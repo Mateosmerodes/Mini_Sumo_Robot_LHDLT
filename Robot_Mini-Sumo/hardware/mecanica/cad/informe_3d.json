@@ -1,0 +1,400 @@
+{
+ "masa_g": {
+  "frontal_rampa_cuna": 39.9,
+  "trasera_cuna_parachoques": 23.0,
+  "carcasa_paredes": 5.1,
+  "carcasa_techo": 9.5,
+  "cuchilla_acero": 5.6,
+  "pcb": 12.7,
+  "bateria_lipo_2s": 32.0,
+  "receptor_ir": 0.5,
+  "lastre_central": 64.5,
+  "lastre_canal_del": 62.9,
+  "lastre_canal_tras": 45.3,
+  "motor_izq_del": 10.0,
+  "llanta_izq_del": 4.6,
+  "neumatico_izq_del": 3.6,
+  "motor_der_del": 10.0,
+  "llanta_der_del": 4.6,
+  "neumatico_der_del": 3.6,
+  "motor_izq_tras": 10.0,
+  "llanta_izq_tras": 4.6,
+  "neumatico_izq_tras": 3.6,
+  "motor_der_tras": 10.0,
+  "llanta_der_tras": 4.6,
+  "neumatico_der_tras": 3.6,
+  "tof_F_izq": 1.0,
+  "tof_F": 1.0,
+  "tof_F_der": 1.0,
+  "tof_izq": 1.0,
+  "tof_der": 1.0,
+  "tof_tras": 1.0,
+  "qre_del_1": 0.6,
+  "qre_del_2": 0.6,
+  "qre_tras_1": 0.6,
+  "qre_tras_2": 0.6,
+  "componentes_pcb": 14.0
+ },
+ "masa_total_g": 396.2,
+ "margen_hasta_500g": 103.8,
+ "envolvente_mm": {
+  "x": [
+   1.0,
+   99.0
+  ],
+  "y_robot": [
+   1.0,
+   99.0
+  ],
+  "z": [
+   0.0,
+   50.1
+  ],
+  "ancho": 98.0,
+  "largo": 98.0,
+  "alto": 50.1
+ },
+ "interferencias_mm3": [],
+ "piezas": {
+  "frontal_rampa_cuna": {
+   "material": "PETG 40 % relleno",
+   "imprimible": true,
+   "grupo": "frontal",
+   "color": [
+    0.85,
+    0.35,
+    0.1
+   ]
+  },
+  "trasera_cuna_parachoques": {
+   "material": "PETG 40 % relleno",
+   "imprimible": true,
+   "grupo": "trasera",
+   "color": [
+    0.85,
+    0.35,
+    0.1
+   ]
+  },
+  "carcasa_paredes": {
+   "material": "PETG 30 % relleno",
+   "imprimible": true,
+   "grupo": "carcasa",
+   "color": [
+    0.15,
+    0.15,
+    0.17
+   ]
+  },
+  "carcasa_techo": {
+   "material": "PETG 30 % relleno",
+   "imprimible": true,
+   "grupo": "techo",
+   "color": [
+    0.22,
+    0.22,
+    0.25
+   ]
+  },
+  "cuchilla_acero": {
+   "material": "acero (fleje 0,4 mm)",
+   "imprimible": false,
+   "grupo": "frontal",
+   "color": [
+    0.75,
+    0.77,
+    0.8
+   ]
+  },
+  "pcb": {
+   "material": "FR4 1,6 mm",
+   "imprimible": false,
+   "grupo": "pcb",
+   "color": [
+    0.05,
+    0.4,
+    0.15
+   ]
+  },
+  "bateria_lipo_2s": {
+   "material": "LiPo",
+   "imprimible": false,
+   "grupo": "bateria",
+   "color": [
+    0.2,
+    0.35,
+    0.8
+   ]
+  },
+  "receptor_ir": {
+   "material": "VS1838B",
+   "imprimible": false,
+   "grupo": "techo",
+   "color": [
+    0.1,
+    0.1,
+    0.1
+   ]
+  },
+  "lastre_central": {
+   "material": "acero",
+   "imprimible": false,
+   "grupo": "lastre",
+   "color": [
+    0.45,
+    0.47,
+    0.5
+   ]
+  },
+  "lastre_canal_del": {
+   "material": "acero",
+   "imprimible": false,
+   "grupo": "lastre",
+   "color": [
+    0.45,
+    0.47,
+    0.5
+   ]
+  },
+  "lastre_canal_tras": {
+   "material": "acero",
+   "imprimible": false,
+   "grupo": "lastre",
+   "color": [
+    0.45,
+    0.47,
+    0.5
+   ]
+  },
+  "motor_izq_del": {
+   "material": "N20 (10 g c/u)",
+   "imprimible": false,
+   "grupo": "motores",
+   "color": [
+    0.8,
+    0.8,
+    0.82
+   ]
+  },
+  "llanta_izq_del": {
+   "material": "PLA 100 %",
+   "imprimible": true,
+   "grupo": "ruedas",
+   "color": [
+    0.95,
+    0.75,
+    0.1
+   ]
+  },
+  "neumatico_izq_del": {
+   "material": "silicona 20-30 ShA",
+   "imprimible": false,
+   "grupo": "ruedas",
+   "color": [
+    0.1,
+    0.1,
+    0.1
+   ]
+  },
+  "motor_der_del": {
+   "material": "N20 (10 g c/u)",
+   "imprimible": false,
+   "grupo": "motores",
+   "color": [
+    0.8,
+    0.8,
+    0.82
+   ]
+  },
+  "llanta_der_del": {
+   "material": "PLA 100 %",
+   "imprimible": true,
+   "grupo": "ruedas",
+   "color": [
+    0.95,
+    0.75,
+    0.1
+   ]
+  },
+  "neumatico_der_del": {
+   "material": "silicona 20-30 ShA",
+   "imprimible": false,
+   "grupo": "ruedas",
+   "color": [
+    0.1,
+    0.1,
+    0.1
+   ]
+  },
+  "motor_izq_tras": {
+   "material": "N20 (10 g c/u)",
+   "imprimible": false,
+   "grupo": "motores",
+   "color": [
+    0.8,
+    0.8,
+    0.82
+   ]
+  },
+  "llanta_izq_tras": {
+   "material": "PLA 100 %",
+   "imprimible": true,
+   "grupo": "ruedas",
+   "color": [
+    0.95,
+    0.75,
+    0.1
+   ]
+  },
+  "neumatico_izq_tras": {
+   "material": "silicona 20-30 ShA",
+   "imprimible": false,
+   "grupo": "ruedas",
+   "color": [
+    0.1,
+    0.1,
+    0.1
+   ]
+  },
+  "motor_der_tras": {
+   "material": "N20 (10 g c/u)",
+   "imprimible": false,
+   "grupo": "motores",
+   "color": [
+    0.8,
+    0.8,
+    0.82
+   ]
+  },
+  "llanta_der_tras": {
+   "material": "PLA 100 %",
+   "imprimible": true,
+   "grupo": "ruedas",
+   "color": [
+    0.95,
+    0.75,
+    0.1
+   ]
+  },
+  "neumatico_der_tras": {
+   "material": "silicona 20-30 ShA",
+   "imprimible": false,
+   "grupo": "ruedas",
+   "color": [
+    0.1,
+    0.1,
+    0.1
+   ]
+  },
+  "tof_F_izq": {
+   "material": "VL53L0X",
+   "imprimible": false,
+   "grupo": "carcasa",
+   "color": [
+    0.55,
+    0.15,
+    0.65
+   ]
+  },
+  "tof_F": {
+   "material": "VL53L0X",
+   "imprimible": false,
+   "grupo": "carcasa",
+   "color": [
+    0.55,
+    0.15,
+    0.65
+   ]
+  },
+  "tof_F_der": {
+   "material": "VL53L0X",
+   "imprimible": false,
+   "grupo": "carcasa",
+   "color": [
+    0.55,
+    0.15,
+    0.65
+   ]
+  },
+  "tof_izq": {
+   "material": "VL53L0X",
+   "imprimible": false,
+   "grupo": "techo",
+   "color": [
+    0.55,
+    0.15,
+    0.65
+   ]
+  },
+  "tof_der": {
+   "material": "VL53L0X",
+   "imprimible": false,
+   "grupo": "techo",
+   "color": [
+    0.55,
+    0.15,
+    0.65
+   ]
+  },
+  "tof_tras": {
+   "material": "VL53L0X",
+   "imprimible": false,
+   "grupo": "techo",
+   "color": [
+    0.55,
+    0.15,
+    0.65
+   ]
+  },
+  "qre_del_1": {
+   "material": "QRE1113",
+   "imprimible": false,
+   "grupo": "frontal",
+   "color": [
+    0.75,
+    0.1,
+    0.1
+   ]
+  },
+  "qre_del_2": {
+   "material": "QRE1113",
+   "imprimible": false,
+   "grupo": "frontal",
+   "color": [
+    0.75,
+    0.1,
+    0.1
+   ]
+  },
+  "qre_tras_1": {
+   "material": "QRE1113",
+   "imprimible": false,
+   "grupo": "trasera",
+   "color": [
+    0.75,
+    0.1,
+    0.1
+   ]
+  },
+  "qre_tras_2": {
+   "material": "QRE1113",
+   "imprimible": false,
+   "grupo": "trasera",
+   "color": [
+    0.75,
+    0.1,
+    0.1
+   ]
+  },
+  "componentes_pcb": {
+   "material": "componentes",
+   "imprimible": false,
+   "grupo": "pcb",
+   "color": [
+    0.25,
+    0.25,
+    0.28
+   ]
+  }
+ }
+}
