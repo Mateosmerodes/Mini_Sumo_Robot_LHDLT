@@ -8,7 +8,7 @@ gen_sch.py y gen_pcb.py leen este fichero.
 PROJECT = 'robot_sumo'
 TITLE = 'Robot Mini-Sumo · Placa base'
 COMPANY = 'HOMBRES DE LAS TABERNAS'
-REV = 'v1.0'
+REV = 'v1.1'
 
 R0603 = 'Resistor_SMD:R_0603_1608Metric'
 C0603 = 'Capacitor_SMD:C_0603_1608Metric'
@@ -53,7 +53,7 @@ R('R3', '100k', 'VBAT', 'VBAT_SENSE', G)
 R('R4', '33k', 'VBAT_SENSE', 'GND', G)
 C('C3', '100n', 'VBAT_SENSE', 'GND', G)
 
-# Buck 5,4 V (luego diodo OR -> +5V ~5,0 V)
+# Buck 5,5 V (luego diodo D2 -> +5V ≈ 5,1 V; y D1 -> pin 5V de la DevKit ≈ 4,7 V, de sobra para su LDO)
 G = 'Buck 5 V'
 add('U2', 'Regulator_Switching:TPS563201', 'TPS563201', 'Package_TO_SOT_SMD:SOT-23-6',
     {'1': 'GND', '2': 'BUCK_SW', '3': 'VBAT', '4': 'BUCK_FB', '5': 'BUCK_EN', '6': 'BUCK_BST'}, G,
@@ -72,68 +72,59 @@ C('C8', '22u 10V', 'V5_BUCK', 'GND', G, C1206)
 C('C9', '22u 10V', 'V5_BUCK', 'GND', G, C1206)
 add('D2', 'Diode:SS34', 'SS34', 'Diode_SMD:D_SMA', {'1': '+5V', '2': 'V5_BUCK'}, G)
 
-# LDO 3,3 V
-G = 'LDO 3,3 V'
-add('U3', 'Regulator_Linear:AMS1117-3.3', 'AMS1117-3.3', 'Package_TO_SOT_SMD:SOT-223-3_TabPin2',
-    {'1': 'GND', '2': '+3V3', '3': '+5V'}, G, 'AMS1117-3.3')
+# ---------------------------------------------------------------- Alimentación de la DevKit
+# La DevKit genera los 3,3 V con su propio LDO (800 mA – 1 A según la placa) y los devuelve por sus
+# pines 3V3 para los sensores. Se alimenta por su pin 5V a través de D1: así, con el USB de la DevKit
+# enchufado, su VBUS no empuja hacia nuestra placa y nuestro buck no empuja hacia el PC.
+G = 'Alimentación DevKit'
 C('C10', '22u 10V', '+5V', 'GND', G, C1206)
-C('C11', '22u 10V', '+3V3', 'GND', G, C1206)
-C('C12', '100n', '+3V3', 'GND', G)
+add('D1', 'Diode:SS34', 'SS34', 'Diode_SMD:D_SMA', {'1': 'V5_ESP', '2': '+5V'}, G)
+C('C11', '10u 10V', 'V5_ESP', 'GND', G, C0805)
 add('D3', 'Device:LED', 'verde', 'LED_SMD:LED_0603_1608Metric', {'1': 'LED_PWR_K', '2': '+3V3'}, G)
 R('R9', '1k', 'LED_PWR_K', 'GND', G)
 
-# USB-C (programación y alimentación de banco)
-G = 'USB-C'
-add('J2', 'Connector:USB_C_Receptacle_USB2.0_16P', 'USB-C',
-    'Connector_USB:USB_C_Receptacle_XKB_U262-16XN-4BVC11',
-    {'A1': 'GND', 'B1': 'GND', 'A12': 'GND', 'B12': 'GND', 'SH': 'GND',
-     'A4': 'VUSB', 'A9': 'VUSB', 'B4': 'VUSB', 'B9': 'VUSB',
-     'A5': 'USB_CC1', 'B5': 'USB_CC2',
-     'A6': 'USB_DP', 'B6': 'USB_DP', 'A7': 'USB_DN', 'B7': 'USB_DN'}, G, 'XKB U262-161N-4BVC11 (USB-C vertical)')
-R('R10', '5.1k', 'USB_CC1', 'GND', G)
-R('R11', '5.1k', 'USB_CC2', 'GND', G)
-add('U4', 'Power_Protection:USBLC6-2SC6', 'USBLC6-2SC6', 'Package_TO_SOT_SMD:SOT-23-6',
-    {'1': 'USB_DN', '6': 'USB_DN', '3': 'USB_DP', '4': 'USB_DP', '2': 'GND', '5': 'VUSB'}, G)
-add('D1', 'Diode:SS34', 'SS34', 'Diode_SMD:D_SMA', {'1': '+5V', '2': 'VUSB'}, G)
-
-# ---------------------------------------------------------------- ESP32-S3
-G = 'ESP32-S3'
-esp = {
-    '1': 'GND', '40': 'GND', '41': 'GND', '2': '+3V3', '3': 'ESP_EN',
-    '27': 'BOOT',                                   # IO0
-    '39': 'LINE_FL', '38': 'LINE_FR',               # IO1, IO2
-    '15': 'LED_DIN',                                # IO3
-    '4': 'LINE_RL', '5': 'LINE_RR',                 # IO4, IO5
-    '6': 'ISENSE_M1', '7': 'ISENSE_M2',             # IO6, IO7
-    '12': 'ISENSE_M3', '17': 'ISENSE_M4',           # IO8, IO9
-    '18': 'VBAT_SENSE',                             # IO10
-    '19': 'M1_IN1', '20': 'M1_IN2',                 # IO11, IO12
-    '21': 'M2_IN1', '22': 'M2_IN2',                 # IO13, IO14
-    '8': 'M3_IN1', '9': 'M3_IN2',                   # IO15, IO16
-    '10': 'M4_IN1', '11': 'M4_IN2',                 # IO17, IO18
-    '13': 'USB_DN', '14': 'USB_DP',                 # IO19, IO20
-    '23': 'DRV_nSLEEP',                             # IO21
-    '28': 'XSHUT_R', '29': 'XSHUT_B',               # IO35, IO36
-    '30': 'IR_START',                               # IO37
-    '31': 'DRV_nFAULT',                             # IO38
-    '32': 'I2C_SDA', '33': 'I2C_SCL',               # IO39, IO40
-    '34': 'XSHUT_L', '35': 'XSHUT_FL',              # IO41, IO42
-    '24': 'XSHUT_F', '25': 'XSHUT_FR',              # IO47, IO48
-    '37': 'AUX_TX', '36': 'AUX_RX',                 # TXD0 (IO43), RXD0 (IO44)
-    # IO45 (26) e IO46 (16) son pines de arranque: se dejan libres
+# ---------------------------------------------------------------- ESP32-S3-DevKitC-1 (enchufable)
+# Placa de desarrollo completa pinchada en tiras hembra de 2,54 mm (filas separadas 22,86 mm).
+# Trae USB (nativo + UART), botones BOOT/RESET, LED RGB y LDO: nada de eso va ya en nuestra placa.
+# Pines del símbolo: 1–22 = J1 de la DevKit, 23–44 = J3 (pin 23 = J3-1).
+# Solo se montan zócalos donde hay señal: los huecos dejan pasar pistas gruesas entre las filas.
+G = 'ESP32-S3-DevKitC-1'
+DEVKIT_J1 = {   # pin de J1 -> red   (GPIO en el comentario)
+    1: '+3V3', 2: '+3V3',                           # salida del LDO de la DevKit
+    4: 'LINE_RL', 5: 'LINE_RR',                     # IO4, IO5
+    6: 'ISENSE_M1', 7: 'ISENSE_M2',                 # IO6, IO7
+    8: 'M3_IN1', 9: 'M3_IN2',                       # IO15, IO16
+    10: 'XSHUT_B', 11: 'IR_START',                  # IO17, IO18
+    12: 'ISENSE_M3',                                # IO8
+    13: 'XSHUT_R',                                  # IO3
+    14: 'M4_IN2',                                   # IO46 (arranque: el pull-down del DRV8874 lo deja a 0)
+    15: 'ISENSE_M4', 16: 'VBAT_SENSE',              # IO9, IO10
+    17: 'M1_IN1', 18: 'M1_IN2',                     # IO11, IO12
+    19: 'M2_IN1', 20: 'M2_IN2',                     # IO13, IO14
+    21: 'V5_ESP', 22: 'GND',
+    # 3 = RST (EN): sin zócalo, la DevKit ya tiene su botón
 }
-add('U1', 'RF_Module:ESP32-S3-WROOM-1', 'ESP32-S3-WROOM-1-N8R2', 'RF_Module:ESP32-S3-WROOM-1', esp, G,
-    'ESP32-S3-WROOM-1-N8R2 (NO usar variantes R8: GPIO35-37)')
+DEVKIT_J3 = {
+    1: 'GND',
+    2: 'AUX_TX', 3: 'AUX_RX',                       # IO43, IO44 (compartidos con el puente USB-UART)
+    4: 'LINE_FL', 5: 'LINE_FR',                     # IO1, IO2
+    6: 'XSHUT_FL', 7: 'XSHUT_L',                    # IO42, IO41
+    8: 'I2C_SCL', 9: 'I2C_SDA',                     # IO40, IO39
+    10: 'DRV_nFAULT',                               # IO38 (LED RGB en la DevKit v1.1: aquí solo es entrada)
+    15: 'M4_IN1',                                   # IO45 (arranque: el pull-down del DRV8874 lo deja a 0)
+    16: 'XSHUT_FR', 17: 'XSHUT_F',                  # IO48, IO47
+    18: 'DRV_nSLEEP',                               # IO21
+    21: 'GND', 22: 'GND',
+    # 11–13 = IO37/36/35: los usa la PSRAM octal de las variantes R8 (N8R8, N16R8) -> sin zócalo
+    # 14 = IO0: botón BOOT de la DevKit, reutilizable como botón de usuario -> sin zócalo
+    # 19, 20 = IO20/IO19: USB nativo de la DevKit -> sin zócalo
+}
+esp = {str(k): v for k, v in DEVKIT_J1.items()}
+esp.update({str(22 + k): v for k, v in DEVKIT_J3.items()})
+add('U1', 'Sumo:ESP32-S3-DevKitC-1', 'ESP32-S3-DevKitC-1', 'Sumo:ESP32-S3-DevKitC-1_Zocalo', esp, G,
+    'ESP32-S3-DevKitC-1 (cualquier variante: N8, N8R2, N8R8, N16R8) + tiras hembra 2,54 mm cortadas')
 C('C13', '22u 10V', '+3V3', 'GND', G, C1206)
 C('C14', '100n', '+3V3', 'GND', G)
-R('R12', '10k', '+3V3', 'ESP_EN', G)
-C('C15', '1u', 'ESP_EN', 'GND', G)
-add('SW2', 'Switch:SW_Push', 'RESET', 'Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2', {'1': 'ESP_EN', '2': 'GND'}, G)
-R('R13', '10k', '+3V3', 'BOOT', G)
-add('SW3', 'Switch:SW_Push', 'BOOT/USER', 'Button_Switch_SMD:SW_Push_1P1T_NO_CK_KMR2', {'1': 'BOOT', '2': 'GND'}, G)
-add('D4', 'LED:WS2812B-2020', 'WS2812B-2020', 'LED_SMD:LED_WS2812B-2020_PLCC4_2.0x2.0mm',
-    {'4': '+3V3', '2': 'GND', '3': 'LED_DIN'}, G)
-C('C16', '100n', '+3V3', 'GND', G)
 
 # ---------------------------------------------------------------- Drivers de motor
 # ITRIP = VREF / (A_IPROPI · R_IPROPI) = 1,65 V / (455 µA/A · 1,5 kΩ) ≈ 2,4 A
@@ -198,4 +189,4 @@ for i in range(1, 9):
     add(f'H{i}', 'Mechanical:MountingHole', 'M2', 'MountingHole:MountingHole_2.2mm_M2', {}, G)
 
 # Redes que necesitan PWR_FLAG (alimentadas por pines pasivos)
-POWER_FLAGS = ['GND', 'VBAT', '+5V', 'VBAT_RAW']
+POWER_FLAGS = ['GND', 'VBAT', '+5V', 'VBAT_RAW', 'V5_ESP']

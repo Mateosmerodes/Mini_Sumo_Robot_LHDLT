@@ -8,7 +8,7 @@ Cada pieza lleva su **elección**, el **porqué** y las **alternativas descartad
 
 | Bloque | Elección | Cant. | ~€ |
 |---|---|---|---|
-| Control | **ESP32-S3-WROOM-1-N8R2** soldado en nuestra PCB | 1 | 3,5 |
+| Control | **ESP32-S3-DevKitC-1** enchufada en tiras hembra sobre nuestra PCB | 1 | 8–10 |
 | Drivers | **TI DRV8874** (uno por motor) en nuestra PCB | 4 (+2 repuesto) | 8 |
 | Motores | **N20 6 V ~500 rpm**, reductora metálica, 4WD | 4 | 12 |
 | Ruedas | Ruedas N20 de goma ~30 mm → luego silicona moldeada | 4 | 3 |
@@ -16,25 +16,27 @@ Cada pieza lleva su **elección**, el **porqué** y las **alternativas descartad
 | Línea | **QRE1113 analógico** (módulo) | 4 | 4 |
 | Rival | **VL53L0X** ToF (módulo GY-VL53L0XV2) | 5 (+1 opc.) | 8–10 |
 | Arranque | **VS1838B / TSOP38238** receptor IR 38 kHz | 1 | 0,3 |
-| Potencia | Buck 5 V 3 A + LDO 3,3 V 1 A en la PCB | — | 2 |
+| Potencia | Buck 5 V 3 A en la PCB (los 3,3 V salen del LDO de la DevKit) | — | 1,5 |
 | PCB | JLCPCB 2 capas, 1,6 mm, ≤100×100 mm | 5 uds | 6–10 |
-| Conectores | JST-SH 1,0 SMD (sensores), cable soldado (motores), XT30 vertical | — | 3 |
+| Conectores | JST-SH 1,0 SMD (sensores), cable soldado (motores), XT30 vertical, tiras hembra 2,54 mm (DevKit) | — | 3,5 |
 | Mecánica | PETG/PLA, chapa de acero para la cuña, tornillería M2/M3, insertos | — | 6 |
-| **Total** | | | **~65–78 €** |
+| **Total** | | | **~70–84 €** |
 
-## 1. Microcontrolador → ESP32-S3-WROOM-1 soldado en la PCB
+## 1. Microcontrolador → ESP32-S3-DevKitC-1 enchufada en la PCB
 
 **Por qué el ESP32-S3 y no el ESP32 "clásico":**
-- **USB nativo** (GPIO19/20): se programa por USB-C sin chip CH340/CP2102. Ahorra componentes, sitio y un posible fallo.
+- **USB nativo** (GPIO19/20): se puede programar y depurar sin chip CH340/CP2102 (la DevKit trae además un puerto USB-UART).
 - **ADC1 con 10 canales** (GPIO1–10), que siguen funcionando con el Wi-Fi activo. En el ESP32 clásico el ADC2 queda inutilizable con Wi-Fi y el ADC1 solo tiene 6 canales útiles. Necesitamos **9 entradas analógicas**: 4 de línea, 4 de corriente de motor y 1 de batería.
 - Más GPIO libres, doble núcleo a 240 MHz: un núcleo para sensores y control, otro para telemetría Wi-Fi.
 - **Arduino IDE: sí.** Se instala el core `esp32` de Espressif y se elige la placa "ESP32S3 Dev Module". También funciona con PlatformIO.
 
-**Por qué el módulo soldado y no una placa de desarrollo (DevKit/SuperMini):**
-- **Pines:** las placas pequeñas (SuperMini, XIAO) sacan 11–16 GPIO y necesitamos ~30. El DevKitC-1 los saca, pero mide 25 × 63 mm y pesa más.
-- Así la PCB es una **placa base de verdad** (punto fuerte para el comité técnico) y además es más barata (~3,5 € el módulo).
-- **Variante N8R2 o N8**, **no R8**: la PSRAM octal de las versiones R8 ocupa los GPIO35–37.
-- Plan B, por si acaso: dejar en la PCB un hueco para pinchar un DevKitC-1. Lo decidimos al hacer el diseño.
+**Por qué la DevKitC-1 completa y no el módulo soldado** (cambio del 19/10/2026, detalle en [04 · ESP32-S3-DevKitC-1](04-ESP32-DevKitC-1.md)):
+- **Se cambia en segundos:** va pinchada en dos tiras hembra. Si se quema en un combate, se pone otra; no hay que desoldar un módulo castellated.
+- **Trae hecho** el USB (nativo + UART), los botones BOOT/RESET, el LED RGB y el LDO de 3,3 V: 13 componentes menos en nuestra PCB.
+- **Saca todos los GPIO** que necesitamos (~28). Las placas pequeñas (SuperMini, XIAO) sacan 11–16 y no llegan.
+- **Vale cualquier variante** (N8, N8R2, N8R8, N16R8): no usamos GPIO35–37, que son los que ocupa la PSRAM octal de las R8.
+- La PCB sigue siendo una **placa base de verdad**: alimentación, drivers, sensores e interconexión son nuestros.
+- Coste: mide 25,4 × 62,7 mm y va a 11 mm sobre la PCB, así que el techo sube 5 mm y el robot pesa ~8 g más. Cuesta ~8–10 € frente a ~3,5 € del módulo.
 
 **Descartados:**
 - *Arduino Nano*: 5 V (habría que adaptar niveles con los sensores de 3,3 V), solo 2 KB de RAM, sin Wi-Fi.
@@ -140,15 +142,15 @@ El reglamento exige **activar y parar el robot con el mando IR del juez (RC5)**.
 | Raíl | Componente | Para qué | Por qué |
 |---|---|---|---|
 | VBAT 6,6–8,4 V | Directo desde la batería tras la protección | DRV8874 (motores) | Sin pérdidas |
-| 5 V / 3 A | **Buck síncrono** (tipo TPS563201 o MP1584) | Servos futuros, entrada del LDO, VBUS USB | Un LDO de 8,4 a 3,3 V disiparía >1,5 W → calor |
-| 3,3 V / 1 A | **LDO** (LDL1117/AMS1117-3.3) desde 5 V | ESP32-S3 (picos ~350 mA con Wi-Fi), sensores | Salida limpia sin rizado para el ADC |
+| 5 V / 3 A | **Buck síncrono** (tipo TPS563201 o MP1584) | Pin 5V de la DevKit, servos futuros | Un LDO de 8,4 a 3,3 V disiparía >1,5 W → calor |
+| 3,3 V | **LDO de la DevKit** (800 mA – 1 A), alimentado desde 5 V por su pin 5V | ESP32-S3 (picos ~350 mA con Wi-Fi), sensores | Salida limpia sin rizado para el ADC; un componente menos en nuestra PCB |
 
 Además:
 - **Protección contra inversión de polaridad:** MOSFET P.
 - **Sin interruptor de potencia:** se quitó para ganar sitio en la PCB; el robot se enciende al enchufar el XT30.
 - **Divisor de tensión** VBAT → ADC (p. ej. 100 k / 33 k: 8,4 V → 2,1 V) para la alarma de batería baja.
 - **Condensadores de reserva** junto a los drivers y de 100 nF en bornes de cada motor, para que el arranque de los motores **no reinicie el ESP32**.
-- **USB-C** con diodo hacia 5 V: se puede programar con la batería desconectada.
+- **USB de la DevKit:** se programa con la batería desconectada y, con el USB solo, funcionan también los sensores. Un diodo entre nuestro +5V y el pin 5V de la DevKit evita que USB y buck se peleen.
 
 El esquema detallado y el pinout están en [02-Arquitectura-electrica](02-Arquitectura-electrica.md).
 

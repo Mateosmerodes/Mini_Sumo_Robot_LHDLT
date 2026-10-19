@@ -42,16 +42,13 @@ pro = {
             netclass('Potencia', 1.0, clearance=0.25, via_d=0.8, via_h=0.4, prio=1,
                      color='rgba(194, 0, 0, 1.000)'),
             netclass('Alimentacion', 0.5, prio=2, color='rgba(194, 118, 0, 1.000)'),
-            netclass('USB', 0.3, prio=3),
         ],
         'netclass_patterns': [
             {'netclass': 'Potencia', 'pattern': p} for p in
             ['VBAT', 'VBAT_RAW', 'VBAT_REV', 'M*_OUTA', 'M*_OUTB']
         ] + [
             {'netclass': 'Alimentacion', 'pattern': p} for p in
-            ['+5V', '+3V3', 'V5_BUCK', 'VUSB', 'BUCK_SW']
-        ] + [
-            {'netclass': 'USB', 'pattern': p} for p in ['USB_DP', 'USB_DN']
+            ['+5V', '+3V3', 'V5_BUCK', 'V5_ESP', 'BUCK_SW']
         ],
     },
     'libraries': {'pinned_footprint_libs': [], 'pinned_symbol_libs': []},

@@ -9,10 +9,13 @@
 - **Cuña de toda la vida**, con la rampa recta desde el filo hasta la PCB (~34,6°) y una **cuchilla de acero intercambiable** de 0,4 mm.
 - **4WD**: dos N20 por eje, enfrentados, con ruedas de 30 mm. Todo el peso descansa sobre ruedas motrices.
 - **La PCB es el chasis.** Va apoyada sobre los motores y une la pieza delantera con la trasera.
+- **El cerebro es una ESP32-S3-DevKitC-1 enchufada** en tiras hembra sobre la PCB, a lo largo del robot y con los USB hacia atrás: se programa por una ventana de la pared trasera y se cambia en segundos ([04](04-ESP32-DevKitC-1.md)).
 - **Masa abajo:** el lastre de acero va bajo la PCB, entre los ejes y en el canal central. La batería va arriba para cambiarla rápido.
 - **Desmontable por capas:** cada capa se quita con 4–8 tornillos M2.
 
 ![Despiece](img/3d_despiece.png)
+
+![Interior sin carcasa](img/3d_interior.png)
 
 | Vista lateral | Vista frontal |
 |---|---|
@@ -24,9 +27,9 @@
 |---|---|---|
 | x | izquierda → derecha | 1 … 99 mm |
 | y | **delante (filo de la cuña) → detrás** | 1 … 99 mm |
-| z | suelo → arriba | 0 … 50 mm |
+| z | suelo → arriba | 0 … 55 mm |
 
-**Envolvente comprobada por el script: 98 × 98 × 50,1 mm**. Deja 1 mm de margen por lado sobre los 100 × 100 del reglamento; la altura no tiene límite.
+**Envolvente comprobada por el script: 98 × 98 × 55,1 mm**. Deja 1 mm de margen por lado sobre los 100 × 100 del reglamento; la altura no tiene límite.
 
 ## Niveles
 
@@ -35,9 +38,11 @@
 | 0 – 1,5 | Filo de la cuchilla; QRE1113 a ~1,7 mm del suelo |
 | 1,5 – 20 | **Pieza frontal** (rampa + cuna delantera), **pieza trasera** (cuna + parachoques), **lastre**, **motores** (eje a 15 mm) |
 | 20 – 21,6 | **PCB** (74 × 62 mm) apoyada sobre los motores y las cunas |
-| 21,6 – 34 | **Paredes de la carcasa**: componentes de la PCB, 3 ToF frontales tras sus ventanas |
-| 34 – 35,6 | **Techo** (98 × 74 mm, también cubre las ruedas) |
-| 35,6 – 50 | **Batería** en su bahía, ToF laterales y trasero en sus soportes, receptor IR |
+| 21,6 – 39 | **Paredes de la carcasa**: componentes de la PCB, 3 ToF frontales tras sus ventanas |
+| 21,6 – 32,6 | Tiras hembra (8,5 mm) + plástico de la tira macho de la DevKit (2,5 mm) |
+| 32,6 – 37,5 | **ESP32-S3-DevKitC-1** (placa + módulo + USB) |
+| 39 – 40,6 | **Techo** (98 × 74 mm, también cubre las ruedas) |
+| 40,6 – 55 | **Batería** en su bahía, ToF laterales y trasero en sus soportes, receptor IR |
 
 ## Piezas
 
@@ -52,7 +57,7 @@
 | 7 | Cuchilla | Chapa cortada y doblada | Acero de fleje / galga de 0,4 mm | 1 | 5,6 g | `step/robot_ensamblaje.step` |
 | 8 | Lastre central | Corte de pletina | Acero (o plomo) | 1 | 65 g | ídem |
 | 9 | Lastres del canal (delantero y trasero) | Corte de pletina | Acero (o plomo) | 2 | 63 g + 45 g | ídem |
-| — | PCB | JLCPCB | FR4 1,6 mm | 1 | 27 g montada | [`hardware/pcb`](../hardware/pcb) |
+| — | PCB | JLCPCB | FR4 1,6 mm | 1 | 33 g montada con la DevKit | [`hardware/pcb`](../hardware/pcb) |
 
 Todas las piezas están en **STEP** en `hardware/mecanica/step/`, para abrir en Onshape o FreeCAD. El ensamblaje completo es `robot_ensamblaje.step` y el documento de FreeCAD, `hardware/mecanica/cad/robot_sumo.FCStd`.
 
@@ -72,17 +77,17 @@ Todas las piezas están en **STEP** en `hardware/mecanica/step/`, para abrir en 
 | Grupo | Masa |
 |---|---|
 | Lastre (3 bloques de acero) | 173 g |
-| Pieza frontal + cuchilla + QRE | 47 g |
+| Pieza frontal + cuchilla + QRE | 46 g |
 | 4 motores N20 | 40 g |
+| PCB montada + DevKit | 33 g |
 | 4 ruedas (llanta + neumático) | 33 g |
 | Batería LiPo 2S | 32 g |
-| PCB montada | 27 g |
 | Pieza trasera + QRE | 24 g |
 | Techo + ToF + IR | 13 g |
-| Paredes + ToF frontales | 8 g |
-| **Total** | **≈ 396 g** |
+| Paredes + ToF frontales | 10 g |
+| **Total** | **≈ 404 g** |
 
-Quedan **~100 g de margen hasta 500 g**. Faltan cables, tornillos y pegamento (unos 15–20 g), así que la cifra real rondará los 415 g. Para llegar a ~490 g:
+Quedan **~96 g de margen hasta 500 g**. Faltan cables, tornillos y pegamento (unos 15–20 g), así que la cifra real rondará los 420 g. Para llegar a ~490 g:
 
 1. **Cambiar el lastre de acero por plomo**: el mismo volumen pesa ×1,44, unos +75 g. Es lo más eficaz porque el peso queda bajo y entre los ejes.
 2. Imprimir las cunas al 100 % de relleno (+10 g).
@@ -92,7 +97,7 @@ Quedan **~100 g de margen hasta 500 g**. Faltan cables, tornillos y pegamento (u
 
 | Uso | Tornillo | Cant. | Dónde rosca |
 |---|---|---|---|
-| Techo + paredes + PCB → cunas (esquinas) | M2 × 18 DIN 912 | 4 | Inserto de latón M2 en la cuna |
+| Techo + paredes + PCB → cunas (esquinas) | M2 × 25 DIN 912 | 4 | Inserto de latón M2 en la cuna (taladro de 7 mm) |
 | PCB → cunas (centrales) | M2 × 6 DIN 912 | 4 | Inserto de latón M2 en la cuna |
 | Cuchilla → rampa | M2 × 5 avellanado DIN 965 | 2 | Inserto de latón M2 en la rampa |
 | Insertos roscados M2 (Ø 3,2 × 4 mm) | — | 10 | Se colocan con el soldador |
@@ -104,11 +109,12 @@ Los motores no llevan abrazadera: quedan atrapados entre su alojamiento de la cu
 1. Colocar los insertos en las cunas y la rampa con el soldador.
 2. Montar los QRE1113 en sus alojamientos (abiertos por abajo) y pasar los cables por los taladros verticales.
 3. Meter los **motores** en las cunas (reductora hacia fuera) y el **lastre** en el canal central y entre las cunas.
-4. Soldar los cables de los motores a la PCB: suben por los pads M1–M4.
+4. Soldar los cables de los motores a la PCB: van por el canal de la cuna y suben por los pads M1–M4, a los lados.
 5. Apoyar la **PCB** y atornillar los 4 M2 × 6 centrales.
-6. Poner las **paredes** con los ToF frontales ya colocados tras sus ventanas.
-7. Poner el **techo** con los ToF laterales y trasero y el receptor IR, y atornillar los 4 M2 × 18 de las esquinas.
-8. Montar las **ruedas** (a presión en el eje D de 3 mm), la **cuchilla** y la **batería** (velcro + cinta).
+6. Enchufar los cables de los sensores y, después, **pinchar la DevKit** en sus zócalos (el conector del ToF frontal queda debajo de ella).
+7. Poner las **paredes** con los ToF frontales ya colocados tras sus ventanas.
+8. Poner el **techo** con los ToF laterales y trasero y el receptor IR, y atornillar los 4 M2 × 25 de las esquinas.
+9. Montar las **ruedas** (a presión en el eje D de 3 mm), la **cuchilla** y la **batería** (velcro + cinta).
 
 ## Impresión
 
@@ -122,7 +128,7 @@ Los motores no llevan abrazadera: quedan atrapados entre su alojamiento de la cu
 ## Limitaciones conocidas (para la v2)
 
 - **Los ToF frontales izquierdo y derecho miran al frente**, no en abanico: no hay fondo suficiente para girarlos sin chocar con la PCB. Lo compensa el firmware con la posición de cada uno. En la v2 se pueden girar ±20° en las esquinas achaflanadas.
-- Las cunas solo dejan **~0,9 mm de pared** entre el inserto trasero exterior y el alojamiento del motor. Si se agrieta al imprimir, mover los taladros traseros (`TALADROS` en `geometria.py`) o usar insertos cortos.
+- Las cunas solo dejan **~0,9 mm de pared** entre el inserto trasero exterior y el alojamiento del motor, y ~1,3 mm entre los insertos centrales y los canales de los cables. Si se agrieta al imprimir, mover los taladros traseros (`TALADROS` en `geometria.py`) o usar insertos cortos.
 - **Componentes de la PCB representados como prismas**: KiCad no tiene instaladas las librerías 3D (`kicad-library-3d`, ~5 GB). Con ellas, el STEP de la PCB sale con todos los modelos reales.
 - El paso de cables está solo esbozado (taladros y ranuras). Se ajusta con la primera impresión.
 

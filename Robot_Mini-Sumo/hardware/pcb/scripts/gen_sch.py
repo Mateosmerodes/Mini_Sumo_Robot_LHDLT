@@ -183,7 +183,7 @@ def main():
 
     sch = [S('kicad_sch'), [S('version'), 20250114], [S('generator'), 'eeschema'], [S('generator_version'), '9.0'],
            [S('uuid'), ROOT_UUID], [S('paper'), 'A1'],
-           [S('title_block'), [S('title'), design.TITLE], [S('date'), '2026-10-06'], [S('rev'), design.REV],
+           [S('title_block'), [S('title'), design.TITLE], [S('date'), '2026-10-19'], [S('rev'), design.REV],
             [S('company'), design.COMPANY],
             [S('comment'), 1, 'Generado con hardware/pcb/scripts/gen_sch.py a partir de design.py'],
             [S('comment'), 2, 'Licencia CERN-OHL-S v2']],

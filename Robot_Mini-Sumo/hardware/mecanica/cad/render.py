@@ -49,9 +49,11 @@ def sombrear(tris, color, luz=np.array([0.4, 0.6, 0.9])):
     return np.clip(np.outer(k, color), 0, 1)
 
 
-def escena(info, despiece=False):
+def escena(info, despiece=False, ocultar=()):
     tris, cols = [], []
     for nombre, meta in info['piezas'].items():
+        if meta['grupo'] in ocultar:
+            continue
         path = os.path.join(RENDER, nombre + '.stl')
         if not os.path.exists(path):
             continue
@@ -138,6 +140,8 @@ def main():
     dibujar(t, c, 0, 90, '3d_frontal.png', 'Vista frontal', 1.0)
     dibujar(t, c, 0, 180, '3d_lateral.png', 'Vista lateral izquierda (delante a la izquierda)', 1.0)
     dibujar(t, c, 90, -90, '3d_planta.png', 'Planta', 1.0)
+    t, c = escena(info, ocultar=('carcasa', 'techo', 'bateria'))
+    dibujar(t, c, 30, -60, '3d_interior.png', 'Interior: ESP32-S3-DevKitC-1 sobre la placa base (sin carcasa)', 1.0)
     t, c = escena(info, despiece=True)
     dibujar(t, c, 20, 128, '3d_despiece.png', 'Despiece', 1.05)
     dibujar(t, c, 20, -52, '3d_despiece_trasera.png', 'Despiece (desde atrás)', 1.05)

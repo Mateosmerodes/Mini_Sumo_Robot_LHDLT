@@ -31,7 +31,7 @@ MOTOR_TOP_Z = EJE_Z + MOTOR_ALTO / 2                              # 20.0
 
 # ---- PCB (base estructural, apoyada sobre los motores)
 PCB_X0, PCB_X1 = 13.0, 87.0     # 74 mm: libra las ruedas (cara interior en x = 11.5)
-PCB_Y0, PCB_Y1 = 30.0, 92.0     # 62 mm: por delante va la cuña; por detrás asoma la antena del ESP32
+PCB_Y0, PCB_Y1 = 30.0, 92.0     # 62 mm: por delante va la cuña; por detrás, las torretas de la carcasa
 PCB_Z0 = MOTOR_TOP_Z            # cara inferior de la PCB
 PCB_GROSOR = 1.6
 PCB_RADIO_ESQUINA = 2.0
@@ -61,6 +61,12 @@ def rampa_z(y):
     """Altura de la superficie de la rampa en la coordenada y."""
     return min(max(0.0, (y - ENV_Y0) * _m.tan(_m.radians(RAMPA_ANGULO))), PCB_Z0)
 
+# ---- Pads de los cables de los motores (x del pad 1 y del pad 2, y): a cada lado, junto a su driver.
+#      Fuera de las zonas de apoyo de los motores; el cable llega por un canal de la cuna.
+PAD_MOTOR_X_IZQ = (21.5, 26.1)
+PAD_MOTOR_X_DER = (73.9, 78.5)
+PAD_MOTOR_Y_DEL, PAD_MOTOR_Y_TRAS = 55.2, 71.6
+
 # ---- Zonas de la cara inferior de la PCB ocupadas por motores (sin componentes THT)
 ZONAS_MOTOR = [
     (MOTOR_IZQ_X[0], EJE_Y_DEL - MOTOR_ANCHO / 2, MOTOR_IZQ_X[1], EJE_Y_DEL + MOTOR_ANCHO / 2),
@@ -81,7 +87,7 @@ LASTRE_Z0, LASTRE_Z1 = 2.0, 17.0
 # ---- Carcasa superior
 CARCASA_Y0 = 25.0               # pared frontal (delante de la PCB, apoyada en la rampa)
 CARCASA_PARED = 1.6
-TECHO_Z = 34.0                  # cara inferior del techo (libra el XT30 y los conectores)
+TECHO_Z = 39.0                  # cara inferior del techo (libra la DevKit: su cara superior queda a ~37,5)
 TECHO_GROSOR = 1.6
 
 # ---- Componentes comerciales (cotas aproximadas)
@@ -91,8 +97,17 @@ BATERIA = (55.0, 31.0, 14.0)    # LiPo 2S 450-650 mAh
 LINEA_DEL = [(17.0, 22.0), (83.0, 22.0)]    # centros de los QRE delanteros (en la rampa, dentro de la carcasa)
 LINEA_TRAS = [(25.0, 94.3), (75.0, 94.3)]   # centros de los QRE traseros (en el parachoques)
 
-# ---- ESP32-S3-WROOM-1 girado 180°: la antena (6 mm) sobresale del borde trasero de la PCB,
-#      así no hace falta zona sin cobre dentro de la placa (recomendación de Espressif).
-ESP32_X = 50.0
-ESP32_Y = PCB_Y1 - 6.75       # centro del módulo (25,5 mm de largo)
-ESP32_Y1 = ESP32_Y + 12.75    # extremo de la antena = 98
+# ---- ESP32-S3-DevKitC-1 enchufada en tiras hembra, a lo largo del robot y centrada en x.
+#      Antena hacia delante, conectores USB hacia la pared trasera (se enchufa el cable por detrás).
+#      Cotas relativas al pin J1-1 (x hacia J3, y hacia los USB), según el plano de Espressif v1.1.
+DEVKIT_PASO = 2.54
+DEVKIT_FILAS = 22.86            # distancia entre las filas J1 y J3 (0,9")
+DEVKIT_PLACA = (-1.27, -1.2, 24.13, 61.5)    # placa de la DevKit (x0, y0, x1, y1) ≈ 25,4 × 62,7
+DEVKIT_ANTENA = (2.5, -7.0, 20.4, -1.2)      # antena del módulo, que vuela por delante de la placa
+DEVKIT_USB_Y1 = 62.8            # cara de los conectores USB
+DEVKIT_X = 50.0 - DEVKIT_FILAS / 2           # x del pin J1-1 (fila J1 a la izquierda)
+DEVKIT_Y = ENV_Y1 - CARCASA_PARED - DEVKIT_USB_Y1   # y del pin J1-1: USB a ras de la pared trasera
+ZOCALO_ALTO = 8.5               # tira hembra estándar
+DEVKIT_SEPARADOR = 2.5          # plástico de la tira macho de la DevKit
+DEVKIT_Z0 = PCB_Z0 + PCB_GROSOR + ZOCALO_ALTO + DEVKIT_SEPARADOR   # cara inferior de la DevKit
+DEVKIT_ALTO = 1.6 + 3.3         # placa + componentes (módulo, USB, botones)

@@ -6,7 +6,7 @@ Robot mini-sumo autónomo (10 × 10 cm, < 500 g) para **Tecnología Eléctrica**
 
 ## Concepto
 
-Rampa (cuña) clásica, **tracción 4WD** con 4 N20, **ESP32-S3** en una **PCB propia que es también el chasis**, 6 sensores ToF para encontrar al rival, 4 de línea y arranque por IR (RC5).
+Rampa (cuña) clásica, **tracción 4WD** con 4 N20, una **ESP32-S3-DevKitC-1 enchufada** sobre una **PCB propia que es también el chasis**, 6 sensores ToF para encontrar al rival, 4 de línea y arranque por IR (RC5).
 
 ## Documentación
 
@@ -16,9 +16,10 @@ Rampa (cuña) clásica, **tracción 4WD** con 4 N20, **ESP32-S3** en una **PCB p
 | [01 · Selección de componentes](docs/01-Seleccion-de-componentes.md) | Qué pieza y por qué | ✅ borrador |
 | [02 · Arquitectura eléctrica](docs/02-Arquitectura-electrica.md) | Alimentación, interconexión, pinout | ✅ borrador |
 | [03 · Disposición mecánica y 3D](docs/03-Disposicion-mecanica.md) | Piezas, niveles, masas, montaje, impresión | ✅ borrador |
-| 04 · Diseño de la PCB | Esquemático ✅ (ERC limpio), colocación ✅, rutado ⏳ | 🟡 |
-| 05 · Lista de compra | AliExpress + LCSC/JLC | ⏳ |
-| 06 · Costes | Desglose para el informe | ⏳ |
+| [04 · ESP32-S3-DevKitC-1](docs/04-ESP32-DevKitC-1.md) | Cambio a DevKit enchufable: montaje, alimentación, pinout, rutado | ✅ borrador |
+| 05 · Diseño de la PCB | Esquemático ✅, colocación v1.1 ✅, ERC/DRC en KiCad 10 ⏳, rutado ⏳ | 🟡 |
+| 06 · Lista de compra | AliExpress + LCSC/JLC | ⏳ |
+| 07 · Costes | Desglose para el informe | ⏳ |
 | Informe final | 6 páginas | ⏳ |
 | [📋 Informe de progreso 06/10/2026](docs/Informe-progreso-2026-10-06.md) | Resumen para el equipo: proceso, compra, útiles, problemas | ✅ |
 
@@ -34,7 +35,7 @@ hardware/pcb/           Proyecto KiCad (scripts/design.py = circuito)
 hardware/mecanica/cad/  Modelo 3D paramétrico (FreeCAD) y renderizador
 hardware/mecanica/step/ Exportaciones STEP (Onshape/FreeCAD)
 hardware/mecanica/stl/  Piezas listas para imprimir
-firmware/               Código del ESP32-S3 (Arduino/PlatformIO)
+firmware/               Código del ESP32-S3 (Arduino/PlatformIO; pines en docs/04)
 media/fotos/            Fotos del proceso
 informe/                Informe de entrega
 ```
