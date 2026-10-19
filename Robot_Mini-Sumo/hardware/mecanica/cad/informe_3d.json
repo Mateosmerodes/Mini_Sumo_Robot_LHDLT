@@ -1,11 +1,11 @@
 {
  "masa_g": {
-  "frontal_rampa_cuna": 39.9,
-  "trasera_cuna_parachoques": 23.0,
-  "carcasa_paredes": 5.1,
-  "carcasa_techo": 9.5,
+  "frontal_rampa_cuna": 39.2,
+  "trasera_cuna_parachoques": 22.5,
+  "carcasa_paredes": 6.9,
+  "carcasa_techo": 9.8,
   "cuchilla_acero": 5.6,
-  "pcb": 12.7,
+  "pcb": 13.4,
   "bateria_lipo_2s": 32.0,
   "receptor_ir": 0.5,
   "lastre_central": 64.5,
@@ -33,10 +33,10 @@
   "qre_del_2": 0.6,
   "qre_tras_1": 0.6,
   "qre_tras_2": 0.6,
-  "componentes_pcb": 14.0
+  "componentes_pcb": 20.0
  },
- "masa_total_g": 396.2,
- "margen_hasta_500g": 103.8,
+ "masa_total_g": 403.8,
+ "margen_hasta_500g": 96.2,
  "envolvente_mm": {
   "x": [
    1.0,
@@ -48,11 +48,11 @@
   ],
   "z": [
    0.0,
-   50.1
+   55.1
   ],
   "ancho": 98.0,
   "largo": 98.0,
-  "alto": 50.1
+  "alto": 55.1
  },
  "interferencias_mm3": [],
  "piezas": {

@@ -89,8 +89,33 @@ def bolsillos_motor(eje):
 
 
 def insertos(lista):
-    """Taladros para insertos roscados M2 (Ø3,2 × 5 mm) desde la cara de apoyo de la PCB."""
-    return [cil_z(1.6, g.PCB_Z0 - 5, g.PCB_Z0 + 0.1, x, y) for x, y in lista]
+    """Taladros para insertos roscados M2 (Ø3,2) desde la cara de apoyo de la PCB: 5 mm de fondo,
+    7 mm en las esquinas para que quepa la punta del tornillo largo de la carcasa (M2 × 25)."""
+    return [cil_z(1.6, g.PCB_Z0 - (7 if (x, y) in g.TALADROS_CARCASA else 5), g.PCB_Z0 + 0.1, x, y)
+            for x, y in lista]
+
+
+def canales_cable(eje, pad_y):
+    """Canal del cable de cada motor: sube por el extremo interior del motor y va por dentro de la cuna
+    hasta los pads de la PCB, que están a un lado (fuera de la zona de apoyo del motor)."""
+    out = []
+    for (m0, m1), pads, sgn in ((g.MOTOR_IZQ_X, g.PAD_MOTOR_X_IZQ, 1), (g.MOTOR_DER_X, g.PAD_MOTOR_X_DER, -1)):
+        xm = m1 - 1.5 if sgn > 0 else m0 - 0.6                  # junto a los terminales del motor
+        ya, yb = sorted((eje, pad_y))
+        out.append(box(xm, xm + 2.1, ya - 3.5, yb + 1.6, g.EJE_Z, g.PCB_Z0 + 0.1))
+        lejano = min(pads) - 1.6 if sgn > 0 else max(pads) + 1.6  # el pad más alejado del motor
+        xa, xb = sorted((lejano, xm + (2.1 if sgn > 0 else 0)))
+        out.append(box(xa, xb, pad_y - 1.6, pad_y + 1.6, g.EJE_Z, g.PCB_Z0 + 0.1))
+    return out
+
+
+def ranuras_zocalo():
+    """Ranuras bajo las filas de la DevKit para las colas de los pines de las tiras hembra
+    (cortadas a ~1,5 mm por debajo de la PCB)."""
+    y0 = g.DEVKIT_Y - 1.5
+    y1 = g.DEVKIT_Y + 21 * g.DEVKIT_PASO + 1.5
+    return [box(x - 1.3, x + 1.3, y0, y1, g.PCB_Z0 - 2.0, g.PCB_Z0 + 0.1)
+            for x in (g.DEVKIT_X, g.DEVKIT_X + g.DEVKIT_FILAS)]
 
 
 def pieza_frontal():
@@ -102,8 +127,8 @@ def pieza_frontal():
     s = fuse(rampa, cuna)
     herr = bolsillos_motor(g.EJE_Y_DEL)
     herr.append(box(g.CANAL_X[0], g.CANAL_X[1], y0, y1 + 0.1, g.CUNA_Z0 - 0.1, g.LASTRE_Z1))   # lastre
-    for xm in (g.MOTOR_IZQ_X[1] - 1.5, g.MOTOR_DER_X[0] - 0.6):                                 # cables
-        herr.append(box(xm, xm + 2.1, g.EJE_Y_DEL - 3.5, g.EJE_Y_DEL + 3.5, g.EJE_Z, g.PCB_Z0 + 0.1))
+    herr += canales_cable(g.EJE_Y_DEL, g.PAD_MOTOR_Y_DEL)
+    herr += ranuras_zocalo()
     herr += insertos([(x, y) for x, y, p in g.TALADROS if p == 'frontal'])
     qw, ql, qh = g.QRE_MODULO
     for xc, yc in g.LINEA_DEL:   # alojamiento del QRE abierto por abajo + paso de cable hacia arriba
@@ -129,8 +154,8 @@ def pieza_trasera():
     s = fuse(cuna, parachoques)
     herr = bolsillos_motor(g.EJE_Y_TRAS)
     herr.append(box(g.CANAL_X[0], g.CANAL_X[1], y0 - 0.1, 89.0, g.CUNA_Z0 - 0.1, g.LASTRE_Z1))
-    for xm in (g.MOTOR_IZQ_X[1] - 1.5, g.MOTOR_DER_X[0] - 0.6):   # cables de los motores hacia delante
-        herr.append(box(xm, xm + 2.1, y0 - 0.1, g.EJE_Y_TRAS - 3.0, g.EJE_Z, g.PCB_Z0 + 0.1))
+    herr += canales_cable(g.EJE_Y_TRAS, g.PAD_MOTOR_Y_TRAS)
+    herr += ranuras_zocalo()
     herr += insertos([(x, y) for x, y, p in g.TALADROS if p == 'trasera'])
     qw, ql, qh = g.QRE_MODULO
     for xc, yc in g.LINEA_TRAS:   # QRE tumbado: 14 mm en X
@@ -176,6 +201,12 @@ TECHO = (g.TECHO_Z, g.TECHO_Z + g.TECHO_GROSOR)
 BAHIA = (21.9, 78.1, 45.0, 76.5)          # hueco interior de la batería (x0, x1, y0, y1)
 SOPORTE_LAT = (55.0, 73.0)                # tramo y de los soportes de ToF laterales
 RIM_H = 6.0
+XT30_HUECO = (19.5, 30.5, 37.0, 43.0)       # paso del XT30 por el techo (x0, x1, y0, y1)
+
+
+def ventana_usb():
+    """Tramo x de la ventana de la pared trasera por la que se enchufan los USB de la DevKit."""
+    return g.DEVKIT_X + g.DEVKIT_PLACA[0] + 1.0, g.DEVKIT_X + g.DEVKIT_PLACA[2] - 1.0
 
 
 def carcasa(frontal):
@@ -187,14 +218,15 @@ def carcasa(frontal):
                   box(0, 100, g.RAMPA_Y_FIN, 100, 0, g.PCB_Z0 + 0.05),             # apoya en cunas
                   box(g.PCB_X0, g.PCB_X1, g.PCB_Y0, g.PCB_Y1, g.PCB_Z0 - 0.1, g.PCB_Z0 + g.PCB_GROSOR + 0.05),
                   frontal,                                                         # sigue la rampa
-                  box(40, 60, 95, 100, g.PCB_Z0, 25.5))                            # antena del ESP32
+                  box(*ventana_usb(), y1 - p - 0.1, y1 + 0.1, g.DEVKIT_Z0 - 1.0, g.TECHO_Z + 0.1),   # USB
+                  box(g.DEVKIT_X + g.DEVKIT_ANTENA[0] - 1.0, g.DEVKIT_X + g.DEVKIT_ANTENA[2] + 1.0,  # antena
+                      y0 - 0.1, y0 + p + 0.1, g.DEVKIT_Z0 + 1.0, g.TECHO_Z + 0.1))
     techo = box(g.ENV_X0, g.ENV_X1, y0, y1, *TECHO)
     # Bahía de la batería (reborde)
     bx0, bx1, by0, by1 = BAHIA
     rim = cut(box(bx0 - p, bx1 + p, by0 - p, by1 + p, TECHO[1], TECHO[1] + RIM_H),
               box(bx0, bx1, by0, by1, TECHO[1] - 1, TECHO[1] + RIM_H + 1),
-              box(63.0, 78.0, by1 - 1, by1 + p + 1, TECHO[1] - 1, TECHO[1] + RIM_H + 1),   # paso del USB
-              box(44.0, 56.0, by0 - p - 1, by0 + 1, TECHO[1] - 1, TECHO[1] + RIM_H + 1))   # cables XT30
+              box(XT30_HUECO[0], XT30_HUECO[1], by0 - p - 1, by0 + 1, TECHO[1] - 1, TECHO[1] + RIM_H + 1))   # cables XT30
     # Soportes de ToF laterales y trasero
     tw, th, tt = g.TOF_MODULO
     sl = fuse(box(g.ENV_X0, g.ENV_X0 + p, *SOPORTE_LAT, TECHO[1], TECHO[1] + th + 1.5),
@@ -207,12 +239,11 @@ def carcasa(frontal):
     herr = [cil_z(1.1, g.PCB_Z0, TECHO[1] + 1, x, y) for x, y in g.TALADROS_CARCASA]
     herr += [cil_z(2.1, TECHO[1] - 1.8, TECHO[1] + 1, x, y) for x, y in g.TALADROS_CARCASA]   # cabeza
     herr += [
-        box(43.5, 56.5, 37.2, 43.4, TECHO[0] - 1, TECHO[1] + 1),      # XT30
-        box(64.5, 76.5, 76.6, 86.2, TECHO[0] - 1, TECHO[1] + 1),      # USB-C
+        box(*XT30_HUECO, TECHO[0] - 1, TECHO[1] + 1),                  # XT30
         box(14.6, 19.6, 58.0, 70.0, TECHO[0] - 1, TECHO[1] + 1),      # cable ToF izq.
         box(80.4, 85.4, 58.0, 70.0, TECHO[0] - 1, TECHO[1] + 1),      # cable ToF der.
-        box(28.0, 40.0, 86.0, 92.0, TECHO[0] - 1, TECHO[1] + 1),      # cables ToF trasero / línea
-        box(60.5, 70.5, 87.0, 92.0, TECHO[0] - 1, TECHO[1] + 1),      # cable IR
+        box(24.0, 36.0, 86.0, 92.0, TECHO[0] - 1, TECHO[1] + 1),      # cables ToF trasero / línea
+        box(64.0, 72.0, 87.0, 92.0, TECHO[0] - 1, TECHO[1] + 1),      # cable IR
     ]
     zc = (TOF_FRONT_Z[0] + TOF_FRONT_Z[1]) / 2
     herr += [cil_y(3.0, y0 - 1, y0 + p + 1, x, zc) for x in TOF_FRONT_X]          # ventanas ToF frontales
@@ -269,7 +300,8 @@ def componentes():
     with open(os.path.join(HERE, 'pcb_componentes.json')) as f:
         data = json.load(f)
     z0 = g.PCB_Z0 + g.PCB_GROSOR
-    return {c['ref']: box(c['bbox'][0], c['bbox'][2], c['bbox'][1], c['bbox'][3], z0, z0 + c['alto'])
+    return {c['ref']: box(c['bbox'][0], c['bbox'][2], c['bbox'][1], c['bbox'][3],
+                          z0 + c.get('z0', 0.0), z0 + c.get('z0', 0.0) + c['alto'])
             for c in data}
 
 
@@ -306,7 +338,7 @@ def construir():
     return piezas, comps
 
 
-MASA_FIJA = {'motor_': 10.0, 'componentes_pcb': 14.0, 'bateria_lipo_2s': 32.0, 'tof_': 1.0, 'qre_': 0.6,
+MASA_FIJA = {'motor_': 10.0, 'componentes_pcb': 20.0, 'bateria_lipo_2s': 32.0, 'tof_': 1.0, 'qre_': 0.6,
              'receptor_ir': 0.5}
 
 

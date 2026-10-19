@@ -1,5 +1,7 @@
 # Informe de progreso · 6 de octubre de 2026
 
+> **Actualización 19/10/2026:** el ESP32 ya no va soldado. Ahora es una **ESP32-S3-DevKitC-1 completa enchufada** en tiras hembra sobre la placa base (sin USB-C, botones, WS2812 ni LDO propios). Lo que dice este informe sobre el módulo WROOM, el USB-C, la antena asomando por detrás y la lista de compra del ESP32 está superado: ver [04 · ESP32-S3-DevKitC-1](04-ESP32-DevKitC-1.md).
+
 **Equipo:** Hombres de las Tabernas (Mateo, Paulo, Mario)
 **Para:** el equipo, para ponernos al día y revisar lo hecho
 **Autoría:** diseño y documentación generados con Claude (asistente de IA) a partir del boceto y las instrucciones de Mateo. **Todo está pendiente de revisión humana**: la sección [Qué revisar](#13-qué-revisar-antes-de-pedir-nada) lista los puntos menos seguros.

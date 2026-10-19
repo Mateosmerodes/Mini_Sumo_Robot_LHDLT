@@ -1,6 +1,6 @@
 # 02 · Arquitectura eléctrica
 
-> Borrador: el pinout es **provisional** y se cierra al diseñar la PCB en KiCad.
+> Borrador. **Desde el 19/10/2026 el ESP32 es una ESP32-S3-DevKitC-1 enchufada** sobre la placa base (antes, un módulo WROOM soldado): detalles, pinout definitivo y rutado en [04 · ESP32-S3-DevKitC-1](04-ESP32-DevKitC-1.md).
 
 ## Árbol de alimentación
 
@@ -12,12 +12,14 @@ flowchart LR
     VBAT --> DRV["4× DRV8874<br/>(VM)"]
     DRV --> MOT["4× N20"]
     VBAT --> DIV["Divisor 100k/33k"] --> ADC["ESP32 ADC"]
-    VBAT --> BUCK["Buck 5 V / 3 A"] --> V5(("5 V"))
-    USB["USB-C VBUS"] --> D["Diodo Schottky"] --> V5
-    V5 --> LDO["LDO 3,3 V / 1 A"] --> V33(("3,3 V"))
+    VBAT --> BUCK["Buck 5,5 V / 3 A"] --> D2["D2 Schottky"] --> V5(("+5V"))
     V5 -.-> SERVO["Servos (futuro)"]
-    V33 --> ESP["ESP32-S3"]
-    V33 --> SENS["QRE1113 ×4<br/>VL53L0X ×5<br/>VS1838B"]
+    V5 --> D1["D1 Schottky"] --> P5["Pin 5V<br/>DevKitC-1"]
+    USB["USB de la DevKit"] --> LDO
+    P5 --> LDO["LDO de la DevKit<br/>3,3 V / 0,8–1 A"]
+    LDO --> ESP["ESP32-S3"]
+    LDO --> V33(("+3V3<br/>(pines 3V3)"))
+    V33 --> SENS["QRE1113 ×4<br/>VL53L0X ×6<br/>VS1838B"]
 ```
 
 ### Presupuesto de corriente
@@ -29,28 +31,26 @@ flowchart LR
 | 6× VL53L0X | 3,3 V | 6×10 mA | 6×20 mA |
 | 4× QRE1113 (LED ~15 mA) | 3,3 V | 60 mA | 60 mA |
 | VS1838B, LED de estado | 3,3 V | 5 mA | 25 mA |
-| **Total 3,3 V** | | ~220 mA | **~540 mA** → LDO de 1 A ✔ |
+| **Total 3,3 V** | | ~220 mA | **~540 mA** → LDO de la DevKit (800 mA en la v1.1, 1 A en clones con AMS1117) ✔ |
 
-Disipación del LDO en el peor caso: (5 − 3,3) × 0,54 ≈ 0,9 W en picos cortos. Con una media de ~0,25 W basta con un plano de cobre debajo.
+Disipación del LDO de la DevKit en el peor caso: (4,7 − 3,3) × 0,54 ≈ 0,75 W en picos cortos; de media ~0,2 W.
 
 ## Diagrama de interconexión
 
 ```mermaid
 flowchart TB
     subgraph PCB["PCB principal · HOMBRES DE LAS TABERNAS"]
-        ESP["ESP32-S3-WROOM-1"]
+        ESP["ESP32-S3-DevKitC-1<br/>(enchufada, con su USB)"]
         D1["DRV8874 M1"]
         D2["DRV8874 M2"]
         D3["DRV8874 M3"]
         D4["DRV8874 M4"]
-        PWR["Potencia: XT30, protección, buck, LDO"]
-        USB["USB-C"]
+        PWR["Potencia: XT30, protección, buck"]
     end
     ESP -- "IN1/IN2 PWM ×4" --> D1 & D2 & D3 & D4
     D1 & D2 & D3 & D4 -- "IPROPI (analógico)" --> ESP
     D1 & D2 & D3 & D4 -- "nFAULT (wired-OR)" --> ESP
     ESP -- "nSLEEP" --> D1 & D2 & D3 & D4
-    USB -- "D+/D− (GPIO19/20)" --> ESP
     ESP <-- "I²C SDA/SCL" --> TOF["6× VL53L0X<br/>JST-SH 5 pines"]
     ESP -- "XSHUT ×5" --> TOF
     LINE["4× QRE1113<br/>JST-SH 3 pines"] -- "analógico" --> ESP
@@ -58,46 +58,22 @@ flowchart TB
     ESP <-- "I²C (conector expansión)" --> IMU["IMU opcional"]
 ```
 
-## Pinout provisional (ESP32-S3-WROOM-1-N8R2)
+## Pinout (ESP32-S3-DevKitC-1)
 
-Pines **que no se usan**:
-- GPIO26–32: memoria flash/PSRAM.
-- GPIO19/20: USB.
-- GPIO43/44: UART de depuración.
-- GPIO0/3/45/46 (strapping): se usan con cuidado o se dejan libres.
+La tabla completa, con el pin de la DevKit (J1/J3) de cada señal, está en [04 · ESP32-S3-DevKitC-1](04-ESP32-DevKitC-1.md#pinout). Resumen:
 
-| GPIO | Señal | Tipo | Notas |
+| GPIO | Señal | GPIO | Señal |
 |---|---|---|---|
-| 1 | LINE_FL | ADC1_CH0 | Línea delantera izquierda |
-| 2 | LINE_FR | ADC1_CH1 | Línea delantera derecha |
-| 4 | LINE_RL | ADC1_CH3 | Línea trasera izquierda |
-| 5 | LINE_RR | ADC1_CH4 | Línea trasera derecha |
-| 6 | ISENSE_M1 | ADC1_CH5 | IPROPI motor 1 (izq. delantero) |
-| 7 | ISENSE_M2 | ADC1_CH6 | IPROPI motor 2 (izq. trasero) |
-| 8 | ISENSE_M3 | ADC1_CH7 | IPROPI motor 3 (der. delantero) |
-| 9 | ISENSE_M4 | ADC1_CH8 | IPROPI motor 4 (der. trasero) |
-| 10 | VBAT_SENSE | ADC1_CH9 | Divisor 100k/33k |
-| 11, 12 | M1_IN1, M1_IN2 | PWM (LEDC) | 20 kHz, fuera del rango audible |
-| 13, 14 | M2_IN1, M2_IN2 | PWM | |
-| 15, 16 | M3_IN1, M3_IN2 | PWM | |
-| 17, 18 | M4_IN1, M4_IN2 | PWM | |
-| 21 | DRV_nSLEEP | Salida | Común a los 4 drivers; resistencia a GND = motores parados al arrancar |
-| 38 | DRV_nFAULT | Entrada | Open-drain común, pull-up a 3,3 V |
-| 39 | I2C_SDA | I²C | Pull-up 2,2 k a 3,3 V |
-| 40 | I2C_SCL | I²C | Pull-up 2,2 k a 3,3 V |
-| 41 | XSHUT_L | Salida | ToF lateral izquierdo |
-| 42 | XSHUT_FL | Salida | ToF frontal izquierdo |
-| 47 | XSHUT_F | Salida | ToF frontal central |
-| 48 | XSHUT_FR | Salida | ToF frontal derecho |
-| 35 | XSHUT_R | Salida | ToF lateral derecho |
-| 36 | XSHUT_B | Salida | ToF trasero (opcional) |
-| 37 | IR_START | Entrada | VS1838B, decodificación RC5 |
-| 3 | LED_STATUS | Salida | LED RGB WS2812 |
-| 0 | BTN_BOOT / USER | Entrada | Botón BOOT, reutilizable como botón de usuario |
-| 43, 44 | UART TX/RX | — | Depuración o servo futuro |
-| 19, 20 | USB D−/D+ | USB | Programación y consola |
+| 1, 2, 4, 5 | LINE_FL, LINE_FR, LINE_RL, LINE_RR (ADC1) | 21 | DRV_nSLEEP |
+| 6, 7, 8, 9 | ISENSE_M1…M4 (ADC1) | 38 | DRV_nFAULT |
+| 10 | VBAT_SENSE (ADC1) | 39, 40 | I2C_SDA, I2C_SCL |
+| 11, 12 / 13, 14 | M1_IN1/IN2, M2_IN1/IN2 (PWM 20 kHz) | 41, 42, 47, 48, 3, 17 | XSHUT_L, FL, F, FR, R, B |
+| 15, 16 / 45, 46 | M3_IN1/IN2, M4_IN1/IN2 | 18 | IR_START |
+| 43, 44 | AUX_TX/RX (compartidos con el USB-UART) | 0 | Botón BOOT de la DevKit (usuario) |
 
-> Si faltan pines (servos, DIP de estrategia), los XSHUT pasan a un expansor I²C (TCA9534, 8 E/S) y se liberan 6 GPIO.
+Libres a propósito: GPIO35–37 (PSRAM octal en las variantes R8) y GPIO19/20 (USB nativo de la DevKit).
+
+> GPIO45 y GPIO46 son pines de arranque y tienen que estar a 0 al encender: por eso llevan entradas IN del DRV8874, que tienen pull-down interno (y los drivers están dormidos por R17 hasta que el firmware levanta nSLEEP).
 
 ## Seguridad de los pines
 
@@ -127,5 +103,6 @@ Los DRV8874 aceptan 3,3 V como nivel alto lógico (V_IH ≈ 1,5 V), así que no 
 - 2 capas, 1,6 mm, cobre de 1 oz.
 - Pistas de potencia (VBAT y motores) de **≥ 1,2 mm**; pistas de señal de 0,25 mm.
 - Plano de GND continuo en la cara inferior. La zona de motores y drivers va **separada** de la zona analógica (QRE e IPROPI).
-- Antena del ESP32 **en el borde de la placa**, sin cobre debajo ni metal encima (ojo con la cuña de acero y el lastre).
+- La antena de la DevKit vuela por delante de su placa, a 12 mm sobre la placa base: debajo no se rellena cobre. Nada de metal encima.
+- Las filas de pines de la DevKit parten la placa en tres zonas: la potencia de cada motor se queda en su lado y VBAT cruza por los huecos sin zócalo (ver [04](04-ESP32-DevKitC-1.md#placa-base)).
 - Serigrafía: **"HOMBRES DE LAS TABERNAS"**, logo de la jarra, nombre del robot, versión y licencia (CERN-OHL-S).
