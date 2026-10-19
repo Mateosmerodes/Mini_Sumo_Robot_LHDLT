@@ -2,6 +2,8 @@
 
 Respuestas al [`Modelo_ficha_técnica_robot.docx`](../Modelo_ficha_t%C3%A9cnica_robot.docx), con los cálculos que hay detrás de cada número.
 
+> 📊 **Informe completo pieza a pieza**, con las fuentes oficiales de cada consumo y todos los cálculos desarrollados: [Informe de consumos y cálculos](Informe-consumos-y-calculos.md). Ahí también están los avisos que han salido de las cuentas (fusible justo, motor bloqueado, margen del LDO).
+
 > Los datos salen del diseño actual (placa base v1.1 con la ESP32-S3-DevKitC-1, modelo 3D de `hardware/mecanica/cad/informe_3d.json`). Lo marcado con **(a medir)** es una estimación hasta que lleguen las piezas: sobre todo la **corriente de bloqueo de los N20**, que en los de AliExpress varía mucho. Cuando la midáis, se rehacen las cuentas de los apartados 3.2 y 3.3 cambiando un solo dato.
 
 ## 1. Datos generales
@@ -57,7 +59,7 @@ Respuestas al [`Modelo_ficha_técnica_robot.docx`](../Modelo_ficha_t%C3%A9cnica_
 
 **Cálculos:**
 - **Corriente de bloqueo:** con el motor parado no hay fuerza contraelectromotriz y solo frena la resistencia del bobinado: R = 6 V / 1,6 A ≈ **3,75 Ω**. Entonces I = V / R: 7,4 / 3,75 = **1,97 A** y 8,4 / 3,75 = **2,24 A**.
-- **Límite de corriente (ITRIP):** V_REF = 3,3 V × 10 k / (10 k + 10 k) = 1,65 V. I_TRIP = V_REF / (A_IPROPI × R_IPROPI) = 1,65 / (455 µA/A × 1,5 kΩ) = **2,42 A**. Queda por encima del bloqueo estimado (2,24 A): el motor no se recorta en uso normal, pero si sale un N20 con más consumo, el driver lo limita a 2,4 A y no se quema. **Cuando midáis el bloqueo real, se ajusta R_IPROPI.**
+- **Límite de corriente (ITRIP):** V_REF = 3,3 V × 10 k / (10 k + 10 k) = 1,65 V. I_TRIP = V_REF / (A_IPROPI × R_IPROPI) = 1,65 / (450 µA/A × 1,5 kΩ) = **2,44 A**. Queda por encima del bloqueo estimado (2,24 A): el motor no se recorta en uso normal, pero si sale un N20 con más consumo, el driver lo limita a 2,4 A y no se quema. **Cuando midáis el bloqueo real, se ajusta R_IPROPI.**
 - **Por qué este driver aguanta:** cada DRV8874 solo ve la corriente de **un** motor (≤ 2,24 A), dentro de sus 2,1 A continuos con margen hasta los 6 A de pico. Con 0,2 Ω de resistencia interna disipa 2,24² × 0,2 ≈ **1 W** en el peor caso; el pad térmico va sobre un plano de GND con 12 vías.
 - **Sobretensión de los motores:** 8,4 V / 6 V = **1,4** (40 % por encima de su tensión nominal) solo con la batería llena y PWM al 100 %; en marcha normal el PWM al 75 % deja ≈ 6 V eficaces.
 
