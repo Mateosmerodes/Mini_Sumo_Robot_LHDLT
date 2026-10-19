@@ -127,7 +127,7 @@ C('C13', '22u 10V', '+3V3', 'GND', G, C1206)
 C('C14', '100n', '+3V3', 'GND', G)
 
 # ---------------------------------------------------------------- Drivers de motor
-# ITRIP = VREF / (A_IPROPI · R_IPROPI) = 1,65 V / (455 µA/A · 1,5 kΩ) ≈ 2,4 A
+# ITRIP = VREF / (A_IPROPI · R_IPROPI) = 1,65 V / (450 µA/A · 1,5 kΩ) ≈ 2,44 A
 G = 'Drivers comunes'
 R('R14', '10k', '+3V3', 'DRV_VREF', G)
 R('R15', '10k', 'DRV_VREF', 'GND', G)

@@ -1,0 +1,259 @@
+{
+ "bat": {
+  "v_nom": 7.4,
+  "v_max": 8.4,
+  "v_min": 6.6,
+  "energia_Wh": {
+   "450": 3.33,
+   "650": 4.81
+  },
+  "i_max_A": {
+   "450": 13.5,
+   "650": 19.5
+  }
+ },
+ "motor": {
+  "r_bobinado": 3.75,
+  "i_stall": {
+   "6.0": 1.6,
+   "7.4": 1.9733,
+   "8.4": 2.24
+  },
+  "p_bloqueo_W": {
+   "6.0": 9.6,
+   "7.4": 14.6027,
+   "8.4": 18.816
+  },
+  "i_stall_crucero_A": 1.68,
+  "p_bloqueo_crucero_W": 10.584,
+  "sobretension": 1.4,
+  "rpm": {
+   "6.0": 500.0,
+   "7.4": 616.6667,
+   "8.4": 700.0
+  }
+ },
+ "driver": {
+  "vref": 1.65,
+  "itrip": 2.4444,
+  "margen_itrip_sobre_stall": 0.0913,
+  "p_conduccion_tipica_W": 1.0035,
+  "p_conduccion_W": 1.7562,
+  "dT_C": [
+   70.2464,
+   87.808
+  ],
+  "tj_C": [
+   95.2464,
+   112.808
+  ],
+  "p_conduccion_itrip_W": 2.0914,
+  "tj_itrip_C": [
+   108.6543,
+   129.5679
+  ],
+  "v_ipropi_por_A": 0.675,
+  "v_ipropi_stall": 1.512,
+  "ipropi_fc_Hz": 10610.3295,
+  "ipropi_atenuacion_pwm_dB": -6.583,
+  "resolucion_corriente_mA": 1.1212
+ },
+ "3v3": {
+  "cargas_A": {
+   "ESP32-S3 (DevKitC-1)": [
+    0.1,
+    0.35
+   ],
+   "6 × VL53L0X": [
+    0.114,
+    0.114
+   ],
+   "4 × QRE1113": [
+    0.084,
+    0.084
+   ],
+   "Receptor IR": [
+    0.0004,
+    0.0004
+   ],
+   "LED de alimentación": [
+    0.0013,
+    0.0013
+   ],
+   "Pull-ups, divisores, otros": [
+    0.003,
+    0.005
+   ]
+  },
+  "i_qre_A": 0.021,
+  "i_led_A": 0.0013,
+  "total_A": [
+   0.3027,
+   0.5547
+  ],
+  "p_W": [
+   0.9991,
+   1.8307
+  ],
+  "ldo_p_W": [
+   0.4328,
+   0.7931
+  ],
+  "ldo_margen_V_ams1117_tipico": 0.3296,
+  "ldo_margen_V_ams1117": -0.1072
+ },
+ "alim": {
+  "v_buck": 5.5296,
+  "v_buck_rango": [
+   5.3928,
+   5.6664
+  ],
+  "v_5V": [
+   4.9796,
+   5.1296
+  ],
+  "v_pin5V_devkit": [
+   4.4296,
+   4.7296
+  ],
+  "ciclo_trabajo": {
+   "6.6": 0.8378,
+   "7.4": 0.7472,
+   "8.4": 0.6583
+  },
+  "rizado_L_App": {
+   "7.4": 0.7302,
+   "8.4": 0.9872
+  },
+  "p_bat_electronica_W": [
+   1.8601,
+   3.4084
+  ],
+  "i_bat_electronica_A": [
+   0.2514,
+   0.4606
+  ],
+  "div_v_adc": {
+   "6.6": 1.6376,
+   "7.4": 1.8361,
+   "8.4": 2.0842
+  },
+  "div_i_uA": 63.1579,
+  "div_tau_ms": 2.4812,
+  "div_resolucion_mV": 3.0503,
+  "buck_d_max": [
+   0.8724,
+   0.8202
+  ],
+  "buck_vin_bajo_pico_V": 6.11,
+  "buck_d_necesario": {
+   "6.11": 0.905,
+   "6.6": 0.8378
+  },
+  "buck_v_alcanzable_V": {
+   "6.11": [
+    5.3304,
+    5.0114
+   ],
+   "6.6": [
+    5.5296,
+    5.4133
+   ]
+  },
+  "v_pin5V_devkit_bat_baja_peor_V": 3.9114,
+  "ldo_margen_bat_baja_peor_V": -0.4886,
+  "buck_iq_A": [
+   0.0001,
+   0.0002
+  ]
+ },
+ "potencia": {
+  "p_motores_max_W": 75.264,
+  "p_total_max_W": 78.6724,
+  "p_total_nom_W": 61.8191,
+  "i_bat_pico_A": 9.3658,
+  "C_minimo": {
+   "450": 20.8128,
+   "650": 14.4089
+  },
+  "margen_fusible": 0.0677,
+  "margen_xt30": 0.6016,
+  "p_total_itrip_W": 85.5417,
+  "i_bat_itrip_A": 10.1835,
+  "fusible_util_A": 7.5,
+  "fusible_propuesto_util_A": 11.25,
+  "margen_fusible_itrip": -0.2635,
+  "margen_fusible_propuesto_itrip": 0.1047,
+  "margen_xt30_itrip": 0.473,
+  "caida_bateria_V": 0.281,
+  "caida_serie_V": 0.2098,
+  "p_q1_pico_W": 1.3158,
+  "v_motor_real_V": 7.9092
+ },
+ "autonomia": {
+  "escenarios": {
+   "Empujando todo el tiempo": {
+    "i_A": 8.1447,
+    "450 mAh": 2.652,
+    "650 mAh": 3.8307
+   },
+   "Combate típico (40 % empujando)": {
+    "i_A": 4.3687,
+    "450 mAh": 4.9443,
+    "650 mAh": 7.1417
+   },
+   "Solo buscando": {
+    "i_A": 1.8514,
+    "450 mAh": 11.6671,
+    "650 mAh": 16.8524
+   }
+  },
+  "sensibilidad_stall": {
+   "0.7": 8.3311,
+   "1.0": 6.7824,
+   "1.6": 4.9443,
+   "2.0": 4.2167
+  },
+  "carga_1C_min": 60
+ },
+ "mecanica": {
+  "f_traccion_N": [
+   3.8848,
+   4.8559
+  ],
+  "f_por_rueda_N": [
+   0.9712,
+   1.214
+  ],
+  "par_por_rueda_Nm": [
+   0.0146,
+   0.0182
+  ],
+  "par_por_rueda_kgcm": [
+   0.1485,
+   0.1856
+  ],
+  "v_m_s": {
+   "6.0": 0.7854,
+   "7.4": 0.9687,
+   "8.4": 1.0996
+  },
+  "t_cruzar_dohyo_s": {
+   "6.0": 0.9804,
+   "7.4": 0.7949,
+   "8.4": 0.7003
+  },
+  "t_borde_ms": {
+   "6.0": 31.831,
+   "7.4": 25.8089,
+   "8.4": 22.7364
+  },
+  "i2c_t_subida_ns": 279.609,
+  "i2c_i_sumidero_mA": 1.5,
+  "i2c_r_equivalente_con_modulos_ohm": 948.2759,
+  "i2c_i_sumidero_con_modulos_mA": 3.48,
+  "i2c_t_subida_con_modulos_ns": 120.5211,
+  "i2c_r_modulos_solos_ohm": 1666.6667,
+  "i2c_i_sumidero_modulos_solos_mA": 1.98
+ }
+}
