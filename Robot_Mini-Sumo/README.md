@@ -21,6 +21,7 @@ Rampa (cuña) clásica, **tracción 4WD** con 4 N20, una **ESP32-S3-DevKitC-1 en
 | 06 · Lista de compra | AliExpress + LCSC/JLC | ⏳ |
 | 07 · Costes | Desglose para el informe | ⏳ |
 | Informe final | 6 páginas | ⏳ |
+| [📝 Ficha técnica](docs/Ficha-tecnica.md) | Respuestas a la ficha de la competición, con los cálculos (consumo, autonomía, corrientes) | ✅ |
 | [📋 Informe de progreso 06/10/2026](docs/Informe-progreso-2026-10-06.md) | Resumen para el equipo: proceso, compra, útiles, problemas | ✅ |
 
 ![Robot montado](docs/img/3d_montado.png)
