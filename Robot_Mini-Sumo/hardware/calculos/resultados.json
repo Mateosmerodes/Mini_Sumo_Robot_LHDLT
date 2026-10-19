@@ -37,10 +37,20 @@
   "vref": 1.65,
   "itrip": 2.4444,
   "margen_itrip_sobre_stall": 0.0913,
-  "p_conduccion_W": 1.0035,
+  "p_conduccion_tipica_W": 1.0035,
+  "p_conduccion_W": 1.7562,
   "dT_C": [
-   30.1056,
-   40.1408
+   70.2464,
+   87.808
+  ],
+  "tj_C": [
+   95.2464,
+   112.808
+  ],
+  "p_conduccion_itrip_W": 2.0914,
+  "tj_itrip_C": [
+   108.6543,
+   129.5679
   ],
   "v_ipropi_por_A": 0.675,
   "v_ipropi_stall": 1.512,
@@ -89,7 +99,8 @@
    0.4328,
    0.7931
   ],
-  "ldo_margen_V_ams1117": 0.0296
+  "ldo_margen_V_ams1117_tipico": 0.3296,
+  "ldo_margen_V_ams1117": -0.1072
  },
  "alim": {
   "v_buck": 5.5296,
@@ -129,7 +140,32 @@
   },
   "div_i_uA": 63.1579,
   "div_tau_ms": 2.4812,
-  "div_resolucion_mV": 3.0503
+  "div_resolucion_mV": 3.0503,
+  "buck_d_max": [
+   0.8724,
+   0.8202
+  ],
+  "buck_vin_bajo_pico_V": 6.11,
+  "buck_d_necesario": {
+   "6.11": 0.905,
+   "6.6": 0.8378
+  },
+  "buck_v_alcanzable_V": {
+   "6.11": [
+    5.3304,
+    5.0114
+   ],
+   "6.6": [
+    5.5296,
+    5.4133
+   ]
+  },
+  "v_pin5V_devkit_bat_baja_peor_V": 3.9114,
+  "ldo_margen_bat_baja_peor_V": -0.4886,
+  "buck_iq_A": [
+   0.0001,
+   0.0002
+  ]
  },
  "potencia": {
   "p_motores_max_W": 75.264,
@@ -142,6 +178,13 @@
   },
   "margen_fusible": 0.0677,
   "margen_xt30": 0.6016,
+  "p_total_itrip_W": 85.5417,
+  "i_bat_itrip_A": 10.1835,
+  "fusible_util_A": 7.5,
+  "fusible_propuesto_util_A": 11.25,
+  "margen_fusible_itrip": -0.2635,
+  "margen_fusible_propuesto_itrip": 0.1047,
+  "margen_xt30_itrip": 0.473,
   "caida_bateria_V": 0.281,
   "caida_serie_V": 0.2098,
   "p_q1_pico_W": 1.3158,
@@ -206,6 +249,11 @@
    "8.4": 22.7364
   },
   "i2c_t_subida_ns": 279.609,
-  "i2c_i_sumidero_mA": 1.5
+  "i2c_i_sumidero_mA": 1.5,
+  "i2c_r_equivalente_con_modulos_ohm": 948.2759,
+  "i2c_i_sumidero_con_modulos_mA": 3.48,
+  "i2c_t_subida_con_modulos_ns": 120.5211,
+  "i2c_r_modulos_solos_ohm": 1666.6667,
+  "i2c_i_sumidero_modulos_solos_mA": 1.98
  }
 }

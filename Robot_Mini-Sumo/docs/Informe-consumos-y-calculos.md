@@ -2,6 +2,8 @@
 
 Informe pieza a pieza con los datos de consumo de cada componente, sus fuentes oficiales y los cálculos completos de todo lo que pide la [ficha técnica](Ficha-tecnica.md).
 
+> **Versión corregida para la entrega:** el [Anexo de cálculos de la ficha técnica](Anexo-calculos-ficha-tecnica.md) recoge solo los cálculos, con referencias numeradas, y corrige el fusible, el margen del LDO, la temperatura del driver, el límite del buck y el I²C (apartado 9 del anexo). Donde no coincidan, vale el anexo.
+
 > **Los números salen de un script**, no de una calculadora a mano: [`hardware/calculos/calculos_electricos.py`](../hardware/calculos/calculos_electricos.py). Todos los datos de entrada están arriba del script, cada uno con su fuente; los resultados se guardan en [`resultados.json`](../hardware/calculos/resultados.json) y las gráficas en `docs/img/calc_*.png`. **Cuando midáis algo (sobre todo la corriente de bloqueo de los motores), se cambia el dato en el script y se ejecuta otra vez:**
 >
 > ```bash

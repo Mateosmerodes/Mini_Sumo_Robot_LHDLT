@@ -33,10 +33,12 @@ DATOS = {
     # DRV8874 (TI)
     'drv_a_ipropi': 450e-6,              # A/A, tabla de características eléctricas
     'drv_r_ipropi': 1500.0, 'drv_vref_r_alta': 10e3, 'drv_vref_r_baja': 10e3,
-    'drv_rdson_total': 0.200,            # Ω, lado alto + lado bajo
+    'drv_rdson_total': 0.200,            # Ω, lado alto + lado bajo, típ. a 25 °C (100 + 100 mΩ)
+    'drv_rdson_max_caliente': 0.35,      # Ω, 120 + 120 mΩ máx. a 25 °C × ~1,45 en caliente
     'drv_i_vm_activo': 3e-3,             # A, VM activo con salidas paradas (típ. a 24 V)
     'drv_i_cont': 2.1, 'drv_i_pico': 6.0,
-    'drv_rth_ja': (30.0, 40.0),          # °C/W, rango según el cobre de la placa (orientativo)
+    'drv_rth_ja': (40.0, 50.0),          # °C/W, placa de 2 capas (la hoja da 30–40 en JEDEC de 4 capas)
+    't_ambiente': 25.0, 'drv_tj_max': 150.0,
     # Electrónica de 3,3 V (típica, pico) en A
     'c_esp32': (0.100, 0.350),           # ESP32-S3: pico 350 mA en TX 802.11b
     'c_vl53l0x': (0.019, 0.019), 'n_vl53l0x': 6,
@@ -48,14 +50,17 @@ DATOS = {
     # Cadena de alimentación
     'buck_vfb': 0.768, 'buck_vfb_min': 0.749, 'buck_vfb_max': 0.787,
     'buck_r_alta': 62e3, 'buck_r_baja': 10e3, 'buck_eta': 0.90, 'buck_f': 580e3, 'buck_l': 3.3e-6,
+    'buck_toff_min': (220e-9, 310e-9),   # s, tiempo mínimo de apagado (típ., máx.), TI SLVSD90B
+    'buck_iq': (120e-6, 200e-6),         # A, consumo propio sin conmutar (típ., máx.)
     'diodo_vf': (0.40, 0.55),            # SS34 a 0,3 A … 3 A
     'ldo_dropout_ams1117': 1.1,          # caso desfavorable (clones con AMS1117)
     'q1_rdson': 0.015, 'fusible_r': 0.005, 'xt30_r': 0.0012,
-    'fusible_a': 10.0, 'xt30_a': 15.0,
+    'fusible_a': 10.0, 'fusible_a_propuesto': 15.0, 'fusible_derating': 0.75, 'xt30_a': 15.0,
     'div_r_alta': 100e3, 'div_r_baja': 33e3, 'div_c': 100e-9,
     'adc_fondo': 3.1, 'adc_bits': 12,    # ESP32-S3 con atenuación de 11/12 dB
     'ipropi_c': 10e-9, 'pwm_f': 20e3,
     'i2c_r_pullup': 2200.0, 'i2c_c_bus': 150e-12,          # 6 módulos + cables (estimado)
+    'i2c_r_pullup_modulo': 10e3, 'i2c_n_modulos': 6,      # pull-ups de los GY-VL53L0XV2 (a comprobar)
     # Mecánica
     'masa_objetivo_g': 495, 'mu': (0.8, 1.0), 'g': 9.81, 'rueda_d': 0.030, 'dohyo_d': 0.77,
     'borde_blanco': 0.025,
@@ -81,6 +86,8 @@ def calcular(d):
     p_cobre = {v: v * i for v, i in i_st.items()}
     i_lim = min(i_st[vmax], itrip)
     p_drv = i_lim ** 2 * d['drv_rdson_total']
+    p_drv_cal = i_lim ** 2 * d['drv_rdson_max_caliente']
+    p_drv_itrip = itrip ** 2 * d['drv_rdson_max_caliente']
     v_crucero = d['mot_pwm_crucero'] * vmax
     r['motor'] = {
         'r_bobinado': r_mot, 'i_stall': i_st, 'p_bloqueo_W': p_cobre,
@@ -90,8 +97,12 @@ def calcular(d):
     }
     r['driver'] = {
         'vref': vref, 'itrip': itrip, 'margen_itrip_sobre_stall': itrip / i_st[vmax] - 1,
-        'p_conduccion_W': p_drv,
-        'dT_C': [p_drv * rt for rt in d['drv_rth_ja']],
+        'p_conduccion_tipica_W': p_drv,
+        'p_conduccion_W': p_drv_cal,
+        'dT_C': [p_drv_cal * rt for rt in d['drv_rth_ja']],
+        'tj_C': [d['t_ambiente'] + p_drv_cal * rt for rt in d['drv_rth_ja']],
+        'p_conduccion_itrip_W': p_drv_itrip,
+        'tj_itrip_C': [d['t_ambiente'] + p_drv_itrip * rt for rt in d['drv_rth_ja']],
         'v_ipropi_por_A': d['drv_a_ipropi'] * d['drv_r_ipropi'],
         'v_ipropi_stall': i_lim * d['drv_a_ipropi'] * d['drv_r_ipropi'],
         'ipropi_fc_Hz': 1 / (2 * math.pi * d['drv_r_ipropi'] * d['ipropi_c']),
@@ -123,7 +134,9 @@ def calcular(d):
         'cargas_A': cargas, 'i_qre_A': i_qre, 'i_led_A': i_led, 'total_A': i33,
         'p_W': [d['v33'] * i for i in i33],
         'ldo_p_W': [(v5esp[1] - d['v33']) * i33[0], (v5esp[1] - d['v33']) * i33[1]],
-        'ldo_margen_V_ams1117': v5esp[0] - d['v33'] - d['ldo_dropout_ams1117'],
+        'ldo_margen_V_ams1117_tipico': v5esp[1] - d['v33'] - d['ldo_dropout_ams1117'],
+        # peor caso: V_FB mínima del buck y V_F máxima de los dos diodos
+        'ldo_margen_V_ams1117': vbuck_rango[0] - 2 * d['diodo_vf'][1] - d['v33'] - d['ldo_dropout_ams1117'],
     }
     r['alim'] = {
         'v_buck': vbuck, 'v_buck_rango': vbuck_rango, 'v_5V': v5, 'v_pin5V_devkit': v5esp,
@@ -141,16 +154,40 @@ def calcular(d):
     p_mot_max = d['mot_n'] * vmax * i_lim
     p_mot_nom = d['mot_n'] * vnom * min(i_st[vnom], itrip)
     i_bat_pico = p_mot_max / vmax + p_bat_elec[1] / vmax
+    # techo absoluto: cada driver deja pasar hasta ITRIP antes de recortar
+    i_bat_itrip = d['mot_n'] * itrip + p_bat_elec[1] / vmax
     r_serie = d['q1_rdson'] + d['fusible_r'] + 2 * d['xt30_r']
     r['potencia'] = {
         'p_motores_max_W': p_mot_max, 'p_total_max_W': p_mot_max + p_bat_elec[1],
         'p_total_nom_W': p_mot_nom + p_bat_elec[1], 'i_bat_pico_A': i_bat_pico,
         'C_minimo': {c: i_bat_pico / (c / 1000) for c in d['bat_capacidades_mAh']},
         'margen_fusible': d['fusible_a'] / i_bat_pico - 1, 'margen_xt30': d['xt30_a'] / i_bat_pico - 1,
+        'p_total_itrip_W': d['mot_n'] * itrip * vmax + p_bat_elec[1], 'i_bat_itrip_A': i_bat_itrip,
+        'fusible_util_A': d['fusible_a'] * d['fusible_derating'],
+        'fusible_propuesto_util_A': d['fusible_a_propuesto'] * d['fusible_derating'],
+        'margen_fusible_itrip': d['fusible_a'] * d['fusible_derating'] / i_bat_itrip - 1,
+        'margen_fusible_propuesto_itrip': d['fusible_a_propuesto'] * d['fusible_derating'] / i_bat_itrip - 1,
+        'margen_xt30_itrip': d['xt30_a'] / i_bat_itrip - 1,
         'caida_bateria_V': i_bat_pico * d['bat_r_interna_ohm'],
         'caida_serie_V': i_bat_pico * r_serie, 'p_q1_pico_W': i_bat_pico ** 2 * d['q1_rdson'],
         'v_motor_real_V': vmax - i_bat_pico * (d['bat_r_interna_ohm'] + r_serie),
     }
+
+    # ---------------------------------------------------------- límite de ciclo de trabajo del buck
+    # Con la batería baja (6,6 V) y la caída del pico de corriente, el buck no llega a su consigna.
+    caida_pico = r['potencia']['caida_bateria_V'] + r['potencia']['caida_serie_V']
+    vin_bajo = round(vmin - caida_pico, 2)
+    d_max = [1 - t * d['buck_f'] for t in d['buck_toff_min']]          # [típ., peor]
+    vbuck_alc = {v: [min(vbuck, dm * v) for dm in d_max] for v in (vin_bajo, vmin)}
+    vbuck_peor = vbuck_alc[vin_bajo][1]
+    r['alim'].update({
+        'buck_d_max': d_max, 'buck_vin_bajo_pico_V': vin_bajo,
+        'buck_d_necesario': {v: vbuck / v for v in (vin_bajo, vmin)},
+        'buck_v_alcanzable_V': vbuck_alc,
+        'v_pin5V_devkit_bat_baja_peor_V': vbuck_peor - 2 * d['diodo_vf'][1],
+        'ldo_margen_bat_baja_peor_V': vbuck_peor - 2 * d['diodo_vf'][1] - d['v33'] - d['ldo_dropout_ams1117'],
+        'buck_iq_A': d['buck_iq'],
+    })
 
     # ---------------------------------------------------------- autonomía
     i_e = r['alim']['i_bat_electronica_A'][0]
@@ -186,6 +223,15 @@ def calcular(d):
         'i2c_t_subida_ns': 0.8473 * d['i2c_r_pullup'] * d['i2c_c_bus'] * 1e9,
         'i2c_i_sumidero_mA': d['v33'] / d['i2c_r_pullup'] * 1000,
     }
+    r_mod = d['i2c_r_pullup_modulo'] / d['i2c_n_modulos']
+    r_eq = 1 / (1 / d['i2c_r_pullup'] + 1 / r_mod)
+    r['mecanica'].update({
+        'i2c_r_equivalente_con_modulos_ohm': r_eq,
+        'i2c_i_sumidero_con_modulos_mA': d['v33'] / r_eq * 1000,
+        'i2c_t_subida_con_modulos_ns': 0.8473 * r_eq * d['i2c_c_bus'] * 1e9,
+        'i2c_r_modulos_solos_ohm': r_mod,
+        'i2c_i_sumidero_modulos_solos_mA': d['v33'] / r_mod * 1000,
+    })
     return r, i_media, minutos
 
 
