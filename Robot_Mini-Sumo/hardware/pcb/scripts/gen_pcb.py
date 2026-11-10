@@ -52,7 +52,7 @@ COLOCACION = {
     # Centro trasero: comunes de los drivers y diodos de 5 V
     'R14': (43.0, 73.6, 90), 'R15': (45.0, 73.6, 90), 'C17': (47.0, 73.6, 90),
     'R16': (49.0, 73.6, 90), 'R17': (51.0, 73.6, 90),
-    'D2': (46.0, 78.6, 0), 'D1': (54.0, 78.6, 0), 'C10': (55.6, 73.6, 90), 'C11': (42.6, 81.6, 0),
+    'U3': (46.0, 78.6, 0), 'C15': (46.0, 81.6, 0), 'D1': (54.0, 78.6, 0), 'C10': (55.6, 73.6, 90), 'C11': (42.6, 81.6, 0),
     # Pads de los motores: a cada lado, junto a su driver (la corriente no cruza las filas de la DevKit).
     # El cable sube desde el motor por un canal de la cuna, fuera de la zona de apoyo del motor.
     'J3': (g.PAD_MOTOR_X_IZQ[0], g.PAD_MOTOR_Y_DEL, 0), 'J4': (g.PAD_MOTOR_X_IZQ[0], g.PAD_MOTOR_Y_TRAS, 0),
@@ -61,15 +61,19 @@ COLOCACION = {
     'J7': (17.0, 64.0, 90), 'J11': (83.0, 64.0, 90),
     # Reserva VBAT
     'C1': (33.5, 57.4, 90), 'C2': (66.5, 57.4, 90),
-    # Delante a la derecha: pull-ups I2C y filtro del receptor IR
-    'R60': (67.5, 40.0, 90), 'R61': (70.0, 40.0, 90), 'R62': (72.5, 40.0, 90), 'C62': (75.2, 40.0, 90),
+    # Delante a la derecha: pull-ups I2C
+    'R60': (67.5, 40.0, 90), 'R61': (70.0, 40.0, 90),
+    # Detrás a la izquierda (v1.2): módulo de arranque ST4RT, cerca de IR_START (J1-11) y de U3
+    'R63': (21.6, 83.0, 90), 'R64': (23.6, 83.0, 90), 'R65': (25.6, 83.0, 90), 'R66': (27.6, 83.0, 90),
+    'R67': (29.6, 83.0, 90), 'JP1': (33.0, 83.0, 90), 'R62': (35.6, 80.0, 90), 'C62': (35.6, 84.0, 90),
+    'TP1': (18.6, 79.5, 0), 'R68': (19.6, 83.0, 90), 'R69': (17.6, 83.0, 90),
     # Trasera izquierda: medida de batería, LED de alimentación, sensores traseros
     'R3': (21.6, 77.0, 90), 'R4': (23.6, 77.0, 90), 'C3': (25.6, 77.0, 90),
     'D3': (31.0, 77.0, 0), 'R9': (31.0, 79.0, 0),
-    'J15': (24.0, 89.0, 0), 'J12': (32.0, 89.0, 0),
+    'J15': (24.0, 89.0, 0), 'J17': (32.0, 89.0, 0),
     # Trasera derecha: expansión I2C, auxiliar, IR y sensor trasero
     'J19': (68.0, 78.0, 0), 'J18': (76.5, 78.0, 0),
-    'J17': (67.5, 89.0, 0), 'J16': (76.0, 89.0, 0),
+    'J12': (67.5, 89.0, 0), 'J16': (76.0, 89.0, 0),
     # ESP32-S3-DevKitC-1: posición fijada por la geometría (USB a ras de la pared trasera)
     'U1': (g.DEVKIT_X, g.DEVKIT_Y, 0),
 }
@@ -92,7 +96,7 @@ ETIQUETAS = {
     'J13': ('LÍN FI', 'S'), 'J8': ('ToF FI', 'S'), 'J18': ('I2C', 'N'), 'J9': ('ToF F', 'S'),
     'J19': ('AUX', 'N'), 'J10': ('ToF FD', 'S'), 'J14': ('LÍN FD', 'S'),
     'J7': ('ToF I', 'S'), 'J11': ('ToF D', 'S'),
-    'J15': ('LÍN TI', 'N'), 'J12': ('ToF T', 'N'), 'J17': ('IR', 'N'), 'J16': ('LÍN TD', 'N'),
+    'J15': ('LÍN TI', 'N'), 'J12': ('ToF T', 'N'), 'J17': ('ST4RT', 'N'), 'JP1': ('BANCO', 'O'), 'J16': ('LÍN TD', 'N'),
     'J3': ('M1', 'O'), 'J4': ('M2', 'O'), 'J5': ('M3', 'E'), 'J6': ('M4', 'E'),
 }
 
@@ -162,7 +166,7 @@ def zone(board, net, layer, pts, name='', priority=0):
     return z
 
 
-def sin_cobre(board, pts):
+def sin_cobre(board, pts, nombre='antena_DevKit'):
     """Área de reglas en las dos caras: prohíbe rellenos de cobre (pistas y pads siguen permitidos)."""
     for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
         z = pcbnew.ZONE(board)
@@ -173,7 +177,7 @@ def sin_cobre(board, pts):
         z.SetDoNotAllowVias(False)
         z.SetDoNotAllowPads(False)
         z.SetDoNotAllowFootprints(False)
-        z.SetZoneName('antena_DevKit')
+        z.SetZoneName(nombre)
         ol = z.Outline()
         ol.NewOutline()
         for x, y in pts:
@@ -232,12 +236,16 @@ def main():
     ds.SetAuxOrigin(P(0, 0))
     ds.SetGridOrigin(P(0, 0))
     board.SetCopperLayerCount(2)
+    # Reglas mínimas también aquí (el relleno de zonas se hace antes de cargar el .kicad_pro)
+    ds.m_HoleClearance = pcbnew.FromMM(0.25)
+    ds.m_CopperEdgeClearance = pcbnew.FromMM(0.3)
+    ds.m_MinClearance = pcbnew.FromMM(0.15)
 
     tb = board.GetTitleBlock()
     tb.SetTitle(design.TITLE)
     tb.SetCompany(design.COMPANY)
     tb.SetRevision(design.REV)
-    tb.SetDate('2026-10-19')
+    tb.SetDate('2026-11-10')
 
     nets = {}
 
@@ -306,6 +314,10 @@ def main():
     ax0, ay0, ax1, ay1 = g.DEVKIT_ANTENA
     sin_cobre(board, [(g.DEVKIT_X + ax0, y0 + i), (g.DEVKIT_X + ax1, y0 + i),
                       (g.DEVKIT_X + ax1, g.DEVKIT_Y + ay1), (g.DEVKIT_X + ax0, g.DEVKIT_Y + ay1)])
+    # Alrededor de los taladros M2 (NPTH) no se rellena cobre: 2,0 mm de radio (taladro 1,1 + 0,9)
+    for x, y, _ in g.TALADROS:
+        sin_cobre(board, [(x + 2.0 * math.cos(a * math.pi / 8), y + 2.0 * math.sin(a * math.pi / 8))
+                          for a in range(16)], 'taladro_M2')
     zona_motor_fab(board)
 
     filler = pcbnew.ZONE_FILLER(board)

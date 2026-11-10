@@ -1,5 +1,7 @@
 # Informe de progreso · 6 de octubre de 2026
 
+> ⚠️ **Documento de la v1.1 (octubre de 2026).** El diseño actual es la **v1.2**: el receptor VS1838B se sustituye por el módulo **Sobotz ST4RT** (J17, con parada por hardware mediante U3), se elimina D2 y el buck pasa a 5,3 V, el fusible pasa a 15 A, J17 y J12 cambian de sitio y GPIO21 se llama DRV_EN. Ver [CHANGELOG](../CHANGELOG.md), [08 · Cálculos v1.2](08-Calculos-v1.2.md) y [12 · Memoria](12-Memoria-rediseno-v1.2.md).
+
 > **Actualización 19/10/2026:** el ESP32 ya no va soldado. Ahora es una **ESP32-S3-DevKitC-1 completa enchufada** en tiras hembra sobre la placa base (sin USB-C, botones, WS2812 ni LDO propios). Lo que dice este informe sobre el módulo WROOM, el USB-C, la antena asomando por detrás y la lista de compra del ESP32 está superado: ver [04 · ESP32-S3-DevKitC-1](04-ESP32-DevKitC-1.md).
 
 **Equipo:** Hombres de las Tabernas (Mateo, Paulo, Mario)

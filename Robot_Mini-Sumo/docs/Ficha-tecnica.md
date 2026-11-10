@@ -1,32 +1,29 @@
-# Ficha técnica del robot
+# Ficha técnica del robot (diseño v1.2)
 
-Respuestas al [`Modelo_ficha_técnica_robot.docx`](../Modelo_ficha_t%C3%A9cnica_robot.docx), con los cálculos que hay detrás de cada número.
+Respuestas a la plantilla del profesor [`Modelo_ficha_técnica_robot.docx`](../Modelo_ficha_t%C3%A9cnica_robot.docx), con el mismo orden de apartados. Sustituye a la ficha entregada en octubre (v1.1, en `entrega/`).
 
-> 📊 **Informe completo pieza a pieza**, con las fuentes oficiales de cada consumo y todos los cálculos desarrollados: [Informe de consumos y cálculos](Informe-consumos-y-calculos.md). Ahí también están los avisos que han salido de las cuentas (fusible justo, motor bloqueado, margen del LDO).
-
-> Los datos salen del diseño actual (placa base v1.1 con la ESP32-S3-DevKitC-1, modelo 3D de `hardware/mecanica/cad/informe_3d.json`). Lo marcado con **(a medir)** es una estimación hasta que lleguen las piezas: sobre todo la **corriente de bloqueo de los N20**, que en los de AliExpress varía mucho. Cuando la midáis, se rehacen las cuentas de los apartados 3.2 y 3.3 cambiando un solo dato.
+> **Cómo leer esta ficha.** Los valores salen del diseño v1.2 (ficheros del repositorio) y de los cálculos de [08 · Cálculos v1.2](08-Calculos-v1.2.md). El robot **aún no está construido**: lo marcado **(a medir)** es una estimación o un dato del vendedor sin comprobar, y lo marcado **[COMPLETAR]** lo tiene que decidir o aportar el equipo. Nada de esta ficha se ha medido en el robot real.
 
 ## 1. Datos generales
 
 | | |
 |---|---|
-| **Nombre del equipo / robot** | Hombres de las Tabernas / *[nombre del robot por decidir]* |
-| **Licencia de hardware libre** | Hardware **CERN-OHL-S v2** · software **MIT** |
-| **Repositorio** | https://github.com/Mateosmerodes/Mini_Sumo_Robot_LHDLT (esquemáticos, PCB, modelo 3D y documentación) |
+| **Nombre del equipo** | Hombres de las Tabernas (LHDT) |
+| **Nombre del robot** | **[COMPLETAR: nombre o número del robot]** (obligatorio, reglamento art. 5.6) |
+| **Licencia de hardware libre** | Hardware **CERN-OHL-S v2** · software **MIT** (son las del repositorio y la serigrafía). ⚠️ La ficha entregada en octubre ponía CERN-OHL-P: **[COMPLETAR: confirmar cuál]** |
+| **Repositorio** | https://github.com/Mateosmerodes/Mini_Sumo_Robot_LHDLT (esquemáticos, PCB, CAD, firmware y documentación) |
 
 ## 2. Especificaciones mecánicas
 
 | Parámetro | Valor nominal |
 |---|---|
-| **Dimensiones (ancho × largo × alto)** | **9,8 × 9,8 × 5,5 cm** |
-| **Masa total (con batería)** | **≈ 420 g** ahora; **objetivo 480–495 g** con lastre de plomo |
-| **Material del chasis** | **PCB de FR4** de 1,6 mm como chasis + piezas de **PETG** impresas (cuña, cunas de motores, carcasa) + lastre de acero/plomo + cuchilla de acero de 0,4 mm |
+| **Dimensiones (ancho × largo × alto)** | **9,8 × 9,8 × 5,9 cm** (modelo 3D; la altura incluye la torre del módulo de arranque) |
+| **Masa total (con batería)** | **≈ 420–426 g** sin lastre (estimada); **objetivo ≤ 495 g** con lastre **(a pesar)** |
+| **Material del chasis** | **PCB de FR4** de 1,6 mm como chasis + piezas de **PETG** impresas (rampa-cuna, cuna trasera, carcasa, techo) + cuchilla de fleje de acero de 0,4 mm + lastre de acero/plomo |
 | **Tipo de tracción** | **4WD** (4 motores N20, uno por rueda) |
-| **Superficie de ruedas** | **Goma** (ruedas N20 comerciales de 30 mm); en la v2, **silicona** 20–30 Shore A colada en molde |
+| **Superficie de ruedas** | **Goma** (ruedas N20 comerciales Ø 30 mm); más adelante, **silicona** colada en molde propio. Sin sustancias adherentes |
 
-**Cálculos:**
-- **Dimensiones:** envolvente medida en el modelo 3D: 98 × 98 × 55,1 mm. Deja 1 mm de margen por lado sobre los 10 × 10 cm del reglamento. La altura no tiene límite.
-- **Masa:** el modelo 3D suma 403,8 g (lastre de acero 173 g, cuña con cuchilla y QRE 46 g, motores 40 g, PCB con DevKit 33 g, ruedas 33 g, batería 32 g, pieza trasera 24 g, techo y sensores 13 g, paredes 10 g). Faltan cables y tornillería, unos 15–20 g → **≈ 420 g**. Pasando el lastre de acero (7,85 g/cm³) a plomo (11,3 g/cm³), el mismo volumen pesa 173 × 11,3 / 7,85 ≈ 249 g, es decir, +76 g → **≈ 496 g**. El ajuste fino se hace con báscula para no pasar de 500 g.
+**Fundamento:** envolvente del modelo 3D 98,0 × 98,0 × 58,6 mm (1 mm de margen por lado sobre 10 × 10 cm). Masa del modelo 405,5 g + 15–20 g de cables y tornillos no modelados ([08, 6.1](08-Calculos-v1.2.md#61-masa-y-dimensiones)).
 
 ## 3. Sistema eléctrico y de potencia
 
@@ -37,104 +34,58 @@ Respuestas al [`Modelo_ficha_técnica_robot.docx`](../Modelo_ficha_t%C3%A9cnica_
 | **Tipo** | **LiPo 2S** con conector XT30 |
 | **Tensión nominal** | **7,4 V** (2 × 3,7 V) |
 | **Tensión máxima a plena carga** | **8,4 V** (2 × 4,2 V) |
-| **Capacidad** | **450 mAh** (válida hasta 650 mAh; caben en la bahía de 55 × 31 × 14 mm) |
-| **Tasa de descarga (C)** | **30 C** (mínimo necesario: 21 C) |
-| **Protección eléctrica** | MOSFET P **AOD4185** contra inversión de polaridad · **fusible rápido de 10 A** (2512) · **limitación de corriente por hardware** en cada driver (ITRIP ≈ 2,4 A) · **medida de tensión de batería** (divisor 100 k / 33 k al ADC) para el **aviso de batería baja** (3,3 V por celda) · apagado por subtensión y temperatura en los drivers |
+| **Capacidad** | **450 mAh** (cabe hasta 650 mAh en la bahía de 55 × 31 × 14 mm) — **[COMPLETAR: modelo comprado]** |
+| **Tasa de descarga (C)** | **≥ 30 C** (mínimo necesario: 21 C) |
+| **Protección eléctrica** | MOSFET P **AOD4185** contra inversión de polaridad · **fusible rápido de 15 A** (v1.2; antes 10 A) · **limitación de corriente por hardware** en cada driver (I_TRIP = 2,44 A) · **medida de tensión de batería** (divisor 100 k / 33 k) con aviso a 3,4 V/celda y potencia limitada al 50 % por debajo de 3,2 V/celda · subtensión y temperatura en los drivers · **parada por hardware** desde el módulo de arranque (KILL → nSLEEP de los drivers) |
 
-**Cálculos:**
-- **C mínimo:** corriente de pico de la batería ≈ 9,4 A (ver 3.3) → 9,4 A / 0,45 Ah ≈ **21 C**. Con 30 C la batería da 0,45 × 30 = **13,5 A**: margen del 44 %.
-- **Fusible:** 9,4 A de pico (en el peor caso teórico, con los 4 motores bloqueados y la batería llena) < 10 A. Un fusible rápido de 10 A aguanta su corriente nominal de forma continua y salta con un cortocircuito.
-- **Divisor de batería:** 8,4 V × 33 / (100 + 33) = **2,08 V** en el ADC, por debajo de los 3,3 V del ESP32. Con 6,6 V (3,3 V por celda) se leen 1,64 V: ese es el umbral del aviso.
+**Fundamento:** pico de batería con los 4 drivers en su límite = 4 × 2,44 + 0,4 = **10,2 A** → C mínimo = 10,2 / 0,45 ≈ 23 C con ese techo (21 C con el bloqueo estimado de los motores). Fusible 15 A × 0,75 = 11,25 A útiles (+11 %) ([08, 3](08-Calculos-v1.2.md#3-batería-y-potencia)).
 
 ### 3.2. Actuadores (motores y drivers)
 
 | | |
 |---|---|
-| **Modelo / tipo de motor** | **N20 micro motorreductor**, 6 V, ~500 rpm, reductora metálica (×4) |
-| **Tensión de trabajo** | **6,6–8,4 V** (batería directa); PWM limitado a ~75 % en marcha normal (≈ 6 V eficaces) y 100 % en el ataque |
-| **Consumo a bloqueo** | **≈ 1,6 A a 6 V → ≈ 2,0 A a 7,4 V → ≈ 2,2 A a 8,4 V** por motor **(a medir)** |
-| **Controlador (driver)** | **TI DRV8874**, uno por motor (4 en total) |
-| **Rango de tensiones del driver** | **4,5–37 V** (VM); lógica compatible con 3,3 V |
-| **Corriente máxima por canal** | **2,1 A continuos / 6 A de pico** (limitada por hardware a **≈ 2,4 A** con ITRIP) |
+| **Modelo / tipo de motor** | **N20 micromotorreductor** 6 V ~500 rpm, reductora metálica (×4) — **[COMPLETAR: modelo/vendedor exacto]** |
+| **Tensión de trabajo** | **6,6–8,4 V** (batería directa por PWM); en búsqueda y crucero el PWM se compensa a 7,4 V equivalentes |
+| **Consumo a bloqueo (stall current)** | **≈ 2,0 A a 7,4 V / 2,2 A a 8,4 V por motor (a medir)** — supuesto 1,6 A a 6 V |
+| **Controlador de motores (driver)** | **TI DRV8874** (uno por motor, en la PCB propia) |
+| **Rango de tensiones admitidas (driver)** | **4,5–37 V** (VM); entradas lógicas compatibles con 3,3 V |
+| **Corriente máxima por canal** | **6 A de pico** (protección por sobrecorriente) / **limitada por diseño a 2,44 A** (I_TRIP). Corriente continua: depende de la disipación de la placa (≈ 2,1 A según el diseño v1.1; **sin confirmar en la hoja de TI**) |
 
-**Cálculos:**
-- **Corriente de bloqueo:** con el motor parado no hay fuerza contraelectromotriz y solo frena la resistencia del bobinado: R = 6 V / 1,6 A ≈ **3,75 Ω**. Entonces I = V / R: 7,4 / 3,75 = **1,97 A** y 8,4 / 3,75 = **2,24 A**.
-- **Límite de corriente (ITRIP):** V_REF = 3,3 V × 10 k / (10 k + 10 k) = 1,65 V. I_TRIP = V_REF / (A_IPROPI × R_IPROPI) = 1,65 / (450 µA/A × 1,5 kΩ) = **2,44 A**. Queda por encima del bloqueo estimado (2,24 A): el motor no se recorta en uso normal, pero si sale un N20 con más consumo, el driver lo limita a 2,4 A y no se quema. **Cuando midáis el bloqueo real, se ajusta R_IPROPI.**
-- **Por qué este driver aguanta:** cada DRV8874 solo ve la corriente de **un** motor (≤ 2,24 A), dentro de sus 2,1 A continuos con margen hasta los 6 A de pico. Con 0,2 Ω de resistencia interna disipa 2,24² × 0,2 ≈ **1 W** en el peor caso; el pad térmico va sobre un plano de GND con 12 vías.
-- **Sobretensión de los motores:** 8,4 V / 6 V = **1,4** (40 % por encima de su tensión nominal) solo con la batería llena y PWM al 100 %; en marcha normal el PWM al 75 % deja ≈ 6 V eficaces.
+**Fundamento:** I_TRIP = V_REF / (A_IPROPI · R_IPROPI) = 1,65 V / (455 µA/A × 1,5 kΩ) = 2,44 A. Con el motor bloqueado a 8,4 V, el driver disipa ≈ 1,8 W → T_unión ≈ 95–113 °C ([08, 4](08-Calculos-v1.2.md#4-motores-y-drivers)).
 
 ### 3.3. Consumo eléctrico estimado
 
 | | |
 |---|---|
-| **Potencia máxima calculada** | **≈ 79 W** de pico teórico (batería llena y 4 motores bloqueados); **≈ 62 W** con la batería a tensión nominal |
-| **Autonomía estimada en combate continuo** | **≈ 5 minutos** con la batería de 450 mAh (≈ 7 min con una de 650 mAh) |
-| **Fundamento del cálculo** | Ver abajo: capacidad útil del 80 % repartida entre un perfil de combate con un 40 % del tiempo empujando |
-
-**Potencia máxima:**
-
-| Carga | Cálculo | Potencia |
-|---|---|---|
-| 4 motores bloqueados, batería llena | 4 × 8,4 V × 2,24 A | 75,3 W |
-| Electrónica a 3,3 V en pico | 5,53 V × 0,55 A / 0,9 (rendimiento del buck) | 3,4 W |
-| **Total** | | **≈ 79 W → 9,4 A de batería** |
-| *Igual, a tensión nominal* | 4 × 7,4 V × 1,97 A + 3,4 W | *≈ 62 W* |
-
-En la práctica será algo menos: la tensión de la batería cae con 9 A y el firmware no tiene por qué mantener los cuatro motores bloqueados a la vez.
-
-**Consumo de la electrónica (raíl de 3,3 V):**
-
-| Elemento | Típica | Pico |
-|---|---|---|
-| ESP32-S3 (DevKitC-1) con Wi-Fi | 100 mA | 350 mA |
-| 6 × VL53L0X | 6 × 19 = 114 mA | 114 mA |
-| 4 × QRE1113 (LED con 100 Ω: (3,3 − 1,2) / 100) | 4 × 21 = 84 mA | 84 mA |
-| Receptor IR, LED de alimentación, pull-ups | ~5 mA | ~5 mA |
-| **Total 3,3 V** | **≈ 300 mA** | **≈ 550 mA** |
-
-Sale del LDO de la DevKit (800 mA – 1 A) ✔. Visto desde la batería: 5,53 V × 0,30 A / 0,9 = 1,84 W → **0,25 A** típicos (0,46 A de pico).
-
-**Autonomía (fundamento del cálculo):**
-
-1. **Capacidad útil:** no se descarga por debajo de 3,3 V por celda, así que se cuenta el **80 %**: 0,8 × 450 mAh = **360 mAh**.
-2. **Perfil de combate continuo:** 40 % del tiempo **empujando** (motores casi parados, a corriente de bloqueo: 4 × 1,97 A = 7,9 A) y 60 % **buscando o maniobrando** (~0,4 A por motor con aceleraciones: 1,6 A), más la electrónica (0,25 A):
-   I_media = 0,4 × 7,9 + 0,6 × 1,6 + 0,25 ≈ **4,4 A**
-3. **Autonomía** = capacidad útil / corriente media = 360 mAh / 4 370 mA = 0,082 h ≈ **4,9 min**.
-
-| Escenario | Corriente media | 450 mAh | 650 mAh |
-|---|---|---|---|
-| Peor caso: empujando todo el rato | 8,1 A | 2,7 min | 3,8 min |
-| **Combate típico (40 % empujando)** | **4,4 A** | **4,9 min** | **7,1 min** |
-| Solo buscando, sin empujar | 1,9 A | 11,7 min | 16,9 min |
-
-Un combate son 3 min de asaltos con pausas, así que **una batería de 450 mAh aguanta un combate** con margen (incluso en el peor caso casi llega). **Hay que llevar dos baterías** y cargar entre combates.
+| **Potencia máxima calculada** | **≈ 85 W** (4 motores en el límite de corriente con la batería llena + electrónica); 79 W con el bloqueo estimado |
+| **Autonomía estimada en combate continuo** | **≈ 2,7 min** empujando todo el tiempo; **≈ 5,0 min** en un combate típico (40 % empujando) con 450 mAh |
+| **Fundamento del cálculo de autonomía** | t = 0,8 · C / I_media. I_media = f · 4 · I_bloqueo(7,4 V) + (1 − f) · 4 · 0,4 A + I_electrónica (0,24 A). Con f = 1: 8,1 A → 2,7 min; con f = 0,4: 4,4 A → 5,0 min. Se usa el 80 % de la capacidad para no bajar de 3,3 V/celda. Conservador: con PWM < 100 % la corriente de batería es menor. Depende de la corriente de bloqueo real **(a medir)** ([08, 7](08-Calculos-v1.2.md#7-autonomía)) |
 
 ## 4. Sistema de control y sensado
 
-| Elemento | Tipo / modelo | Tensiones admitidas y de operación | Corriente nominal |
+| Elemento | Tipo / modelo | Tensión admitida / de operación | Corriente nominal |
 |---|---|---|---|
-| **Placa de control abierta** | **Espressif ESP32-S3-DevKitC-1** (ESP32-S3, doble núcleo 240 MHz, Wi-Fi + BLE), enchufada en nuestra PCB base | Entrada 5 V por el pin 5V o USB (nosotros le damos ≈ 4,7 V); el chip trabaja a **3,3 V** (3,0–3,6 V) | ≈ 100 mA (350 mA de pico con Wi-Fi) |
-| **Receptor IR de arranque** | **VS1838B / TSOP38238**, 38 kHz, protocolo **RC5** | Admite 2,7–5,5 V; trabaja a **3,3 V** (con filtro RC 100 Ω + 4,7 µF) | ≈ 1 mA |
-| **Sensores de borde (línea)** | **QRE1113 analógico** (módulo), × 4: 2 delante y 2 detrás | Admite 3,3–5 V; trabaja a **3,3 V** | ≈ 21 mA cada uno (LED IR) |
-| **Sensores de oponente** | **VL53L0X ToF** (módulo GY-VL53L0XV2), × 6: 3 frontales, 2 laterales, 1 trasero | Admite 2,6–5,5 V (regulador propio); trabaja a **3,3 V**, I²C | ≈ 19 mA cada uno midiendo |
-| **Drivers de motor** | **TI DRV8874** × 4, con sensado de corriente (IPROPI) | Potencia 4,5–37 V (trabaja a 6,6–8,4 V); entradas lógicas a **3,3 V** | Hasta 2,4 A por motor (limitado) |
-| **Regulador de 5 V** | **TI TPS563201** (buck síncrono) | Entrada 4,5–17 V (trabaja a 6,6–8,4 V); salida 5,5 V | Hasta 3 A |
-| **Expansión** | Conector I²C tipo Qwiic para IMU opcional (MPU-6050 / LSM6DS3) | 3,3 V | ~4 mA |
-
-> **Todo lo que habla con el ESP32 está alimentado a 3,3 V**, así que ninguna señal puede pasar de 3,3 V en un GPIO y no hace falta ningún adaptador de nivel.
+| **Placa de control abierta** | **Espressif ESP32-S3-DevKitC-1** enchufada en la placa base propia v1.2 | 5 V por su pin 5V (≈ 4,75–4,90 V en el robot) / ESP32-S3 a 3,3 V | ≈ 100 mA (Wi-Fi apagado) |
+| **Módulo del receptor IR** | **Sobotz ST4RT** (lo entrega el profesor), compatible con el start module de p1r.se, protocolo RC5 | 2,8–5,2 V según el fabricante (sin hoja) / **3,3 V** en el robot | **(a medir)**: no publicado |
+| **Sensores de borde (línea)** | **onsemi QRE1113** analógico (módulo), × 4: 2 delante, 2 detrás | 3,3 V | ≈ 21 mA c/u (LED IR con 100 Ω) |
+| **Sensores de oponente** | **ST VL53L0X** ToF (módulo GY-VL53L0XV2), × 6: 3 frontales, 2 laterales, 1 trasero | 3,3 V | ≈ 19 mA c/u midiendo (cota alta; a medir) |
+| **Controladores de motor** | **TI DRV8874** × 4 | VM 6,6–8,4 V; lógica 3,3 V | ver 3.2 |
+| **Regulador** | TI TPS563201 (buck a 5,3 V) + LDO de la DevKit (3,3 V) | 6,6–8,4 V de entrada | 0,30 A típ. / 0,56 A pico en 3,3 V |
 
 ## 5. Inspección reglamentaria y seguridad
 
-| Criterio | Estado | Justificación (para el inspector) |
+Autoevaluación del equipo (la columna "Notas del inspector" es para el juez). Detalle y evidencias: [11 · Cumplimiento](11-Cumplimiento-normativo.md).
+
+| Criterio | Estado (equipo) | Nota del equipo |
 |---|---|---|
-| **1. Dispositivos de interferencia (jamming)** | ☑ CUMPLE | No hay emisores para cegar al rival. Los únicos emisores IR son los de nuestros propios sensores: los VL53L0X (láser de clase 1, pulsos de baja potencia para medir) y los QRE1113, que apuntan al suelo. |
-| **2. Daño al dohyo o al oponente** | ☑ CUMPLE | La cuchilla de acero de 0,4 mm tiene el **filo matado**: está pensada para meterse por debajo, no para cortar. Sin partes punzantes. Frenado activo por firmware. |
-| **3. Fluidos, polvo, gas u otras sustancias** | ☑ CUMPLE | No lleva ningún depósito ni mecanismo de este tipo. |
-| **4. Pirotecnia** | ☑ CUMPLE | Nada pirotécnico ni inflamable. La batería LiPo va protegida por fusible y limitación de corriente. |
-| **5. Lanzamiento de objetos** | ☑ CUMPLE | Sin mecanismos de lanzamiento. Todas las piezas van atornilladas. |
-| **6. Sustancias pegajosas** | ☑ CUMPLE | Ruedas de goma/silicona limpias, sin productos adherentes. |
-| **7. Incremento artificial del "efecto suelo"** | ☑ CUMPLE | Sin vacío, succión ni imanes. El agarre sale solo de **peso × rozamiento** (lastre bajo la PCB). |
-| **8. Fuente de energía permitida** | ☑ CUMPLE | Solo una batería LiPo 2S. |
-| **9. Dimensiones y masa** | ☑ CUMPLE | 9,8 × 9,8 cm en planta (altura 5,5 cm, sin límite). Masa ≈ 420 g ahora, se ajustará con báscula a < 500 g. |
-| **10. Arranque por infrarrojos / kill switch** | ☑ CUMPLE | Receptor IR de 38 kHz con decodificación **RC5** del mando del juez para **arrancar y parar**. **Kill switch:** desenchufar el **XT30**, accesible desde arriba por el techo, corta toda la alimentación. ⚠️ Confirmar con la organización si aceptan el XT30 como kill switch o quieren un interruptor. |
-| **11. Filosofía hardware libre** | ☑ CUMPLE | ESP32-S3 programado con Arduino/ESP-IDF (abiertos) y PCB, modelo 3D y código publicados en el repositorio con licencias CERN-OHL-S v2 y MIT. |
+| 1. Dispositivos de interferencia (jamming) | [x] CUMPLE | Sin emisores para cegar. Los VL53L0X usan láser IR de clase 1 para medir distancia |
+| 2. Daño al dohyo o al oponente/operador | [x] CUMPLE | Cuchilla con el filo matado; parada fiable por hardware |
+| 3. Fluidos, polvo, gas u otras sustancias | [x] CUMPLE | — |
+| 4. Pirotecnia | [x] CUMPLE | — |
+| 5. Lanzamiento de objetos | [x] CUMPLE | — |
+| 6. Sustancias pegajosas | [x] CUMPLE | Ruedas de goma/silicona limpias |
+| 7. Incremento artificial del efecto suelo | [x] CUMPLE | Sin vacío ni imanes |
+| 8. Fuente de energía permitida | [x] CUMPLE | LiPo 2S |
+| 9. Dimensiones y masa | [ ] pendiente | 98 × 98 mm y ≈ 420–495 g en el diseño: **medir y pesar el robot construido** |
+| 10. Arranque por IR / kill switch | [ ] pendiente | ST4RT integrado (START al ESP32, KILL a los drivers por hardware); corte total desenchufando el XT30. **Pendiente de probar con el módulo y de confirmar con el profesor** si vale como "kill switch accesible" |
+| 11. Hardware libre (no obligatorio) | [x] CUMPLE | Repositorio público con PCB, CAD y firmware |

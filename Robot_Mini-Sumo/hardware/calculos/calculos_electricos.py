@@ -49,22 +49,38 @@ DATOS = {
     'v33': 3.3,
     # Cadena de alimentación
     'buck_vfb': 0.768, 'buck_vfb_min': 0.749, 'buck_vfb_max': 0.787,
-    'buck_r_alta': 62e3, 'buck_r_baja': 10e3, 'buck_eta': 0.90, 'buck_f': 580e3, 'buck_l': 3.3e-6,
+    'buck_r_alta': 59e3, 'buck_r_baja': 10e3, 'buck_eta': 0.90, 'buck_f': 580e3, 'buck_l': 3.3e-6,
     'buck_toff_min': (220e-9, 310e-9),   # s, tiempo mínimo de apagado (típ., máx.), TI SLVSD90B
     'buck_iq': (120e-6, 200e-6),         # A, consumo propio sin conmutar (típ., máx.)
     'diodo_vf': (0.40, 0.55),            # SS34 a 0,3 A … 3 A
+    'n_diodos_5v': 1,                    # v1.2: solo D1 (D2 eliminado). En la v1.1 eran 2
     'ldo_dropout_ams1117': 1.1,          # caso desfavorable (clones con AMS1117)
     'q1_rdson': 0.015, 'fusible_r': 0.005, 'xt30_r': 0.0012,
-    'fusible_a': 10.0, 'fusible_a_propuesto': 15.0, 'fusible_derating': 0.75, 'xt30_a': 15.0,
+    'fusible_a': 15.0, 'fusible_a_propuesto': 15.0, 'fusible_derating': 0.75, 'xt30_a': 15.0,
     'div_r_alta': 100e3, 'div_r_baja': 33e3, 'div_c': 100e-9,
     'adc_fondo': 3.1, 'adc_bits': 12,    # ESP32-S3 con atenuación de 11/12 dB
     'ipropi_c': 10e-9, 'pwm_f': 20e3,
-    'i2c_r_pullup': 2200.0, 'i2c_c_bus': 150e-12,          # 6 módulos + cables (estimado)
+    'i2c_r_pullup': 4700.0, 'i2c_c_bus': 150e-12,          # 6 módulos + cables (estimado)
     'i2c_r_pullup_modulo': 10e3, 'i2c_n_modulos': 6,      # pull-ups de los GY-VL53L0XV2 (a comprobar)
     # Mecánica
     'masa_objetivo_g': 495, 'mu': (0.8, 1.0), 'g': 9.81, 'rueda_d': 0.030, 'dohyo_d': 0.77,
     'borde_blanco': 0.025,
     'perfil_empuje': 0.40,               # fracción del combate empujando
+    # ---- v1.2: módulo de arranque ST4RT (datos del fabricante leídos a través de un buscador; sin hoja)
+    'st_v_min': 2.8, 'st_v_max': 5.2,    # rango de alimentación anunciado por Sobotz (sin confirmar)
+    'st_i': (0.002, 0.010),              # 🔶 consumo supuesto (receptor TSOP + µC + LED); no publicado
+    'st_r_filtro': 10.0, 'st_r_serie': 1000.0, 'st_r_pulldown': 100e3,
+    'esp_vih_frac': 0.75, 'esp_vil_frac': 0.25,   # ESP32-S3: V_IH ≥ 0,75·VDD, V_IL ≤ 0,25·VDD (datasheet)
+    'esp_vdd': 3.3,
+    # ---- v1.2: frenada ante el borde (geometría de geometria.py)
+    'y_sensor_linea_del': 22.0, 'y_eje_del': 47.0,   # mm desde el filo de la cuña
+    'latencia_borde_s': (0.001, 0.003),  # bucle a 1 kHz + filtro: 1 ms típ., 3 ms peor (estimado)
+    'mu_pesimista': 0.6,                 # por si la goma/el dohyo agarran menos de lo estimado
+    'pot_busqueda': 0.45, 'pot_crucero': 0.65, 'pot_ataque': 1.0,   # firmware/config.h (v1.2)
+    'compensacion_vbat': True,           # el firmware escala el PWM a 7,4 V equivalentes (config.h)
+    # ---- v1.2: geometría
+    'pcb_z0_mm': 20.0, 'rampa_largo_mm': 29.0,
+    'masa_extra_g': (15.0, 20.0),        # cables, tornillos, cinta: no modelados en el 3D (estimado)
 }
 
 
@@ -119,7 +135,7 @@ def calcular(d):
         'ESP32-S3 (DevKitC-1)': d['c_esp32'],
         f"{d['n_vl53l0x']} × VL53L0X": tuple(d['n_vl53l0x'] * x for x in d['c_vl53l0x']),
         f"{d['n_qre']} × QRE1113": (d['n_qre'] * i_qre,) * 2,
-        'Receptor IR': d['c_ir'],
+        'Módulo ST4RT': d['st_i'],        # v1.2 (antes receptor TSOP38238, 0,45 mA)
         'LED de alimentación': (i_led, i_led),
         'Pull-ups, divisores, otros': d['c_varios'],
     }
@@ -127,8 +143,9 @@ def calcular(d):
     vbuck = d['buck_vfb'] * (1 + d['buck_r_alta'] / d['buck_r_baja'])
     vbuck_rango = [d['buck_vfb_min'] * (1 + d['buck_r_alta'] / d['buck_r_baja']),
                    d['buck_vfb_max'] * (1 + d['buck_r_alta'] / d['buck_r_baja'])]
-    v5 = [vbuck - d['diodo_vf'][1], vbuck - d['diodo_vf'][0]]
-    v5esp = [vbuck - 2 * d['diodo_vf'][1], vbuck - 2 * d['diodo_vf'][0]]
+    nd = d['n_diodos_5v']
+    v5 = [vbuck - (nd - 1) * d['diodo_vf'][1], vbuck - (nd - 1) * d['diodo_vf'][0]]   # salida +5V
+    v5esp = [vbuck - nd * d['diodo_vf'][1], vbuck - nd * d['diodo_vf'][0]]            # pin 5V DevKit
     p_bat_elec = [vbuck * i / d['buck_eta'] for i in i33]
     r['3v3'] = {
         'cargas_A': cargas, 'i_qre_A': i_qre, 'i_led_A': i_led, 'total_A': i33,
@@ -136,7 +153,7 @@ def calcular(d):
         'ldo_p_W': [(v5esp[1] - d['v33']) * i33[0], (v5esp[1] - d['v33']) * i33[1]],
         'ldo_margen_V_ams1117_tipico': v5esp[1] - d['v33'] - d['ldo_dropout_ams1117'],
         # peor caso: V_FB mínima del buck y V_F máxima de los dos diodos
-        'ldo_margen_V_ams1117': vbuck_rango[0] - 2 * d['diodo_vf'][1] - d['v33'] - d['ldo_dropout_ams1117'],
+        'ldo_margen_V_ams1117': vbuck_rango[0] - nd * d['diodo_vf'][1] - d['v33'] - d['ldo_dropout_ams1117'],
     }
     r['alim'] = {
         'v_buck': vbuck, 'v_buck_rango': vbuck_rango, 'v_5V': v5, 'v_pin5V_devkit': v5esp,
@@ -184,8 +201,8 @@ def calcular(d):
         'buck_d_max': d_max, 'buck_vin_bajo_pico_V': vin_bajo,
         'buck_d_necesario': {v: vbuck / v for v in (vin_bajo, vmin)},
         'buck_v_alcanzable_V': vbuck_alc,
-        'v_pin5V_devkit_bat_baja_peor_V': vbuck_peor - 2 * d['diodo_vf'][1],
-        'ldo_margen_bat_baja_peor_V': vbuck_peor - 2 * d['diodo_vf'][1] - d['v33'] - d['ldo_dropout_ams1117'],
+        'v_pin5V_devkit_bat_baja_peor_V': vbuck_peor - nd * d['diodo_vf'][1],
+        'ldo_margen_bat_baja_peor_V': vbuck_peor - nd * d['diodo_vf'][1] - d['v33'] - d['ldo_dropout_ams1117'],
         'buck_iq_A': d['buck_iq'],
     })
 
@@ -232,6 +249,49 @@ def calcular(d):
         'i2c_r_modulos_solos_ohm': r_mod,
         'i2c_i_sumidero_modulos_solos_mA': d['v33'] / r_mod * 1000,
     })
+    # ---------------------------------------------------------- v1.2: módulo de arranque ST4RT
+    v_st = [d['esp_vdd'] - i * d['st_r_filtro'] for i in d['st_i']]
+    v_gpio_alto = d['esp_vdd'] * d['st_r_pulldown'] / (d['st_r_pulldown'] + d['st_r_serie'])
+    r['st4rt'] = {
+        'v_alimentacion_V': v_st, 'margen_sobre_vmin_V': [v - d['st_v_min'] for v in v_st],
+        'v_gpio_start_alto_V': v_gpio_alto, 'vih_min_V': d['esp_vih_frac'] * d['esp_vdd'],
+        'margen_vih_V': v_gpio_alto - d['esp_vih_frac'] * d['esp_vdd'],
+        'i_pulldown_uA': d['esp_vdd'] / d['st_r_pulldown'] * 1e6,
+        # si por error el módulo se alimentara a 5 V: corriente por el diodo de protección del GPIO
+        'i_gpio_si_5V_mA': (5.0 - d['esp_vdd'] - 0.3) / d['st_r_serie'] * 1000,
+    }
+
+    # ---------------------------------------------------------- v1.2: frenada ante el borde
+    # Distancia disponible desde que el sensor delantero ve el blanco hasta que la rueda delantera
+    # sale del dohyo: ancho de la franja blanca + distancia sensor → punto de apoyo de la rueda.
+    d_disp = d['borde_blanco'] + (d['y_eje_del'] - d['y_sensor_linea_del']) / 1000
+    rpm_v = r['motor']['rpm']
+    fren = {}
+    for nombre, pot in (('busqueda', d['pot_busqueda']), ('crucero', d['pot_crucero']), ('ataque', d['pot_ataque'])):
+        for v_bat in (vnom, vmax):
+            v_ef = min(v_bat, vnom) if (d['compensacion_vbat'] and nombre != 'ataque') else v_bat
+            v = pot * rpm_v[v_ef] * math.pi * d['rueda_d'] / 60   # en vacío: cota superior
+            casos = {}
+            for etiqueta, mu in (('mu_0.8', d['mu'][0]), ('mu_0.6', d['mu_pesimista'])):
+                a = mu * d['g']                   # deceleración máxima por agarre (4WD frenando)
+                s_lat = v * d['latencia_borde_s'][1]
+                s_fr = v ** 2 / (2 * a)
+                casos[etiqueta] = {'dist_total_mm': (s_lat + s_fr) * 1000,
+                                   'margen_mm': (d_disp - s_lat - s_fr) * 1000}
+            fren[f'{nombre} a {v_bat:.1f} V'] = {'v_m_s': v, **casos}
+    v_seg = {etq: math.sqrt(2 * mu * d['g'] * d_disp) for etq, mu in (('mu_0.8', d['mu'][0]), ('mu_0.6', d['mu_pesimista']))}
+    r['borde'] = {'distancia_disponible_mm': d_disp * 1000, 'casos': fren, 'v_max_segura_m_s': v_seg}
+
+    # ---------------------------------------------------------- v1.2: geometría y masa
+    r['geometria'] = {'rampa_angulo_deg': math.degrees(math.atan2(d['pcb_z0_mm'], d['rampa_largo_mm']))}
+    inf = os.path.join(HW, 'mecanica', 'cad', 'informe_3d.json')
+    if os.path.exists(inf):
+        with open(inf) as f:
+            m3d = json.load(f)
+        tot = m3d['masa_total_g']
+        r['masa'] = {'modelo_3d_g': tot, 'con_extras_g': [tot + x for x in d['masa_extra_g']],
+                     'margen_hasta_500_g': [500 - tot - x for x in d['masa_extra_g'][::-1]],
+                     'envolvente_mm': m3d['envolvente_mm']}
     return r, i_media, minutos
 
 

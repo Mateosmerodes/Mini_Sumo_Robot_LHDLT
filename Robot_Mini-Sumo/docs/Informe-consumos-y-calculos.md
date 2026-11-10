@@ -1,5 +1,7 @@
 # Informe de consumos y cálculos
 
+> ⚠️ **Documento de la v1.1 (octubre de 2026).** El diseño actual es la **v1.2**: el receptor VS1838B se sustituye por el módulo **Sobotz ST4RT** (J17, con parada por hardware mediante U3), se elimina D2 y el buck pasa a 5,3 V, el fusible pasa a 15 A, J17 y J12 cambian de sitio y GPIO21 se llama DRV_EN. Ver [CHANGELOG](../CHANGELOG.md), [08 · Cálculos v1.2](08-Calculos-v1.2.md) y [12 · Memoria](12-Memoria-rediseno-v1.2.md).
+
 Informe pieza a pieza con los datos de consumo de cada componente, sus fuentes oficiales y los cálculos completos de todo lo que pide la [ficha técnica](Ficha-tecnica.md).
 
 > **Versión corregida para la entrega:** el [Anexo de cálculos de la ficha técnica](Anexo-calculos-ficha-tecnica.md) recoge solo los cálculos, con referencias numeradas, y corrige el fusible, el margen del LDO, la temperatura del driver, el límite del buck y el I²C (apartado 9 del anexo). Donde no coincidan, vale el anexo.
