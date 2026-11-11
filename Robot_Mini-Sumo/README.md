@@ -15,7 +15,7 @@ Rampa (cuña) clásica, **tracción 4WD** con 4 N20, una **ESP32-S3-DevKitC-1 en
 | Doc | Contenido | Estado |
 |---|---|---|
 | [📝 Ficha técnica v1.2](docs/Ficha-tecnica.md) | Plantilla del profesor rellenada con el diseño v1.2 | 🟡 faltan nombre del robot y modelos comprados |
-| [05 · PCB](docs/05-PCB.md) | Placa base v1.2, bloques, rutado, fabricación | 🟡 rutado incompleto: **no fabricar todavía** |
+| [05 · PCB](docs/05-PCB.md) | Placa base v1.2, bloques, rutado, fabricación | 🟡 rutado terminado y DRC limpio; falta revisión humana antes de pedirla |
 | [06 · Módulo de arranque ST4RT](docs/06-Modulo-arranque-ST4RT.md) | Lo que se sabe del módulo del profesor, riesgos e integración | 🟡 pendiente del módulo real |
 | [07 · Firmware](docs/07-Firmware.md) | Estructura, compilación, arranque/parada, estrategia | ✅ compila · 🟡 sin probar en el robot |
 | [08 · Cálculos v1.2](docs/08-Calculos-v1.2.md) | Eléctricos, mecánicos y de rendimiento con fuentes y márgenes | ✅ teórico |
@@ -43,7 +43,7 @@ firmware/               Código del ESP32-S3 (Arduino) y pruebas de lógica en e
 media/fotos/            Fotos del proceso
 informe/                Informe académico (borrador)
 hardware/calculos/      Cálculos reproducibles (python3 calculos_electricos.py)
-hardware/pcb/fabricacion/  Gerber, taladros, posiciones, BOM y PDF (rutado parcial: solo revisión)
+hardware/pcb/fabricacion/  Gerber, taladros, posiciones, BOM, PDF e informe DRC (rutado terminado, pendiente de revisión)
 ```
 
 ## Herramientas (Linux)
@@ -52,7 +52,7 @@ hardware/pcb/fabricacion/  Gerber, taladros, posiciones, BOM y PDF (rutado parci
 sudo pacman -S --needed kicad kicad-library freecad   # Arch (Ubuntu: PPA de KiCad 9 y FreeCAD)
 ```
 
-Probado con KiCad 9.0.9 y FreeCAD 0.21.2 (los scripts también funcionan con KiCad 10). Rutado automático: Freerouting 2.1 + Java 21. Firmware: arduino-cli con el core `esp32` 3.0.7 y la librería Pololu VL53L0X 1.3.
+Probado con KiCad 9.0.9 y FreeCAD 0.21.2 (los scripts también funcionan con KiCad 10). Rutado automático: Freerouting 1.9.0 + Java 21 (y `xvfb-run` sin pantalla). Firmware: arduino-cli con el core `esp32` 3.0.7 y la librería Pololu VL53L0X 1.3.
 
 Opcional, para exportar la PCB a 3D con todos los componentes (~5 GB):
 

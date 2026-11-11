@@ -54,7 +54,7 @@ Reglamento: OSHWDem Mini Sumo, revisión 7 (2026), [rules.oshwdem.org/loita_sumo
 
 | # | Requisito | Estado | Evidencia |
 |---|---|---|---|
-| A1 | PCB diseñada y fabricada por el equipo que interconecte unidad de control, sensores y controladores de motores | 🟡 | Diseño v1.2 en [`hardware/pcb`](../hardware/pcb): la DevKit, los 6 ToF, los 4 QRE, el ST4RT y los 4 DRV8874 se conectan a través de ella ([05](05-PCB.md)). **Pendiente:** terminar y revisar el rutado, fabricar y montar |
+| A1 | PCB diseñada y fabricada por el equipo que interconecte unidad de control, sensores y controladores de motores | 🟡 | Diseño v1.2 en [`hardware/pcb`](../hardware/pcb): la DevKit, los 6 ToF, los 4 QRE, el ST4RT y los 4 DRV8874 se conectan a través de ella ([05](05-PCB.md)). **Pendiente:** revisar el rutado (terminado, DRC limpio), fabricar y montar |
 | A2 | Nombre del equipo en la serigrafía | ✅ | "HOMBRES DE LAS TABERNAS" en la cara inferior (1,8 mm) y en la superior (1,0 mm); ver `gen_pcb.py` y [05](05-PCB.md) |
 | A3 | Se pueden usar módulos y placas de desarrollo | ✅ | DevKitC-1, módulos ToF y QRE, ST4RT |
 | A4 | Estructura base de diseño y fabricación propios (tornillería comercial permitida) | ✅ diseño / 🟡 fabricación | Rampa-cuna, cuna trasera, carcasa, techo y llantas diseñados por el equipo ([`hardware/mecanica`](../hardware/mecanica)); la PCB es además el chasis. Falta imprimir |

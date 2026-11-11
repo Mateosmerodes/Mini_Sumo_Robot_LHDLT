@@ -18,8 +18,13 @@ Motivo principal: el profesor entrega el módulo de arranque IR **Sobotz ST4RT**
 - **Pull-ups I²C de 4,7 kΩ** (R60, R61), antes más bajas: corriente de sumidero ≤ 3 mA con los módulos en paralelo.
 - R17 (100 kΩ) mantiene DRV_EN a 0 durante el arranque del ESP32.
 - Conectores J17 (ST4RT) y J12 (ToF trasero) intercambiados de sitio para que el ST4RT quede bajo su torre.
-- Reglas de diseño: zonas sin cobre alrededor de los taladros M2, holguras a agujeros y borde; clases de red Default 0,2/0,15 mm y Potencia 0,8 mm.
-- Nuevo `scripts/autoroute.py` (Freerouting). **El rutado no está terminado** (ver [docs/05](docs/05-PCB.md)).
+- Reglas de diseño: zonas sin cobre alrededor de los taladros M2, holguras a agujeros y borde; clases de red Default 0,2/0,15 mm, Alimentación 0,5 mm y Potencia 0,4 mm (se ensancha al final).
+- **Rutado terminado** (11/11/2026): DRC con 0 infracciones, 0 avisos y 0 conexiones sin rutar; 1139 pistas, 180 vías y zonas de VBAT en la cara superior. Sin revisar todavía por una persona ni fabricado ([docs/05](docs/05-PCB.md)).
+  - Salida fija de los pines de cada DRV8874 (`salida_driver()` en `gen_pcb.py`); C_VCP y C_CP a 0402 junto a los pines; R_IPROPI, C_IPROPI y R_IMODE al lado izquierdo.
+  - `scripts/autoroute.py` pasa a Freerouting 1.9.0 (con `xvfb-run` si no hay pantalla).
+  - Nuevos `scripts/acabado.py` (rutador A* propio para las conexiones que deja Freerouting y cosido de GND) y `scripts/ensanchar.py` (ensancha VBAT hasta 2 mm y motores hasta 1 mm donde lo permite el DRC, y añade las zonas de VBAT).
+  - Zonas con holgura 0,2 mm y alivios térmicos de 0,4 mm; la DevKit se une al plano en macizo.
+  - Recomendado cobre de 2 oz: quedan tramos de VBAT de 0,4 mm (entrada a los drivers y cruce de la fila izquierda de la DevKit).
 - Herramientas: los scripts funcionan con KiCad 9 y 10 (`check.sh` detecta la versión; librería de símbolos en formato 9).
 - `bom.csv` ya no incluye los componentes sin montar (DNP).
 

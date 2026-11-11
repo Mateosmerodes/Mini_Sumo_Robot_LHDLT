@@ -13,6 +13,7 @@ REV = 'v1.2'
 R0603 = 'Resistor_SMD:R_0603_1608Metric'
 C0603 = 'Capacitor_SMD:C_0603_1608Metric'
 C0805 = 'Capacitor_SMD:C_0805_2012Metric'
+C0402 = 'Capacitor_SMD:C_0402_1005Metric'
 C1206 = 'Capacitor_SMD:C_1206_3216Metric'
 CPEL = 'Capacitor_SMD:CP_Elec_6.3x7.7'
 JST_SH = 'Connector_JST:JST_SH_BM0{n}B-SRSS-TB_1x0{n}-1MP_P1.00mm_Vertical'  # SMD: cara inferior plana
@@ -185,8 +186,9 @@ for k in MOTORES:
     R(f'R{b}', '1.5k', f'ISENSE_{n}', 'GND', G)                 # R_IPROPI
     C(f'C{b}', '10n', f'ISENSE_{n}', 'GND', G)                  # filtro IPROPI
     R(f'R{b + 1}', '20k', f'{n}_IMODE', 'GND', G)               # ciclo a ciclo + reintento
-    C(f'C{b + 1}', '100n 16V', f'{n}_VCP', 'VBAT', G)
-    C(f'C{b + 2}', '22n 50V', f'{n}_CPH', f'{n}_CPL', G)
+    # v1.2: C_VCP y C_CP en 0402, pegados a los pines 11-14 (en 0603 no salían las pistas a 0,65 mm de paso)
+    C(f'C{b + 1}', '100n 16V', f'{n}_VCP', 'VBAT', G, C0402)
+    C(f'C{b + 2}', '22n 50V', f'{n}_CPH', f'{n}_CPL', G, C0402)
     C(f'C{b + 3}', '100n 50V', 'VBAT', 'GND', G)
     C(f'C{b + 4}', '10u 25V', 'VBAT', 'GND', G, C1206)
     add(f'J{2 + k}', 'Connector_Generic:Conn_01x02', f'MOTOR {k}',

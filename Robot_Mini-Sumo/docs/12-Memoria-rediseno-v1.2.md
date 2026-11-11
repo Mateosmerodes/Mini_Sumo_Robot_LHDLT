@@ -18,7 +18,7 @@ Qué se revisó, qué se encontró, qué se decidió y por qué. Fecha: 10/11/20
 | 6 | Frenada ante el borde no estudiada | Media | Cálculo nuevo: en crucero cabe justo; **a fondo no cabe** → el firmware solo va a fondo con el rival a < 15 cm o en contacto ([08, 6.3](08-Calculos-v1.2.md#63-frenada-ante-el-borde-nuevo-en-v12)) |
 | 7 | Ficha entregada: capacidad escrita "4.50 mAh", sin nombre del robot, licencia CERN-OHL-P frente a CERN-OHL-S del repositorio | Media | Ficha rehecha con marcadores [COMPLETAR] |
 | 8 | Scripts de KiCad solo para KiCad 10; ruta de librerías rota en `check.sh` | Baja | Compatibles con KiCad 9 y 10 |
-| 9 | PCB sin rutar | Bloqueante para fabricar | Rutado automático parcial con Freerouting; **falta terminarlo a mano** ([05](05-PCB.md)) |
+| 9 | PCB sin rutar | Bloqueante para fabricar | **Rutado terminado** (Freerouting 1.9 + scripts propios), DRC 0 infracciones / 0 sin rutar. Falta la revisión humana y pedirla con 2 oz ([05](05-PCB.md)) |
 | 10 | Masa ≈ 420 g frente a 500 g permitidos | Oportunidad | Lastre de plomo o arandelas hasta ≈ 495 g, pesando |
 
 ## 2. Decisiones y alternativas
@@ -56,11 +56,11 @@ Ver [09, apartado 4](09-Lista-de-compra-y-presupuesto.md#4-alternativas-consider
 3. ToF frontales laterales girados ±20°.
 4. Neumáticos de silicona colada y medida del coeficiente de rozamiento real.
 5. Protección térmica de los motores en el firmware con la corriente de bloqueo medida.
-6. Placa de 4 capas si el rutado de 2 capas queda demasiado comprometido bajo la DevKit.
+6. Llevar Q1 y F1 a la izquierda de la DevKit, o pasar a 4 capas, para que el tronco de VBAT no tenga que cruzar la fila izquierda de pines con pistas de 0,4 mm ([05, 3.1](05-PCB.md#31-anchos-de-las-pistas-de-potencia)).
 
 ## 4. Lo que falta para cerrar el diseño
 
-- Terminar y revisar el rutado de la PCB, DRC limpio, fabricar ([05](05-PCB.md)).
+- Revisar en KiCad la placa ya rutada (DRC limpio) y pedirla con cobre de 2 oz ([05](05-PCB.md)).
 - Recibir el ST4RT y medir: orden de pines, niveles de S y K, consumo, tipo de salida ([06, 5](06-Modulo-arranque-ST4RT.md)).
 - Medir los motores (corriente y par de bloqueo) y los demás valores de [08, apartado 8](08-Calculos-v1.2.md#8-qué-hay-que-medir-para-cerrar-los-cálculos).
 - Imprimir, montar, pesar y medir ([10](10-Montaje-y-fabricacion.md)).

@@ -80,8 +80,11 @@ COLOCACION = {
 
 # Grupo de cada driver respecto al centro del DRV8874 (rotación 0)
 DRIVER = {
-    'U': (0.0, 0.0, 0), 'R_IPROPI': (-6.5, 0.6, 0), 'C_IPROPI': (-6.5, 2.4, 0), 'R_IMODE': (-6.5, 4.2, 0),
-    'C_VCP': (6.5, -2.7, 0), 'C_CP': (6.5, -0.9, 0), 'C_VM': (6.5, 0.9, 0), 'C_BULK': (6.5, 3.4, 0),
+    'U': (0.0, 0.0, 0),
+    # v1.2: girados 180° (pad de señal hacia el driver, GND hacia fuera) y alineados con los pines 6 y 7
+    'R_IPROPI': (-6.5, 0.975, 180), 'C_IPROPI': (-6.5, -0.525, 180), 'R_IMODE': (-6.5, 2.9, 180),
+    # v1.2: C_VCP y C_CP (0402) junto a los pines 12-14; ver salida_driver()
+    'C_VCP': (5.08, 0.25, 0), 'C_CP': (5.08, -1.0, 0), 'C_VM': (7.5, 1.0, 0), 'C_BULK': (6.6, 4.2, 0),
 }
 CENTROS_DRIVER = {1: (28.0, 46.0), 2: (28.0, 64.0), 3: (71.0, 46.0), 4: (71.0, 64.0)}
 for k, (cx, cy) in CENTROS_DRIVER.items():
@@ -93,7 +96,7 @@ for k, (cx, cy) in CENTROS_DRIVER.items():
 
 # Etiquetas de serigrafía: ref -> (texto, lado del courtyard donde se escribe: N/S/E/O)
 ETIQUETAS = {
-    'J13': ('LÍN FI', 'S'), 'J8': ('ToF FI', 'S'), 'J18': ('I2C', 'N'), 'J9': ('ToF F', 'S'),
+    'J13': ('LÍN FI', 'O'), 'J8': ('ToF FI', 'S'), 'J18': ('I2C', 'N'), 'J9': ('ToF F', 'S'),
     'J19': ('AUX', 'N'), 'J10': ('ToF FD', 'S'), 'J14': ('LÍN FD', 'S'),
     'J7': ('ToF I', 'S'), 'J11': ('ToF D', 'S'),
     'J15': ('LÍN TI', 'N'), 'J12': ('ToF T', 'N'), 'J17': ('ST4RT', 'N'), 'JP1': ('BANCO', 'O'), 'J16': ('LÍN TD', 'N'),
@@ -147,17 +150,22 @@ def outline(board):
     arc(board, P(x0 + r, y0 + r), P(x0, y0 + r), 90)
 
 
+def ajustes_zona(z):
+    """v1.2: holgura 0,2 mm, SMD unidos en macizo y PTH con alivio térmico (radios de 0,4 mm)."""
+    z.SetLocalClearance(pcbnew.FromMM(0.2))
+    z.SetMinThickness(pcbnew.FromMM(0.2))
+    z.SetPadConnection(pcbnew.ZONE_CONNECTION_THT_THERMAL)
+    z.SetThermalReliefGap(pcbnew.FromMM(0.25))
+    z.SetThermalReliefSpokeWidth(pcbnew.FromMM(0.4))
+
+
 def zone(board, net, layer, pts, name='', priority=0):
     z = pcbnew.ZONE(board)
     z.SetLayer(layer)
     z.SetNetCode(net.GetNetCode())
     z.SetZoneName(name)
     z.SetAssignedPriority(priority)
-    z.SetLocalClearance(pcbnew.FromMM(0.3))
-    z.SetMinThickness(pcbnew.FromMM(0.25))
-    z.SetPadConnection(pcbnew.ZONE_CONNECTION_THERMAL)
-    z.SetThermalReliefGap(pcbnew.FromMM(0.3))
-    z.SetThermalReliefSpokeWidth(pcbnew.FromMM(0.5))
+    ajustes_zona(z)
     ol = z.Outline()
     ol.NewOutline()
     for x, y in pts:
@@ -210,6 +218,53 @@ def vias_termicas(board, x, y, gnd):
             v.SetDrill(pcbnew.FromMM(0.3))
             v.SetNet(gnd)
             board.Add(v)
+
+
+def pista(board, net, pts, w, layer=pcbnew.F_Cu):
+    for a, b in zip(pts, pts[1:]):
+        t = pcbnew.PCB_TRACK(board)
+        t.SetStart(P(*a)); t.SetEnd(P(*b)); t.SetWidth(pcbnew.FromMM(w)); t.SetLayer(layer)
+        t.SetNet(net); t.SetLocked(True)
+        board.Add(t)
+
+
+def via(board, net, x, y, d, drill):
+    v = pcbnew.PCB_VIA(board)
+    v.SetPosition(P(x, y)); v.SetWidth(pcbnew.FromMM(d)); v.SetDrill(pcbnew.FromMM(drill))
+    v.SetNet(net); v.SetLocked(True)
+    board.Add(v)
+
+
+def salida_driver(board, nets, k, cx, cy):
+    """Salida pre-rutada (fija) de los pines 9-15 del DRV8874 k hacia sus condensadores.
+
+    Paso de 0,65 mm: el autorrutador no conseguía sacar CPL, CPH, VCP y VM a la vez. Coordenadas
+    relativas al centro del driver; pads del lado derecho en x = 2,8625.
+    """
+    m = f'M{k}'
+    def r(pts):
+        return [(cx + x, cy + y) for x, y in pts]
+    X = 2.8625
+    pista(board, nets[f'{m}_CPL'], r([(X, -0.975), (3.6, -0.975), (4.225, -1.6), (5.56, -1.6), (5.56, -1.0)]), 0.2)
+    pista(board, nets[f'{m}_CPH'], r([(X, -0.325), (4.0, -0.325), (4.45, -0.775)]), 0.2)
+    pista(board, nets[f'{m}_VCP'], r([(X, 0.325), (4.45, 0.325)]), 0.2)
+    pista(board, nets['VBAT'], r([(X, 0.975), (6.8, 0.975)]), 0.4)
+    pista(board, nets['VBAT'], r([(5.56, 0.975), (5.56, 0.4)]), 0.4)
+    pista(board, nets['VBAT'], r([(6.45, 1.2), (6.45, 2.4), (5.3, 3.55), (5.3, 3.7)]), 0.4)
+    pista(board, nets[f'{m}_OUTB'], r([(X, 1.625), (3.9, 1.625), (4.5, 2.225), (4.5, 2.45)]), 0.4)
+    via(board, nets[f'{m}_OUTB'], cx + 4.5, cy + 2.45, 0.8, 0.4)
+    # lado izquierdo: pines 1-5 salen en diagonal hacia arriba; 6 y 7 a sus resistencias; 8 (OUTA) baja
+    izq = {1: f'{m}_IN1', 2: f'{m}_IN2', 3: 'DRV_nSLEEP', 4: 'DRV_nFAULT', 5: 'DRV_VREF'}
+    for pin, red in izq.items():
+        y = -2.275 + 0.65 * (pin - 1)
+        pista(board, nets[red], r([(-X, y), (-3.75, y), (-4.55, y - 0.8)]), 0.2)
+    pista(board, nets[f'ISENSE_{m}'], r([(-X, 0.975), (-5.725, 0.975), (-5.725, -0.525)]), 0.2)
+    pista(board, nets[f'{m}_IMODE'], r([(-X, 1.625), (-3.75, 1.625), (-5.0, 2.875), (-5.725, 2.875)]), 0.2)
+    pista(board, nets[f'{m}_OUTA'], r([(-X, 2.275), (-3.2, 2.275), (-3.2, 3.6)]), 0.4)
+    pista(board, nets['GND'], r([(-7.275, -0.525), (-7.275, 2.9)]), 0.3)
+    via(board, nets['GND'], cx - 7.275, cy + 1.95, 0.6, 0.3)
+    for y in (-1.625, 2.275):  # GND de los pines 15 y 9 al pad térmico
+        pista(board, nets['GND'], r([(2.3, y), (1.4, y)]), 0.25)
 
 
 def etiqueta(board, fp, s, lado, size=0.8):
@@ -286,9 +341,12 @@ def main():
             n = p['nets'].get(pad.GetNumber())
             if n:
                 pad.SetNet(nets[n])
+        if p['ref'] == 'U1':  # zócalo de la DevKit: GND en macizo (no hay sitio para los 4 radios del alivio)
+            fp.SetLocalZoneConnection(pcbnew.ZONE_CONNECTION_FULL)
         board.Add(fp)
         if p['ref'].startswith('U') and p['lib'] == 'Sumo:DRV8874':
             vias_termicas(board, x, y, nets['GND'])
+            salida_driver(board, nets, int(p['ref'][1:]) - 4, x, y)
         if p['ref'] in ETIQUETAS:
             etiqueta(board, fp, *ETIQUETAS[p['ref']])
     if faltan:

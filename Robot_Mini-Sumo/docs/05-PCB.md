@@ -2,12 +2,13 @@
 
 Proyecto KiCad en [`hardware/pcb/`](../hardware/pcb/). Todo se genera con scripts a partir del circuito descrito en [`scripts/design.py`](../hardware/pcb/scripts/design.py) y de la geometría compartida [`hardware/geometria.py`](../hardware/geometria.py).
 
-> **Estado (10/11/2026): diseño con rutado incompleto. NO FABRICAR TODAVÍA.**
-> - ERC: **0** infracciones. DRC (antes de rutar): solo conexiones pendientes y un aviso de serigrafía.
-> - Rutado automático con Freerouting: 700 pistas y 101 vías, **72 conexiones sin rutar** (16 de VBAT, 9 de GND, las salidas de los 4 motores y unas 20 señales). Sin cortocircuitos ni infracciones de holgura en el DRC; quedan 17 avisos de alivio térmico incompleto en GND y una pareja de vías a 0,49 mm (mínimo 0,50 mm).
-> - **Falta terminar el rutado a mano en KiCad**, reforzar la potencia y revisar todo antes de pedir la placa. Los Gerber de `fabricacion/` son de la placa tal como está, solo para revisar en el visor del fabricante.
+> **Estado (11/11/2026): rutado terminado, DRC limpio. Pendiente de revisión humana antes de pedirla.**
+> - ERC: **0** infracciones. DRC (`kicad-cli pcb drc --severity-all`): **0 infracciones, 0 avisos y 0 conexiones sin rutar** ([informe](../hardware/pcb/fabricacion/drc_v1.2.rpt)).
+> - 1139 pistas y 180 vías en 2 capas, más planos de GND en las dos caras y 443 mm² de zonas de VBAT en la cara superior.
+> - Nadie ha revisado todavía la placa a ojo en KiCad ni la ha fabricado: el DRC solo comprueba reglas geométricas, no que el circuito vaya a funcionar. Ver la lista del [apartado 4](#4-qué-revisar-antes-de-pedir-la-placa).
+> - Pedirla con **cobre de 2 oz** (ver [apartado 3.1](#31-anchos-de-las-pistas-de-potencia)).
 
-*English: the board is generated from scripts. ERC is clean; the autorouter left 72 connections unrouted (mainly VBAT, GND and the motor outputs), so the layout must be finished by hand in KiCad before ordering. Gerbers in `fabricacion/` are for review only.*
+*English: the board is generated from scripts and fully routed (Freerouting 1.9 + own clean-up scripts). ERC and DRC are clean (0 errors, 0 warnings, 0 unrouted). Not yet reviewed by a person or fabricated; order it with 2 oz copper.*
 
 ## 1. Datos de la placa
 
@@ -15,7 +16,7 @@ Proyecto KiCad en [`hardware/pcb/`](../hardware/pcb/). Todo se genera con script
 |---|---|
 | Tamaño | 74 × 62 mm, esquinas achaflanadas, 8 taladros M2 (NPTH) |
 | Capas | 2, FR4 1,6 mm, cobre 1 oz (2 oz recomendado) |
-| Clases de red | Potencia 0,8 mm (VBAT, motores) · Alimentación 0,5 mm · Default 0,2 mm / 0,15 mm de holgura |
+| Clases de red | Potencia 0,4 mm / 0,2 mm (VBAT y motores, ensanchadas después hasta 2 mm donde cabe) · Alimentación 0,5 mm / 0,2 mm · Default 0,2 mm / 0,15 mm de holgura |
 | Planos | GND en las dos caras, con zonas sin cobre de 2 mm de radio alrededor de los taladros |
 | Serigrafía | **"HOMBRES DE LAS TABERNAS"** en la cara inferior (1,8 mm) y en la superior (1,0 mm), versión `v1.2`, nombres de los conectores ("ST4RT", "BANCO", "ToF …", "LÍN …", M1–M4) |
 | Componentes | 48 líneas de BOM ([`bom.csv`](../hardware/pcb/bom.csv)); R68 y R69 se marcan DNP (sin montar) |
@@ -43,25 +44,52 @@ Esquemático completo: [`fabricacion/robot_sumo_esquematico.pdf`](../hardware/pc
 
 ```bash
 cd hardware/pcb
-scripts/check.sh /tmp/sumo_check        # librerías, proyecto, esquemático y PCB sin rutar + ERC/DRC
-python3 scripts/autoroute.py /ruta/a/freerouting.jar 25 00:03:00   # rutado automático (parcial)
-scripts/fabricacion.sh                  # Gerber, taladros, posiciones, BOM y PDF en fabricacion/
+export KICAD_CONFIG_HOME=/tmp/sumo_check/kcfg            # lo crea check.sh
+scripts/check.sh /tmp/sumo_check        # 1. librerías, proyecto, esquemático y PCB SIN RUTAR + ERC/DRC
+python3 scripts/autoroute.py /ruta/a/freerouting-1.9.0.jar 60   # 2. Freerouting (deja algunas redes sin terminar)
+python3 scripts/acabado.py              # 3. termina las redes que falten con un rutador propio (A*) y cose GND
+python3 scripts/ensanchar.py            # 4. ensancha VBAT y motores hasta donde deja el DRC y añade las zonas de VBAT
+python3 scripts/acabado.py GND          # 5. vuelve a coser las islas de GND que cortan las zonas de VBAT
+kicad-cli pcb drc --severity-all -o fabricacion/drc_v1.2.rpt robot_sumo.kicad_pcb   # 6. tiene que dar 0 / 0
+scripts/fabricacion.sh                  # 7. Gerber, taladros, posiciones, BOM y PDF en fabricacion/
 ```
 
-Herramientas probadas: KiCad 9.0.9 (los scripts también funcionan con KiCad 10), Freerouting 2.1.0 con Java 21. **`check.sh` y `generar_todo.sh` vuelven a generar la placa desde cero y borran el rutado**: una vez se empiece a rutar a mano, la placa pasa a ser la fuente y no hay que volver a ejecutarlos sin copiar antes `robot_sumo.kicad_pcb`.
+Herramientas probadas: KiCad 9.0.9, **Freerouting 1.9.0** con Java 21 (necesita pantalla: sin `DISPLAY` el script usa `xvfb-run`; Freerouting 2.1 no respeta el número de pasadas y, si se corta por tiempo, guarda un rutado a medias).
 
-## 4. Qué falta antes de fabricar (lista de revisión)
+**La placa del repositorio es ahora la fuente.** `check.sh` y `generar_todo.sh` la vuelven a generar desde cero y **borran el rutado**. Además, el rutado de Freerouting no sale idéntico cada vez y la placa actual lleva unos pocos retoques hechos a mano con scripts sueltos (M4_IN1, DRV_VREF, +3V3 junto a U1.22 y el tramo VBAT_REV de Q1 a F1 a 1,2 mm). Si se cambia algo del circuito, copiar antes `robot_sumo.kicad_pcb`, y repetir los pasos 2–6 y revisar el resultado.
 
-1. ☐ Terminar las 72 conexiones pendientes. Empezar por la potencia:
-   - VBAT del fusible a los 4 drivers y al buck: mejor como **zona de cobre** en la cara superior (≥ 2 mm de ancho equivalente para 10 A en 1 oz, o 2 oz) que como pistas de 0,8 mm.
-   - Salidas de los motores (OUTA/OUTB de U4–U7) a los pads de los motores (J3–J6, serigrafía M1–M4) con 0,8 mm.
-   - Pad térmico de cada DRV8874 a GND con varias vías a la cara inferior.
-2. ☐ Retornos de GND: que el plano inferior quede continuo bajo los drivers y el buck (bucle de conmutación corto: C4/C5 – U2 – L1 – C8/C9).
-3. ☐ Corregir los 17 alivios térmicos incompletos (o aceptar los que tengan 1 radio si la pista es corta) y la pareja de vías ISENSE_M3/DRV_nFAULT a 0,49 mm.
-4. ☐ DRC con 0 errores y 0 conexiones pendientes (`kicad-cli pcb drc`).
-5. ☐ Comprobar con la DevKit real la separación de las filas (22,86 mm) y la altura con las tiras hembra.
-6. ☐ Comprobar con el ST4RT real el orden de pines antes de hacer el cable (el de J17 no cambia: el cable se adapta).
-7. ☐ Revisar en el visor de JLCPCB la serigrafía, el contorno y los taladros, y el fichero de posiciones si se pide montaje (las coordenadas salen respecto al origen de la hoja de KiCad: fijar el origen auxiliar en la esquina de la placa si el fabricante lo pide).
+Cómo se llegó aquí: la primera pasada (Freerouting 2.1, pistas de potencia de 0,8 mm) dejó 72 conexiones sin rutar. Las causas eran que una pista de 0,8 mm no entra en los pines de 0,4 mm y 0,65 mm de paso del DRV8874, que la salida de los pines de los drivers estaba congestionada y que las filas de la DevKit parten la placa en tres. Se cambió:
+- La salida de cada driver es ahora una plantilla fija (`salida_driver()` en `gen_pcb.py`): VBAT, OUTA/OUTB, bomba de carga e ISENSE salen ya rutados y bloqueados, con una vía en OUTB.
+- C_VCP y C_CP de los drivers pasan a 0402 y se recolocan junto a los pines 12–14. R_IPROPI, C_IPROPI y R_IMODE van al lado izquierdo.
+- La clase Potencia pasa a 0,4 mm y el ensanchado se hace al final (`ensanchar.py`).
+- Zonas: holgura 0,2 mm, alivios térmicos de 0,4 mm para los PTH y conexión maciza para la DevKit.
+
+### 3.1 Anchos de las pistas de potencia
+
+| Tramo | Corriente máx. (diseño) | Cobre | Comentario |
+|---|---|---|---|
+| XT30 → Q1 → F1 (VBAT_RAW, VBAT_REV) | 10,2 A (4 drivers en I_TRIP) | 1,5 mm (VBAT_RAW) · 1,2 mm (VBAT_REV) · 1,0 mm hasta F1.1 | El pin 3 de Q1 (DPAK) es el cuello de botella real |
+| F1 → reparto | 10,2 A | Pistas de 1,5–2,0 mm y zonas de VBAT en la cara superior (443 mm²) | Zona central (Q1/F1/buck), zona de los drivers izquierdos, zona de los derechos y puente por debajo de la fila derecha de la DevKit |
+| Cruce de la fila izquierda de la DevKit hacia U5/U6 | ≤ 4,9 A (2 drivers) | **3 pistas de 0,4 mm en paralelo** (6–9 mm de largo) | Entre dos pines de la tira (paso 2,54 mm) solo cabe 0,44 mm con 0,2 mm de holgura |
+| Entrada a cada driver (pin 11) | ≤ 2,44 A | 0,4 mm, unos 3 mm | Limitado por el pin de 0,4 mm |
+| Salidas de motor (OUTA/OUTB) | ≤ 2,44 A | 1,0 mm casi todo (41 mm), 0,4 mm solo en la salida del pin (15 mm en total) | — |
+
+Capacidad orientativa según IPC-2221 (pista exterior, subida de 20 °C): 0,4 mm ≈ **1,7 A** con 1 oz y ≈ **2,8 A** con 2 oz; 1,0 mm ≈ 3,2 A / 5,4 A; 1,5 mm ≈ 4,4 A / 7,2 A. Son corrientes continuas, y los picos de 2,44 A por motor duran lo que dura un empuje. Las 3 pistas de 0,4 mm del cruce izquierdo dan ≈ 5 A con 1 oz y ≈ 8 A con 2 oz. **Con 1 oz los tramos de 0,4 mm quedan justos, así que se recomienda pedir la placa con 2 oz.** Estos números salen de la fórmula de IPC-2221 (I = 0,048 · ΔT^0,44 · A^0,725, con A en mil²) y no se han medido.
+
+Si se rehace la placa (v1.3): colocar Q1 y F1 a la izquierda de la DevKit, junto a U5/U6, para que el tronco de 10 A no tenga que cruzar una fila de pines, o pasar a 4 capas con un plano de VBAT.
+
+## 4. Qué revisar antes de pedir la placa
+
+1. ☑ Rutado completo: 0 conexiones sin rutar (`kicad-cli pcb drc`).
+2. ☑ DRC con 0 infracciones y 0 avisos (holguras, alivios térmicos, serigrafía, huellas).
+3. ☐ **Revisión a ojo en KiCad por alguien del equipo**, sobre todo:
+   - el bucle de conmutación del buck (C4/C5 – U2 – L1 – C8/C9) y su retorno de GND;
+   - las vías del pad térmico de los DRV8874;
+   - los cruces de VBAT de la fila izquierda de la DevKit ([3.1](#31-anchos-de-las-pistas-de-potencia)).
+4. ☐ Comprobar con la DevKit real la separación de las filas (22,86 mm) y la altura con las tiras hembra.
+5. ☐ Comprobar con el ST4RT real el orden de pines antes de hacer el cable (el de J17 no cambia: el cable se adapta).
+6. ☐ Revisar en el visor de JLCPCB la serigrafía, el contorno y los taladros, y el fichero de posiciones si se pide montaje (las coordenadas salen respecto al origen de la hoja de KiCad: fijar el origen auxiliar en la esquina de la placa si el fabricante lo pide).
+7. ☐ Pedirla con **cobre de 2 oz**.
 
 ## 5. Ficheros de fabricación (`hardware/pcb/fabricacion/`)
 
@@ -71,6 +99,6 @@ Herramientas probadas: KiCad 9.0.9 (los scripts también funcionan con KiCad 10)
 | `robot_sumo_posiciones.csv` | Posición de los componentes (sin los DNP) |
 | `robot_sumo_bom.csv` | Lista de materiales |
 | `robot_sumo_esquematico.pdf` | Esquemático |
-| `drc_v1.2_rutado_parcial.rpt` | Informe del DRC del estado actual |
+| `drc_v1.2.rpt` | Informe del DRC (0 infracciones, 0 avisos, 0 sin rutar) |
 
-Corresponden a la placa **con el rutado parcial**: sirven para revisar, no para pedir.
+Corresponden a la placa con el rutado terminado. Antes de pedirla, hacer la revisión del [apartado 4](#4-qué-revisar-antes-de-pedir-la-placa).

@@ -13,12 +13,12 @@ Instrucciones para pasar del repositorio al robot. **Ningún paso se ha hecho to
 
 ## 1. Fabricar la PCB
 
-> ⚠️ **No pedir la PCB todavía.** El rutado de la v1.2 está **incompleto** (ver [05](05-PCB.md)). Primero hay que terminarlo en KiCad y que el DRC salga sin errores.
+> **Estado (11/11/2026):** rutado terminado, ERC y DRC sin errores ni avisos. Falta que alguien del equipo revise la placa en KiCad antes de pedirla ([05, apartado 4](05-PCB.md#4-qué-revisar-antes-de-pedir-la-placa)).
 
-1. ☐ Abrir `hardware/pcb/robot_sumo.kicad_pro` con **KiCad 9 o 10**. Terminar el rutado y revisar las pistas de potencia (VBAT, motores) y los retornos de GND bajo los drivers.
-2. ☐ `hardware/pcb/scripts/check.sh` → ERC 0 y DRC 0 (sin pistas sin conectar).
-3. ☐ Generar los ficheros de fabricación: `hardware/pcb/scripts/fabricacion.sh` (Gerber, taladros, posiciones y BOM en `hardware/pcb/fabricacion/`).
-4. ☐ JLCPCB: subir el ZIP de Gerber. 2 capas, FR4, **1,6 mm**, cobre 1 oz (o 2 oz si se puede, por la corriente de los motores), acabado HASL sin plomo o ENIG, serigrafía blanca. Comprobar en el visor que se lee **"HOMBRES DE LAS TABERNAS"**.
+1. ☐ Abrir `hardware/pcb/robot_sumo.kicad_pro` con **KiCad 9 o 10** y revisar la placa (lista de [05, apartado 4](05-PCB.md#4-qué-revisar-antes-de-pedir-la-placa)). **No ejecutar `check.sh` ni `generar_todo.sh`: borran el rutado.**
+2. ☐ DRC: `kicad-cli pcb drc --severity-all hardware/pcb/robot_sumo.kicad_pcb` → 0 infracciones y 0 sin conectar (o Inspeccionar → DRC en KiCad).
+3. ☐ Generar los ficheros de fabricación: `hardware/pcb/scripts/fabricacion.sh` (Gerber, taladros, posiciones y BOM en `hardware/pcb/fabricacion/`). Los del repositorio ya corresponden a la placa actual.
+4. ☐ JLCPCB: subir el ZIP de Gerber. 2 capas, FR4, **1,6 mm**, **cobre 2 oz** (hay tramos de VBAT de 0,4 mm, ver [05, 3.1](05-PCB.md#31-anchos-de-las-pistas-de-potencia)), acabado HASL sin plomo o ENIG, serigrafía blanca. Comprobar en el visor que se lee **"HOMBRES DE LAS TABERNAS"**.
 5. ☐ Montaje: a mano (soldador de punta fina + aire caliente para los DRV8874, que tienen pad térmico) o SMT de JLCPCB con `bom.csv` y el fichero de posiciones (comprobar referencias LCSC y rotaciones en su visor).
 
 ### 1.1 Soldadura (si se monta a mano)
@@ -27,7 +27,7 @@ Orden recomendado: de lo más bajo a lo más alto, y la potencia primero para po
 
 1. ☐ Bloque de potencia: Q1 (AOD4185), F1 (fusible 15 A), condensadores de entrada, J1 (XT30).
 2. ☐ Buck: U2 (TPS563201), L1, R5–R8, C4–C9. **Probar** (paso 3.1) antes de seguir.
-3. ☐ Drivers U4–U7 (DRV8874, HTSSOP con pad térmico: estaño en el pad y aire caliente) y sus pasivos.
+3. ☐ Drivers U4–U7 (DRV8874, HTSSOP con pad térmico: estaño en el pad y aire caliente) y sus pasivos. Los condensadores de la bomba de carga (C21/C22, C31/C32, C41/C42, C51/C52) son **0402**: pinzas finas y lupa.
 4. ☐ U3 (74LVC1G08) y C15; bloque ST4RT (R62–R67, C62). **R68 y R69 no se montan** salvo que S/K sean de drenador abierto.
 5. ☐ Conectores JST-SH J7–J19 y tiras hembra de la DevKit (8,5 mm). Comprobar con la DevKit pinchada que entra recta (filas a 22,86 mm).
 6. ☐ Inspección con lupa: puentes en los HTSSOP y en U3; continuidad VBAT–GND **no** debe haber.
