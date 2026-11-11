@@ -37,9 +37,9 @@ pro = {
     'net_settings': {
         'meta': {'version': 4},
         'classes': [
-            netclass('Default', 0.25),
+            netclass('Default', 0.2, clearance=0.15),
             # VBAT, salidas de motor y GND de potencia: hasta ~2,5 A por motor (10 A en total por VBAT)
-            netclass('Potencia', 1.0, clearance=0.25, via_d=0.8, via_h=0.4, prio=1,
+            netclass('Potencia', 0.4, clearance=0.2, via_d=0.8, via_h=0.4, prio=1,
                      color='rgba(194, 0, 0, 1.000)'),
             netclass('Alimentacion', 0.5, prio=2, color='rgba(194, 118, 0, 1.000)'),
         ],

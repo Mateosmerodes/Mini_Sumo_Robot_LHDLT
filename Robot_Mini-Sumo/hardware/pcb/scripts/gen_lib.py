@@ -170,8 +170,8 @@ def devkit_zocalo():
 
 
 def main():
-    lib = [S('kicad_symbol_lib'), [S('version'), 20251024], [S('generator'), 'gen_lib.py'],
-           [S('generator_version'), '10.0'], drv8874(), devkit()]
+    lib = [S('kicad_symbol_lib'), [S('version'), 20241209], [S('generator'), 'gen_lib.py'],
+           [S('generator_version'), '9.0'], drv8874(), devkit()]
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     with open(OUT, 'w') as f:
         f.write(dump(lib) + '\n')

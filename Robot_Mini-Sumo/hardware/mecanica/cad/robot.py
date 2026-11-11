@@ -232,10 +232,23 @@ def carcasa(frontal):
     sl = fuse(box(g.ENV_X0, g.ENV_X0 + p, *SOPORTE_LAT, TECHO[1], TECHO[1] + th + 1.5),
               box(g.ENV_X0, g.ENV_X0 + 6, *SOPORTE_LAT, TECHO[1], TECHO[1] + 1.2))
     st = box(41.0, 59.0, y1 - p, y1, TECHO[1], TECHO[1] + th + 1.5)
+    # Alojamiento del módulo de arranque ST4RT (v1.2): cajetín abierto por arriba con paso de cable al
+    # interior. El módulo se sujeta por ajuste + cinta de doble cara fina en el fondo (no se sabe aún si
+    # tiene taladros); el receptor y el LED quedan por encima de las paredes, a la vista del juez.
+    mx, my = g.ST4RT_CENTRO
+    mw = g.ST4RT_MODULO[0] / 2 + g.ST4RT_HOLGURA
+    ml = g.ST4RT_MODULO[1] / 2 + g.ST4RT_HOLGURA
+    w = g.ST4RT_PARED
+    z0a = TECHO[1] + g.ST4RT_ELEVACION          # fondo del alojamiento (arriba de la torre)
+    aloj = cut(box(mx - mw - w, mx + mw + w, my - ml - w, my + ml + w, TECHO[1], z0a + g.ST4RT_ALTO_ALOJ),
+               box(mx - mw, mx + mw, my - ml, my + ml, z0a, z0a + g.ST4RT_ALTO_ALOJ + 0.1),
+               box(mx - 2.5, mx + 2.5, my + ml - 0.1, my + ml + w + 0.1, z0a + 1.0,
+                   z0a + g.ST4RT_ALTO_ALOJ + 0.1),     # muesca trasera: salida de los pines/cable
+               box(mx - 2.5, mx + 2.5, my + ml - 3.5, my + ml - 0.5, TECHO[0] - 1, z0a + 0.1))   # paso del cable
     # Torretas de los tornillos largos
     torres = [cil_z(2.75, g.PCB_Z0 + g.PCB_GROSOR, g.TECHO_Z, x, y) for x, y in g.TALADROS_CARCASA]
     cuerpo = fuse(paredes, *torres)
-    tapa = fuse(techo, rim, sl, espejo_x(sl), st)
+    tapa = fuse(techo, rim, sl, espejo_x(sl), st, aloj)
     herr = [cil_z(1.1, g.PCB_Z0, TECHO[1] + 1, x, y) for x, y in g.TALADROS_CARCASA]
     herr += [cil_z(2.1, TECHO[1] - 1.8, TECHO[1] + 1, x, y) for x, y in g.TALADROS_CARCASA]   # cabeza
     herr += [
@@ -243,7 +256,11 @@ def carcasa(frontal):
         box(14.6, 19.6, 58.0, 70.0, TECHO[0] - 1, TECHO[1] + 1),      # cable ToF izq.
         box(80.4, 85.4, 58.0, 70.0, TECHO[0] - 1, TECHO[1] + 1),      # cable ToF der.
         box(24.0, 36.0, 86.0, 92.0, TECHO[0] - 1, TECHO[1] + 1),      # cables ToF trasero / línea
-        box(64.0, 72.0, 87.0, 92.0, TECHO[0] - 1, TECHO[1] + 1),      # cable IR
+        box(64.0, 72.0, 87.0, 92.0, TECHO[0] - 1, TECHO[1] + 1),      # cable ToF trasero (J12, v1.2)
+        box(g.ST4RT_CENTRO[0] - 2.5, g.ST4RT_CENTRO[0] + 2.5,          # cable del ST4RT por dentro de la torre
+            g.ST4RT_CENTRO[1] + g.ST4RT_MODULO[1] / 2 + g.ST4RT_HOLGURA - 3.5,
+            g.ST4RT_CENTRO[1] + g.ST4RT_MODULO[1] / 2 + g.ST4RT_HOLGURA - 0.5,
+            TECHO[0] - 1, TECHO[1] + g.ST4RT_ELEVACION + 0.1),
     ]
     zc = (TOF_FRONT_Z[0] + TOF_FRONT_Z[1]) / 2
     herr += [cil_y(3.0, y0 - 1, y0 + p + 1, x, zc) for x in TOF_FRONT_X]          # ventanas ToF frontales
@@ -284,8 +301,11 @@ def bateria():
     return box(cx - bl / 2, cx + bl / 2, cy - bw / 2, cy + bw / 2, TECHO[1] + 0.2, TECHO[1] + 0.2 + bh)
 
 
-def receptor_ir():
-    return box(47.0, 53.0, 86.5, 91.5, TECHO[1], TECHO[1] + 7.5)
+def modulo_st4rt():
+    mx, my = g.ST4RT_CENTRO
+    a, b, h = g.ST4RT_MODULO
+    z0 = TECHO[1] + g.ST4RT_ELEVACION
+    return box(mx - a / 2, mx + a / 2, my - b / 2, my + b / 2, z0, z0 + h)
 
 
 def pcb():
@@ -318,7 +338,7 @@ def construir():
         'cuchilla_acero': (cuchilla(), 'acero (fleje 0,4 mm)', 7.85, (0.75, 0.77, 0.80), False, 'frontal'),
         'pcb': (pcb(), 'FR4 1,6 mm', 1.85, (0.05, 0.40, 0.15), False, 'pcb'),
         'bateria_lipo_2s': (bateria(), 'LiPo', 1.9, (0.20, 0.35, 0.80), False, 'bateria'),
-        'receptor_ir': (receptor_ir(), 'VS1838B', 1.2, (0.1, 0.1, 0.1), False, 'techo'),
+        'modulo_st4rt': (modulo_st4rt(), 'Sobotz ST4RT (del profesor)', 1.2, (0.1, 0.1, 0.1), False, 'techo'),
     }
     for k, s in lastres().items():
         piezas[k] = (s, 'acero', 7.85, (0.45, 0.47, 0.50), False, 'lastre')
@@ -339,7 +359,7 @@ def construir():
 
 
 MASA_FIJA = {'motor_': 10.0, 'componentes_pcb': 20.0, 'bateria_lipo_2s': 32.0, 'tof_': 1.0, 'qre_': 0.6,
-             'receptor_ir': 0.5}
+             'modulo_st4rt': 1.5}   # masa del ST4RT sin dato del fabricante: estimada, pesar
 
 
 def masa(nombre, forma, dens):

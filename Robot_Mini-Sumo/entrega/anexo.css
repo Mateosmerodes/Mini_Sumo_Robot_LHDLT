@@ -1,0 +1,13 @@
+@page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+body { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 9.5pt; line-height: 1.4; color: #111; max-width: none; margin: 0; }
+h1 { font-size: 17pt; margin: 0 0 6pt; border-bottom: 2px solid #2a78d6; padding-bottom: 4pt; }
+h2 { font-size: 12.5pt; margin: 14pt 0 5pt; color: #1d4f8f; break-after: avoid; }
+table { border-collapse: collapse; width: 100%; margin: 6pt 0 8pt; font-size: 8.5pt; break-inside: avoid; }
+th, td { border: 1px solid #c9c8c3; padding: 3pt 5pt; text-align: left; vertical-align: top; }
+th { background: #eef3fa; }
+img { max-width: 82%; display: block; margin: 6pt auto; break-inside: avoid; }
+math[display="block"] { margin: 6pt 0; font-size: 10.5pt; }
+hr { border: 0; border-top: 1px solid #ddd; margin: 10pt 0; }
+a { color: #1d4f8f; word-break: break-all; }
+ol li { margin-bottom: 3pt; }
+code { font-family: "DejaVu Sans Mono", monospace; font-size: 8.5pt; }

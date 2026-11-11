@@ -94,6 +94,14 @@ TECHO_GROSOR = 1.6
 TOF_MODULO = (18.0, 13.0, 1.6)  # VL53L0X tamaño Pololu/mini (ancho, alto, grosor)
 QRE_MODULO = (7.6, 14.0, 3.0)   # QRE1113 analógico (tipo SparkFun)
 BATERIA = (55.0, 31.0, 14.0)    # LiPo 2S 450-650 mAh
+# Módulo de arranque Sobotz ST4RT (lo entrega el profesor). Cotas del fabricante según su web
+# (10,2 × 10,2 × 6 mm), leídas a través de un buscador: MEDIR el módulo real y regenerar.
+ST4RT_MODULO = (10.2, 10.2, 6.0)
+ST4RT_CENTRO = (50.0, 88.5)     # (x, y) sobre el techo, detrás de la bahía de la batería, a la vista del juez
+ST4RT_HOLGURA = 0.3             # por lado en el alojamiento
+ST4RT_PARED = 1.2
+ST4RT_ALTO_ALOJ = 4.0           # el alojamiento sujeta los 4 mm de abajo; receptor y LED quedan libres
+ST4RT_ELEVACION = 12.0          # torre: el receptor queda por encima de la batería (14 mm) y se ve desde delante
 LINEA_DEL = [(17.0, 22.0), (83.0, 22.0)]    # centros de los QRE delanteros (en la rampa, dentro de la carcasa)
 LINEA_TRAS = [(25.0, 94.3), (75.0, 94.3)]   # centros de los QRE traseros (en el parachoques)
 

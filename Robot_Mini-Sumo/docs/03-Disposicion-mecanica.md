@@ -1,5 +1,7 @@
 # 03 · Disposición mecánica y modelo 3D
 
+> **v1.2:** el receptor IR se sustituye por el módulo ST4RT en una torre del techo; altura total 58,6 mm y masa del modelo 405,5 g. El resto de este documento sigue siendo válido. Ver [CHANGELOG](../CHANGELOG.md).
+
 > Modelo paramétrico: **todas las cotas salen de [`hardware/geometria.py`](../hardware/geometria.py)**. Si se cambia un parámetro (diámetro de rueda, ángulo de rampa, posición de un eje…), basta con ejecutar `hardware/generar_todo.sh` y se regeneran la PCB, el modelo 3D, los STL/STEP y estas imágenes.
 
 ![Robot montado](img/3d_montado.png)
@@ -42,7 +44,8 @@
 | 21,6 – 32,6 | Tiras hembra (8,5 mm) + plástico de la tira macho de la DevKit (2,5 mm) |
 | 32,6 – 37,5 | **ESP32-S3-DevKitC-1** (placa + módulo + USB) |
 | 39 – 40,6 | **Techo** (98 × 74 mm, también cubre las ruedas) |
-| 40,6 – 55 | **Batería** en su bahía, ToF laterales y trasero en sus soportes, receptor IR |
+| 40,6 – 55 | **Batería** en su bahía, ToF laterales y trasero en sus soportes |
+| 52,6 – 58,6 | **Módulo ST4RT** (v1.2) en su torre, a 12 mm sobre el techo |
 
 ## Piezas
 
@@ -70,7 +73,7 @@ Todas las piezas están en **STEP** en `hardware/mecanica/step/`, para abrir en 
 | ToF trasero | x = 50; y ≈ 96; z ≈ 43 | Soporte trasero en el techo | J12 |
 | Línea delanteros | x = 17 / 83; y = 22; z ≈ 1,7 | Alojamientos abiertos por abajo en la rampa | J13 / J14 |
 | Línea traseros | x = 25 / 75; y = 94; z ≈ 1,7 | Alojamientos en el parachoques | J15 / J16 |
-| Receptor IR (RC5) | x = 50; y = 89; arriba del todo | Sobre el techo, a la vista del juez | J17 |
+| Módulo de arranque ST4RT (v1.2) | x = 50; y = 88,5; arriba del todo | En la torre del techo, a la vista del juez desde todos los lados | J17 (cable JST-SH de 5 polos) |
 
 ## Masa (estimada por el script)
 
@@ -83,9 +86,9 @@ Todas las piezas están en **STEP** en `hardware/mecanica/step/`, para abrir en 
 | 4 ruedas (llanta + neumático) | 33 g |
 | Batería LiPo 2S | 32 g |
 | Pieza trasera + QRE | 24 g |
-| Techo + ToF + IR | 13 g |
+| Techo con torre + ToF + ST4RT | ≈ 14 g |
 | Paredes + ToF frontales | 10 g |
-| **Total** | **≈ 404 g** |
+| **Total** | **≈ 404 g (v1.1) · 405,5 g (v1.2, `informe_3d.json`)** |
 
 Quedan **~96 g de margen hasta 500 g**. Faltan cables, tornillos y pegamento (unos 15–20 g), así que la cifra real rondará los 420 g. Para llegar a ~490 g:
 
@@ -113,7 +116,7 @@ Los motores no llevan abrazadera: quedan atrapados entre su alojamiento de la cu
 5. Apoyar la **PCB** y atornillar los 4 M2 × 6 centrales.
 6. Enchufar los cables de los sensores y, después, **pinchar la DevKit** en sus zócalos (el conector del ToF frontal queda debajo de ella).
 7. Poner las **paredes** con los ToF frontales ya colocados tras sus ventanas.
-8. Poner el **techo** con los ToF laterales y trasero y el receptor IR, y atornillar los 4 M2 × 25 de las esquinas.
+8. Poner el **techo** con los ToF laterales y trasero y el módulo ST4RT en su torre (cable a J17), y atornillar los 4 M2 × 25 de las esquinas.
 9. Montar las **ruedas** (a presión en el eje D de 3 mm), la **cuchilla** y la **batería** (velcro + cinta).
 
 ## Impresión

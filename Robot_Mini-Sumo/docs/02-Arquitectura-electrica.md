@@ -1,5 +1,7 @@
 # 02 · Arquitectura eléctrica
 
+> ⚠️ **Documento de la v1.1 (octubre de 2026).** El diseño actual es la **v1.2**: el receptor VS1838B se sustituye por el módulo **Sobotz ST4RT** (J17, con parada por hardware mediante U3), se elimina D2 y el buck pasa a 5,3 V, el fusible pasa a 15 A, J17 y J12 cambian de sitio y GPIO21 se llama DRV_EN. Ver [CHANGELOG](../CHANGELOG.md), [08 · Cálculos v1.2](08-Calculos-v1.2.md) y [12 · Memoria](12-Memoria-rediseno-v1.2.md).
+
 > Borrador. **Desde el 19/10/2026 el ESP32 es una ESP32-S3-DevKitC-1 enchufada** sobre la placa base (antes, un módulo WROOM soldado): detalles, pinout definitivo y rutado en [04 · ESP32-S3-DevKitC-1](04-ESP32-DevKitC-1.md).
 
 ## Árbol de alimentación
@@ -91,9 +93,9 @@ Los DRV8874 aceptan 3,3 V como nivel alto lógico (V_IH ≈ 1,5 V), así que no 
 ## Configuración del DRV8874
 
 - **PMODE** en modo PWM (IN1/IN2): permite adelante, atrás, **freno** (ambas entradas altas) y rueda libre.
-- **Límite de corriente:** `I_TRIP = V_REF / (A_IPROPI × R_IPROPI)`, con A_IPROPI ≈ 455 µA/A.
-  - Ejemplo: R_IPROPI = 1 kΩ e I_TRIP = 2,5 A → V_REF ≈ 1,14 V (divisor desde 3,3 V).
-  - En el ADC se lee 0–1,14 V, proporcional a 0–2,5 A.
+- **Límite de corriente:** `I_TRIP = V_REF / (A_IPROPI × R_IPROPI)`, con A_IPROPI = 450 µA/A (hoja de datos de TI).
+  - Ejemplo: R_IPROPI = 1 kΩ e I_TRIP = 2,5 A → V_REF ≈ 1,13 V (divisor desde 3,3 V).
+  - En el ADC se lee 0–1,13 V, proporcional a 0–2,5 A.
   - Se ajusta cuando midamos la corriente de bloqueo real del N20.
 - **Condensadores:** 10 µF + 100 nF cerámicos en VM de cada driver, y 2 × 22 µF / 25 V cerámicos de reserva en VBAT (más bajos que un electrolítico, que no cabía).
 - **Térmica:** pad expuesto sobre plano de GND con vías térmicas hacia la cara inferior.

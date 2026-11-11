@@ -1,7 +1,7 @@
 (kicad_symbol_lib
-	(version 20251024)
+	(version 20241209)
 	(generator "gen_lib.py")
-	(generator_version "10.0")
+	(generator_version "9.0")
 	(symbol "DRV8874"
 		(exclude_from_sim no)
 		(in_bom yes)

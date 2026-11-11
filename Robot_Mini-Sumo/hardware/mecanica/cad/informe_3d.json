@@ -3,11 +3,11 @@
   "frontal_rampa_cuna": 39.2,
   "trasera_cuna_parachoques": 22.5,
   "carcasa_paredes": 6.9,
-  "carcasa_techo": 9.8,
+  "carcasa_techo": 11.3,
   "cuchilla_acero": 5.6,
-  "pcb": 13.4,
+  "pcb": 12.6,
   "bateria_lipo_2s": 32.0,
-  "receptor_ir": 0.5,
+  "modulo_st4rt": 1.5,
   "lastre_central": 64.5,
   "lastre_canal_del": 62.9,
   "lastre_canal_tras": 45.3,
@@ -35,8 +35,8 @@
   "qre_tras_2": 0.6,
   "componentes_pcb": 20.0
  },
- "masa_total_g": 403.8,
- "margen_hasta_500g": 96.2,
+ "masa_total_g": 405.5,
+ "margen_hasta_500g": 94.5,
  "envolvente_mm": {
   "x": [
    1.0,
@@ -48,11 +48,11 @@
   ],
   "z": [
    0.0,
-   55.1
+   58.6
   ],
   "ancho": 98.0,
   "largo": 98.0,
-  "alto": 55.1
+  "alto": 58.6
  },
  "interferencias_mm3": [],
  "piezas": {
@@ -126,8 +126,8 @@
     0.8
    ]
   },
-  "receptor_ir": {
-   "material": "VS1838B",
+  "modulo_st4rt": {
+   "material": "Sobotz ST4RT (del profesor)",
    "imprimible": false,
    "grupo": "techo",
    "color": [
