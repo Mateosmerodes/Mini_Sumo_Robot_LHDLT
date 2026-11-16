@@ -18,7 +18,7 @@ Instrucciones para pasar del repositorio al robot. **Ningún paso se ha hecho to
 1. ☐ Abrir `hardware/pcb/robot_sumo.kicad_pro` con **KiCad 9 o 10** y revisar la placa (lista de [05, apartado 4](05-PCB.md#4-qué-revisar-antes-de-pedir-la-placa)). **No ejecutar `check.sh` ni `generar_todo.sh`: borran el rutado.**
 2. ☐ DRC: `kicad-cli pcb drc --severity-all hardware/pcb/robot_sumo.kicad_pcb` → 0 infracciones y 0 sin conectar (o Inspeccionar → DRC en KiCad).
 3. ☐ Generar los ficheros de fabricación: `hardware/pcb/scripts/fabricacion.sh` (Gerber, taladros, posiciones y BOM en `hardware/pcb/fabricacion/`). Los del repositorio ya corresponden a la placa actual.
-4. ☐ JLCPCB: subir el ZIP de Gerber. 2 capas, FR4, **1,6 mm**, **cobre 2 oz** (hay tramos de VBAT de 0,4 mm, ver [05, 3.1](05-PCB.md#31-anchos-de-las-pistas-de-potencia)), acabado HASL sin plomo o ENIG, serigrafía blanca. Comprobar en el visor que se lee **"HOMBRES DE LAS TABERNAS"**.
+4. ☐ JLCPCB: subir el ZIP de Gerber. 2 capas, FR4, **1,6 mm**, **cobre 1 oz**, tamaño 74,1 × 62,1 mm (ver [05, 3.2](05-PCB.md#32-corrección-del-16112026-tronco-de-vbat)), acabado HASL sin plomo o ENIG, serigrafía blanca. Comprobar en el visor que se lee **"HOMBRES DE LAS TABERNAS"**.
 5. ☐ Montaje: a mano (soldador de punta fina + aire caliente para los DRV8874, que tienen pad térmico) o SMT de JLCPCB con `bom.csv` y el fichero de posiciones (comprobar referencias LCSC y rotaciones en su visor).
 
 ### 1.1 Soldadura (si se monta a mano)
