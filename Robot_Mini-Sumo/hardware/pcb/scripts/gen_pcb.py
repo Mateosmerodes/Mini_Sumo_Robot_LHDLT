@@ -99,7 +99,7 @@ ETIQUETAS = {
     'J13': ('LÍN FI', 'O'), 'J8': ('ToF FI', 'S'), 'J18': ('I2C', 'N'), 'J9': ('ToF F', 'S'),
     'J19': ('AUX', 'N'), 'J10': ('ToF FD', 'S'), 'J14': ('LÍN FD', 'S'),
     'J7': ('ToF I', 'S'), 'J11': ('ToF D', 'S'),
-    'J15': ('LÍN TI', 'N'), 'J12': ('ToF T', 'N'), 'J17': ('ST4RT', 'N'), 'JP1': ('BANCO', 'O'), 'J16': ('LÍN TD', 'N'),
+    'J15': ('LÍN TI', 'N'), 'J12': ('ToF T', 'N'), 'J17': ('ST4RT', 'N'), 'JP1': ('JP1', 'O'), 'J16': ('LÍN TD', 'N'),
     'J3': ('M1', 'O'), 'J4': ('M2', 'O'), 'J5': ('M3', 'E'), 'J6': ('M4', 'E'),
 }
 
@@ -365,7 +365,7 @@ def main():
     # Serigrafía: obligatoria con el nombre del equipo. En la cara inferior, en las franjas delantera y
     # trasera, las únicas que no cruzan las filas de pines de la DevKit.
     text(board, 'HOMBRES DE LAS TABERNAS', 50, 31.8, 1.8, pcbnew.B_SilkS)
-    text(board, f'Robot Mini-Sumo {design.REV} · Tecnología Eléctrica · USC · 2026 · CERN-OHL-S v2',
+    text(board, f'Mini-Sumo {design.REV} · 2026',
          50, 90.6, 1.0, pcbnew.B_SilkS, False)
     text(board, 'HOMBRES DE LAS TABERNAS', 50, 90.8, 1.0, pcbnew.F_SilkS)
     # Bajo la antena de la DevKit (que vuela por delante de su placa) no se rellena cobre

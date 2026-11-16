@@ -2,20 +2,20 @@
 
 Proyecto KiCad en [`hardware/pcb/`](../hardware/pcb/). Todo se genera con scripts a partir del circuito descrito en [`scripts/design.py`](../hardware/pcb/scripts/design.py) y de la geometría compartida [`hardware/geometria.py`](../hardware/geometria.py).
 
-> **Estado (11/11/2026): rutado terminado, DRC limpio. Pendiente de revisión humana antes de pedirla.**
+> **Estado (16/11/2026): rutado terminado, DRC limpio y revisado antes de fabricar. Se corrigió el tronco de VBAT (ver [3.2](#32-corrección-del-16112026-tronco-de-vbat)).**
 > - ERC: **0** infracciones. DRC (`kicad-cli pcb drc --severity-all`): **0 infracciones, 0 avisos y 0 conexiones sin rutar** ([informe](../hardware/pcb/fabricacion/drc_v1.2.rpt)).
-> - 1139 pistas y 180 vías en 2 capas, más planos de GND en las dos caras y 443 mm² de zonas de VBAT en la cara superior.
-> - Nadie ha revisado todavía la placa a ojo en KiCad ni la ha fabricado: el DRC solo comprueba reglas geométricas, no que el circuito vaya a funcionar. Ver la lista del [apartado 4](#4-qué-revisar-antes-de-pedir-la-placa).
-> - Pedirla con **cobre de 2 oz** (ver [apartado 3.1](#31-anchos-de-las-pistas-de-potencia)).
+> - 2 capas, planos de GND en las dos caras, zonas de VBAT en la cara superior y un puente de VBAT en la cara inferior.
+> - No está fabricada ni probada: todo lo de aquí son cálculos. Ver la lista del [apartado 4](#4-qué-revisar-antes-de-pedir-la-placa).
+> - Se puede pedir con **cobre de 1 oz** (ver [3.2](#32-corrección-del-16112026-tronco-de-vbat)).
 
-*English: the board is generated from scripts and fully routed (Freerouting 1.9 + own clean-up scripts). ERC and DRC are clean (0 errors, 0 warnings, 0 unrouted). Not yet reviewed by a person or fabricated; order it with 2 oz copper.*
+*English: the board is generated from scripts and fully routed (Freerouting 1.9 + own clean-up scripts). ERC and DRC are clean (0 errors, 0 warnings, 0 unrouted). VBAT trunk fixed on 16/11/2026; 1 oz copper is enough. Not fabricated or tested.*
 
 ## 1. Datos de la placa
 
 | | |
 |---|---|
 | Tamaño | 74 × 62 mm, esquinas achaflanadas, 8 taladros M2 (NPTH) |
-| Capas | 2, FR4 1,6 mm, cobre 1 oz (2 oz recomendado) |
+| Capas | 2, FR4 1,6 mm, cobre 1 oz |
 | Clases de red | Potencia 0,4 mm / 0,2 mm (VBAT y motores, ensanchadas después hasta 2 mm donde cabe) · Alimentación 0,5 mm / 0,2 mm · Default 0,2 mm / 0,15 mm de holgura |
 | Planos | GND en las dos caras, con zonas sin cobre de 2 mm de radio alrededor de los taladros |
 | Serigrafía | **"HOMBRES DE LAS TABERNAS"** en la cara inferior (1,8 mm) y en la superior (1,0 mm), versión `v1.2`, nombres de los conectores ("ST4RT", "BANCO", "ToF …", "LÍN …", M1–M4) |
@@ -69,14 +69,27 @@ Cómo se llegó aquí: la primera pasada (Freerouting 2.1, pistas de potencia de
 | Tramo | Corriente máx. (diseño) | Cobre | Comentario |
 |---|---|---|---|
 | XT30 → Q1 → F1 (VBAT_RAW, VBAT_REV) | 10,2 A (4 drivers en I_TRIP) | 1,5 mm (VBAT_RAW) · 1,2 mm (VBAT_REV) · 1,0 mm hasta F1.1 | El pin 3 de Q1 (DPAK) es el cuello de botella real |
-| F1 → reparto | 10,2 A | Pistas de 1,5–2,0 mm y zonas de VBAT en la cara superior (443 mm²) | Zona central (Q1/F1/buck), zona de los drivers izquierdos, zona de los derechos y puente por debajo de la fila derecha de la DevKit |
-| Cruce de la fila izquierda de la DevKit hacia U5/U6 | ≤ 4,9 A (2 drivers) | **3 pistas de 0,4 mm en paralelo** (6–9 mm de largo) | Entre dos pines de la tira (paso 2,54 mm) solo cabe 0,44 mm con 0,2 mm de holgura |
+| F1 → reparto | 10,2 A | Zonas de VBAT (cara superior) + puente de VBAT en la cara inferior | Corregido el 16/11/2026: antes pasaba todo por una pista de 0,4 mm (ver 3.2) |
+| Cruce de la fila izquierda de la DevKit hacia U5/U6 | ≤ 4,9 A (2 drivers) | La zona de VBAT pasa entre varios pines de la tira, más pistas de 0,4 mm | Entre dos pines (paso 2,54 mm) solo cabe 0,44 mm; los tramos estrechos miden ≈ 1,5 mm |
 | Entrada a cada driver (pin 11) | ≤ 2,44 A | 0,4 mm, unos 3 mm | Limitado por el pin de 0,4 mm |
 | Salidas de motor (OUTA/OUTB) | ≤ 2,44 A | 1,0 mm casi todo (41 mm), 0,4 mm solo en la salida del pin (15 mm en total) | — |
 
-Capacidad orientativa según IPC-2221 (pista exterior, subida de 20 °C): 0,4 mm ≈ **1,7 A** con 1 oz y ≈ **2,8 A** con 2 oz; 1,0 mm ≈ 3,2 A / 5,4 A; 1,5 mm ≈ 4,4 A / 7,2 A. Son corrientes continuas, y los picos de 2,44 A por motor duran lo que dura un empuje. Las 3 pistas de 0,4 mm del cruce izquierdo dan ≈ 5 A con 1 oz y ≈ 8 A con 2 oz. **Con 1 oz los tramos de 0,4 mm quedan justos, así que se recomienda pedir la placa con 2 oz.** Estos números salen de la fórmula de IPC-2221 (I = 0,048 · ΔT^0,44 · A^0,725, con A en mil²) y no se han medido.
+Capacidad orientativa según IPC-2221 (pista exterior, subida de 20 °C): 0,4 mm ≈ **1,7 A** con 1 oz y ≈ **2,8 A** con 2 oz; 1,0 mm ≈ 3,2 A / 5,4 A; 1,5 mm ≈ 4,4 A / 7,2 A. Son corrientes continuas, y los picos de 2,44 A por motor duran lo que dura un empuje. Las 3 pistas de 0,4 mm del cruce izquierdo dan ≈ 5 A con 1 oz y ≈ 8 A con 2 oz. Desde la corrección del 16/11/2026 ya no hay ningún tramo largo y estrecho por el que pase más de un motor, así que **basta con 1 oz**. Estos números salen de la fórmula de IPC-2221 (I = 0,048 · ΔT^0,44 · A^0,725, con A en mil²) y no se han medido.
 
 Si se rehace la placa (v1.3): colocar Q1 y F1 a la izquierda de la DevKit, junto a U5/U6, para que el tronco de 10 A no tenga que cruzar una fila de pines, o pasar a 4 capas con un plano de VBAT.
+
+### 3.2 Corrección del 16/11/2026: tronco de VBAT
+
+En la revisión antes de fabricar salió un fallo: **toda la corriente de los motores (≈ 9,8 A con los 4 en I_TRIP) pasaba de F1 a los drivers por una sola pista de 0,4 mm × 5,7 mm**, porque la zona de VBAT central no llegaba hasta el pad de F1. Esa pista se habría comportado como un fusible.
+
+Cambios (sin tocar el circuito):
+- La zona de VBAT central sube hasta F1 y llega hasta las filas de pines de la DevKit; la de los drivers izquierdos también llega a la fila, así que el cobre pasa entre los pines libres.
+- R1 (pull-down de la puerta de Q1) se mueve junto a Q1, y DRV_nSLEEP baja a la cara inferior antes de Q1. Así queda libre el paso de VBAT bajo Q1 hacia la izquierda.
+- Puente de VBAT en la cara inferior (zona `VBAT_puente_B`) con 13 vías de 0,4 mm, que une la zona de F1 con la franja de VBAT que va a los drivers derechos.
+- 13 vías de GND en la parte delantera para que el plano GND inferior siga unido.
+- Serigrafía: JP1 se rotula "JP1" (antes "BANCO", que se montaba encima de "ST4RT"), y el texto de la cara inferior se acorta a "Mini-Sumo v1.2 · 2026".
+
+Cálculo de la red VBAT (malla de 0,1 mm sobre el cobre real, 1 oz, 4 × 2,44 A): la caída de F1 a los drivers baja de 108–258 mV a **37–51 mV**, y las pérdidas en el cobre de 1,8 W a **0,4 W**. Lo que queda está en tramos cortos junto a los pines. Es un cálculo, no una medida.
 
 ## 4. Qué revisar antes de pedir la placa
 
@@ -85,11 +98,11 @@ Si se rehace la placa (v1.3): colocar Q1 y F1 a la izquierda de la DevKit, junto
 3. ☐ **Revisión a ojo en KiCad por alguien del equipo**, sobre todo:
    - el bucle de conmutación del buck (C4/C5 – U2 – L1 – C8/C9) y su retorno de GND;
    - las vías del pad térmico de los DRV8874;
-   - los cruces de VBAT de la fila izquierda de la DevKit ([3.1](#31-anchos-de-las-pistas-de-potencia)).
+   - los cruces de VBAT de la fila izquierda de la DevKit ([3.2](#32-corrección-del-16112026-tronco-de-vbat)).
 4. ☐ Comprobar con la DevKit real la separación de las filas (22,86 mm) y la altura con las tiras hembra.
 5. ☐ Comprobar con el ST4RT real el orden de pines antes de hacer el cable (el de J17 no cambia: el cable se adapta).
 6. ☐ Revisar en el visor de JLCPCB la serigrafía, el contorno y los taladros, y el fichero de posiciones si se pide montaje (las coordenadas salen respecto al origen de la hoja de KiCad: fijar el origen auxiliar en la esquina de la placa si el fabricante lo pide).
-7. ☐ Pedirla con **cobre de 2 oz**.
+7. ☐ Pedirla con **cobre de 1 oz**, 74,1 × 62,1 mm, sin montaje.
 
 ## 5. Ficheros de fabricación (`hardware/pcb/fabricacion/`)
 

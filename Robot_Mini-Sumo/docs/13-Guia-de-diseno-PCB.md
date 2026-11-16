@@ -455,12 +455,12 @@ I = 0,048 × ΔT^0,44 × A^0,725, con ΔT = subida de temperatura en °C y A = s
 | Tramo | Corriente de diseño | Cobre usado |
 |---|---|---|
 | XT30 → Q1 → F1 | 10,2 A | 1,5 mm + 1,2 mm + zonas; el pin de Q1 es el cuello de botella real |
-| F1 → reparto | 10,2 A | Pistas de 1,5–2 mm y zonas de VBAT |
-| Cruce de la fila izquierda de la DevKit hacia U5/U6 | ≤ 4,9 A (2 drivers) | **3 pistas de 0,4 mm en paralelo** → ≈ 5 A con 1 oz, ≈ 8 A con 2 oz |
+| F1 → reparto | 10,2 A | Zonas de VBAT en la cara superior + puente en la inferior (corregido el 16/11/2026) |
+| Cruce de la fila izquierda de la DevKit hacia U5/U6 | ≤ 4,9 A (2 drivers) | Zona de VBAT entre los pines libres + pistas de 0,4 mm; tramos estrechos de ≈ 1,5 mm |
 | Entrada a cada driver (pin 11) | ≤ 2,44 A | 0,4 mm, unos 3 mm de largo (no cabe más en un pin de 0,4 mm) |
 | Salidas de motor | ≤ 2,44 A | 1,0 mm casi todo el recorrido; 0,4 mm solo al salir del pin |
 
-**Por eso se pide la placa con cobre de 2 oz:** con 1 oz los tramos de 0,4 mm quedan justos para 2,44 A (aunque esos picos duran lo que dura un empuje, no son continuos).
+**Basta con 1 oz:** desde la corrección del 16/11/2026 no queda ningún tramo largo y estrecho por el que pase más de un motor. Caída calculada de F1 a los drivers: 37–51 mV con 4 × 2,44 A ([05, 3.2](05-PCB.md#32-corrección-del-16112026-tronco-de-vbat)).
 
 ### 6.3 Reglas específicas
 
@@ -495,7 +495,7 @@ Si la rutas a mano, el orden recomendado es: (1) potencia (VBAT, motores, GND de
 | Fabricante | JLCPCB (o similar) | Barato, monta SMD si se pide |
 | Tamaño | 74 × 62 mm | Por debajo de 100 × 100 mm, la tarifa más barata |
 | Capas / grosor | 2 / 1,6 mm | Estándar; 1,6 mm es rígido (la placa es chasis) |
-| Cobre | **2 oz** | Pistas de potencia (ver §6.2) |
+| Cobre | **1 oz** | Suficiente tras la corrección de VBAT (ver §6.2); con 2 oz el fabricante puede exigir 8/8 mil y la placa está a 6/6 |
 | Pista / holgura mínimas | 0,2 / 0,15 mm | Dentro de lo estándar de JLCPCB |
 | Vía mínima | 0,3 mm de taladro | Estándar en 2 capas |
 | Serigrafía | "HOMBRES DE LAS TABERNAS" (1,8 mm abajo, 1,0 mm arriba), `v1.2`, nombres de conectores | Requisito de la asignatura |
@@ -524,7 +524,7 @@ Ficheros listos en [`hardware/pcb/fabricacion/`](../hardware/pcb/fabricacion/) (
 
 | Punto | Riesgo | Qué hacer |
 |---|---|---|
-| Cruce de VBAT por la fila izquierda de la DevKit (3 × 0,4 mm) | Calentamiento con 1 oz en empujes largos | Pedir 2 oz; en la v1.3 mover Q1/F1 a la izquierda |
+| Cruce de VBAT por la fila izquierda de la DevKit (tramos estrechos cortos) | Algo de calentamiento local en empujes largos | En la v1.3 mover Q1/F1 a la izquierda |
 | Pin 5V de la DevKit con la batería baja (4,46 V en el peor caso) | Reinicios del ESP32 con un clon con AMS1117 | Comprar DevKit original y **medir** a 6,6 V con los motores bloqueados |
 | Corriente de bloqueo real del N20 🔶 | I_TRIP mal ajustado | Medir y recalcular R_IPROPI (§4.6) |
 | Pines, niveles y consumo del ST4RT 🟡 | Conexión cruzada o niveles distintos | Medir con el módulo en la mano antes de hacer el cable (J17) |

@@ -2,6 +2,15 @@
 
 Formato: versión del diseño, fecha y qué cambia. Nada de lo indicado está probado en un robot físico.
 
+## v1.2 (corrección) — 16/11/2026
+
+Revisión antes de fabricar. No cambia el circuito, solo la placa.
+- **Tronco de VBAT**: antes, toda la corriente de los motores pasaba de F1 a los drivers por una pista de 0,4 mm. Ahora va por zonas de VBAT ampliadas y un puente en la cara inferior. Caída calculada de 258 mV a 51 mV en el peor driver. Detalle en [docs/05 §3.2](docs/05-PCB.md#32-corrección-del-16112026-tronco-de-vbat).
+- R1 se mueve junto a Q1 y DRV_nSLEEP pasa por la cara inferior para dejar sitio a VBAT.
+- Serigrafía más simple: "JP1" en vez de "BANCO", y "Mini-Sumo v1.2 · 2026" en la cara inferior.
+- Cobre de **1 oz** suficiente (antes se recomendaba 2 oz).
+- Gerber, posiciones e imágenes regenerados. DRC 0 / 0 sin rutar; el esquemático y la placa coinciden pin a pin.
+
 ## v1.2 — 10/11/2026 (diseño, sin fabricar)
 
 Motivo principal: el profesor entrega el módulo de arranque IR **Sobotz ST4RT** (principios de diciembre de 2026) y el reglamento OSHWDem rev. 7 exige arranque **y parada** por IR (art. 5.4). Se revisa también todo lo detectado en la revisión del informe de consumos (PR #3).
@@ -24,7 +33,7 @@ Motivo principal: el profesor entrega el módulo de arranque IR **Sobotz ST4RT**
   - `scripts/autoroute.py` pasa a Freerouting 1.9.0 (con `xvfb-run` si no hay pantalla).
   - Nuevos `scripts/acabado.py` (rutador A* propio para las conexiones que deja Freerouting y cosido de GND) y `scripts/ensanchar.py` (ensancha VBAT hasta 2 mm y motores hasta 1 mm donde lo permite el DRC, y añade las zonas de VBAT).
   - Zonas con holgura 0,2 mm y alivios térmicos de 0,4 mm; la DevKit se une al plano en macizo.
-  - Recomendado cobre de 2 oz: quedan tramos de VBAT de 0,4 mm (entrada a los drivers y cruce de la fila izquierda de la DevKit).
+  - (Corregido el 16/11/2026: el tronco de VBAT tenía una pista de 0,4 mm; ver arriba.)
 - Herramientas: los scripts funcionan con KiCad 9 y 10 (`check.sh` detecta la versión; librería de símbolos en formato 9).
 - `bom.csv` ya no incluye los componentes sin montar (DNP).
 
