@@ -23,6 +23,7 @@ Rampa (cuña) clásica, **tracción 4WD** con 4 N20, una **ESP32-S3-DevKitC-1 en
 | [10 · Fabricación y montaje](docs/10-Montaje-y-fabricacion.md) | PCB, impresión, montaje, cableado, puesta en marcha | ✅ borrador |
 | [11 · Cumplimiento](docs/11-Cumplimiento-normativo.md) | Reglamento, plantilla de inspección, requisitos académicos, preguntas al profesor | ✅ |
 | [12 · Memoria del rediseño](docs/12-Memoria-rediseno-v1.2.md) | Revisión, decisiones y alternativas | ✅ |
+| [13 · Guía de diseño de la PCB](docs/13-Guia-de-diseno-PCB.md) | La placa v1.2 explicada bloque a bloque: por qué cada pieza, cálculos, colocación y rutado | ✅ teórico |
 | [Informe académico](informe/Informe-academico.md) | Borrador de ≤ 6 páginas con marcadores | 🟡 |
 
 Histórico de la v1.1 (octubre de 2026; algunos datos ya no aplican, ver el aviso de cada uno): [00 · Requisitos](docs/00-Requisitos-y-reglamento.md) · [01 · Componentes](docs/01-Seleccion-de-componentes.md) · [02 · Arquitectura eléctrica](docs/02-Arquitectura-electrica.md) · [03 · Mecánica y 3D](docs/03-Disposicion-mecanica.md) · [04 · DevKitC-1](docs/04-ESP32-DevKitC-1.md) · [Consumos y cálculos](docs/Informe-consumos-y-calculos.md) · [Anexo de la ficha entregada](docs/Anexo-calculos-ficha-tecnica.md) · [Informe de progreso 06/10](docs/Informe-progreso-2026-10-06.md).
