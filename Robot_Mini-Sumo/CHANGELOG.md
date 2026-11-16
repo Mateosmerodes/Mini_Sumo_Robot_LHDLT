@@ -2,6 +2,12 @@
 
 Formato: versión del diseño, fecha y qué cambia. Nada de lo indicado está probado en un robot físico.
 
+## v1.2 (simulaciones) — 16/11/2026
+
+Simulación de la placa antes de fabricarla. No cambia ni el circuito ni la placa. Detalle en [docs/14](docs/14-Simulaciones.md).
+- Nueva carpeta `simulacion/`: modelos ngspice (buck, entrada de batería, drivers y motores), cálculo de caída y calor en el cobre y simulación del firmware sobre un dohyo virtual. Todo se repite con `simulacion/ejecutar_todo.sh`.
+- Resultado: la placa pasa; nada impide fabricarla. Dos avisos para el firmware: la lectura de corriente con PWM no sirve para detectar el contacto, y tras la parada del módulo el robot rueda libre en vez de frenar.
+
 ## v1.2 (corrección) — 16/11/2026
 
 Revisión antes de fabricar. No cambia el circuito, solo la placa.

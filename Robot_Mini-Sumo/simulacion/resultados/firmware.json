@@ -1,0 +1,134 @@
+{
+ "arranque_parada": {
+  "t_primer_mov_ms": 1.0,
+  "d_parada_mm": 171.3,
+  "v_max": 0.83
+ },
+ "ruido_start": {
+  "pulsos_1ms_arranques_falsos_de_200": 0,
+  "pulsos_2ms_arranques_falsos_de_200": 200
+ },
+ "reinicio_en_combate": {
+  "sigue_dentro": true
+ },
+ "bordes_dohyo_vacio_60s": [
+  {
+   "mu": 0.6,
+   "vbat": 7.4,
+   "salidas_de_100": 0,
+   "max_quieto_s": 0.0
+  },
+  {
+   "mu": 0.6,
+   "vbat": 8.4,
+   "salidas_de_100": 0,
+   "max_quieto_s": 0.0
+  },
+  {
+   "mu": 0.8,
+   "vbat": 7.4,
+   "salidas_de_100": 0,
+   "max_quieto_s": 0.0
+  },
+  {
+   "mu": 0.8,
+   "vbat": 8.4,
+   "salidas_de_100": 0,
+   "max_quieto_s": 0.0
+  },
+  {
+   "mu": 1.0,
+   "vbat": 7.4,
+   "salidas_de_100": 0,
+   "max_quieto_s": 0.0
+  },
+  {
+   "mu": 1.0,
+   "vbat": 8.4,
+   "salidas_de_100": 0,
+   "max_quieto_s": 0.0
+  }
+ ],
+ "rival": [
+  {
+   "rival": "quieto",
+   "mu": 0.6,
+   "contacto_de_200": 200,
+   "t_contacto_mediana_s": 0.75,
+   "t_contacto_p90_s": 0.94,
+   "salidas_de_200": 0
+  },
+  {
+   "rival": "quieto",
+   "mu": 0.8,
+   "contacto_de_200": 200,
+   "t_contacto_mediana_s": 0.68,
+   "t_contacto_p90_s": 0.84,
+   "salidas_de_200": 0
+  },
+  {
+   "rival": "circulo_0,3m/s",
+   "mu": 0.6,
+   "contacto_de_200": 200,
+   "t_contacto_mediana_s": 0.64,
+   "t_contacto_p90_s": 0.81,
+   "salidas_de_200": 0
+  },
+  {
+   "rival": "circulo_0,3m/s",
+   "mu": 0.8,
+   "contacto_de_200": 200,
+   "t_contacto_mediana_s": 0.57,
+   "t_contacto_p90_s": 0.75,
+   "salidas_de_200": 0
+  },
+  {
+   "rival": "circulo_0,6m/s",
+   "mu": 0.6,
+   "contacto_de_200": 200,
+   "t_contacto_mediana_s": 0.2,
+   "t_contacto_p90_s": 0.35,
+   "salidas_de_200": 0
+  },
+  {
+   "rival": "circulo_0,6m/s",
+   "mu": 0.8,
+   "contacto_de_200": 200,
+   "t_contacto_mediana_s": 0.22,
+   "t_contacto_p90_s": 0.38,
+   "salidas_de_200": 0
+  }
+ ],
+ "esquiva_junto_al_borde": [
+  {
+   "mu": 0.6,
+   "vbat": 7.4,
+   "salidas_de_200": 2
+  },
+  {
+   "mu": 0.6,
+   "vbat": 8.4,
+   "salidas_de_200": 2
+  },
+  {
+   "mu": 0.8,
+   "vbat": 7.4,
+   "salidas_de_200": 0
+  },
+  {
+   "mu": 0.8,
+   "vbat": 8.4,
+   "salidas_de_200": 0
+  },
+  {
+   "mu": 1.0,
+   "vbat": 7.4,
+   "salidas_de_200": 0
+  },
+  {
+   "mu": 1.0,
+   "vbat": 8.4,
+   "salidas_de_200": 0
+  }
+ ]
+}

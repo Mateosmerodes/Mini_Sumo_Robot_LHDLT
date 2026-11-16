@@ -1,0 +1,51 @@
+* modelos.lib — modelos SIMPLIFICADOS para la simulación de la placa v1.2 (no son de fabricante).
+* Las webs de TI / AOS no se pueden abrir desde el entorno de trabajo, así que cada modelo se ha
+* ajustado a mano a los datos de la hoja de datos que se citan en docs/14-Simulaciones.md.
+
+* ---------------------------------------------------------------- Q1: AOD4185 (P-MOSFET, -40 V)
+* Ajuste: R_DS(on) ≈ 14 mΩ con V_GS = -8 V y ≈ 20 mΩ con -4,5 V; V_th ≈ -2 V; C_iss ≈ 2,6 nF;
+* diodo interno (body diode) V_F ≈ 0,75 V a 1 A.
+.model AOD4185 VDMOS(pchan Vto=-2.0 Kp=25 Rd=5m Rs=2m Rg=3 Cgs=2.3n Cgdmax=1.2n Cgdmin=0.15n
++ a=0.6 Cjo=0.7n Is=2e-11 N=1.05 Rb=6m Vds=-40 Ksubthres=0.1)
+
+* ---------------------------------------------------------------- Conmutadores ideales con histéresis
+* SWH: interruptor de potencia del puente del DRV8874 (R_DS(on) de un transistor, en caliente).
+.model SWH sw(vt=0 vh=0.05 ron=0.15 roff=1e6)
+
+* ---------------------------------------------------------------- DRV8874 + motor N20 (modelo de comportamiento)
+* Puente en H con 4 interruptores. Mientras la entrada de su lado está activa, el lado alto conduce
+* hasta que la corriente llega a ITRIP y pasa a freno (los dos lados bajos), con 0,1 A de histéresis.
+* El DRV8874 real usa un tiempo de apagado fijo (t_OFF), así que el rizado real es mayor; la corriente
+* media y la de batería salen parecidas.
+* Motor: R = 3,75 Ω, L = 0,5 mH (supuesto), Ke = 0,107 V·s/rad y Kt efectivo = 0,0613 N·m/A en el eje
+* de la rueda (N20 6 V 500 rpm, 1,6 A de bloqueo: datos estimados, ver docs/08).
+* Mecánica: inercia del rotor reflejada JR + cuarta parte del robot JV, unidas por la adherencia de
+* la rueda (par máximo TTRAC = μ·m·g·r/4). LOCK=1 bloquea el rotor (peor caso: robot empotrado).
+.subckt DRVMOT vm gnd fwd rev params: ITRIP=2.44 RM=3.75 LM=0.5m KE=0.107 KT=0.0613 JR=2.5e-5
++ JV=2.8e-5 TTRAC=0.0146 TF=0.006 LOCK=0
+Bca ca 0 V = V(fwd)>0.5 ? ({ITRIP} - I(Vsen)) : -1
+Bcb cb 0 V = V(rev)>0.5 ? ({ITRIP} + I(Vsen)) : -1
+Bna na 0 V = -V(ca)
+Bnb nb 0 V = -V(cb)
+S1 vm oa ca 0 SWH
+S2 oa gnd na 0 SWH
+S3 vm ob cb 0 SWH
+S4 ob gnd nb 0 SWH
+* diodos internos de los transistores (por si el puente queda abierto)
+D1 oa vm DBODY
+D2 gnd oa DBODY
+D3 ob vm DBODY
+D4 gnd ob DBODY
+Vsen oa m1 0
+Rm m1 m2 {RM}
+Lm m2 m3 {LM}
+Bemf m3 ob V = {KE}*V(wr)
+* mecánica (tensión = velocidad angular en rad/s, corriente = par en N·m)
+Btm 0 wr I = {KT}*I(Vsen)*(1-{LOCK})
+Cjr wr 0 {JR}
+Rlock wr 0 {LOCK>0.5 ? 1e-6 : 1e9}
+Btf wr 0 I = {TF}*tanh(V(wr)/0.5)
+Btr wr wv I = {TTRAC}*tanh((V(wr)-V(wv))/0.3)
+Cjv wv 0 {JV}
+.model DBODY D(Is=1e-9 N=1.2 Rs=20m)
+.ends DRVMOT
