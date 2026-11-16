@@ -1,0 +1,35 @@
+{
+ "vbat_sense": {
+  "tau_ms": 2.481203007518797,
+  "fc_Hz": 64.17538027899006,
+  "rizado_restante_mVpp_en_VBAT": 0.9703357575761018,
+  "retardo_al_63pc_ms": 2.2808065000000006,
+  "V_SENSE_a_8,4V": 2.0842105263157893,
+  "V_SENSE_a_6,4V": 1.5879699248120303,
+  "error_lectura_6.4V_mV_p99": 108.08576431431462,
+  "error_lectura_7.4V_mV_p99": 120.80559998190846,
+  "error_lectura_8.4V_mV_p99": 131.51856279845785
+ },
+ "ipropi": {
+  "0.45": {
+   "I_real_A": 1.5,
+   "lectura_media_A": 0.6770351887534992,
+   "lectura_min_A": 0.19365495384615383,
+   "lectura_max_A": 1.2087184615384616
+  },
+  "0.65": {
+   "I_real_A": 1.5,
+   "lectura_media_A": 0.9752417574056723,
+   "lectura_min_A": 0.4297608,
+   "lectura_max_A": 1.3774581216117214
+  },
+  "1.0": {
+   "I_real_A": 1.5,
+   "lectura_media_A": 1.4985477983219995,
+   "lectura_min_A": 1.4950674725274726,
+   "lectura_max_A": 1.4998203516483515
+  },
+  "I_real_al_disparar_A": 2.66973504,
+  "retraso_us": 13.674704761904763
+ }
+}

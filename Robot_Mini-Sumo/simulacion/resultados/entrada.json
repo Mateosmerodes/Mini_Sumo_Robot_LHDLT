@@ -1,0 +1,119 @@
+{
+ "maniobra": {
+  "I_bat_max_A": 10.75767,
+  "I_bat_min_A": -0.626935128,
+  "VM8_min_V": 7.78574557,
+  "VM8_max_V": 8.44621752,
+  "I_motor_max_arranque_A": 1.9135673,
+  "I_motor_max_inversion_A": 2.48999789,
+  "v_robot_60ms_m_s": 0.3901053765
+ },
+ "enchufe": [
+  {
+   "R_int": "10m",
+   "L_cables": "50n",
+   "VBAT_max_V": 9.05,
+   "I_pico_A": 158.8
+  },
+  {
+   "R_int": "10m",
+   "L_cables": "100n",
+   "VBAT_max_V": 10.14,
+   "I_pico_A": 129.4
+  },
+  {
+   "R_int": "10m",
+   "L_cables": "300n",
+   "VBAT_max_V": 11.76,
+   "I_pico_A": 88.2
+  },
+  {
+   "R_int": "10m",
+   "L_cables": "1u",
+   "VBAT_max_V": 13.19,
+   "I_pico_A": 54.3
+  },
+  {
+   "R_int": "30m",
+   "L_cables": "50n",
+   "VBAT_max_V": 8.38,
+   "I_pico_A": 116.2
+  },
+  {
+   "R_int": "30m",
+   "L_cables": "100n",
+   "VBAT_max_V": 8.38,
+   "I_pico_A": 100.2
+  },
+  {
+   "R_int": "30m",
+   "L_cables": "300n",
+   "VBAT_max_V": 10.04,
+   "I_pico_A": 74.0
+  },
+  {
+   "R_int": "30m",
+   "L_cables": "1u",
+   "VBAT_max_V": 11.89,
+   "I_pico_A": 48.7
+  },
+  {
+   "R_int": "50m",
+   "L_cables": "50n",
+   "VBAT_max_V": 8.37,
+   "I_pico_A": 91.0
+  },
+  {
+   "R_int": "50m",
+   "L_cables": "100n",
+   "VBAT_max_V": 8.37,
+   "I_pico_A": 81.3
+  },
+  {
+   "R_int": "50m",
+   "L_cables": "300n",
+   "VBAT_max_V": 8.9,
+   "I_pico_A": 63.4
+  },
+  {
+   "R_int": "50m",
+   "L_cables": "1u",
+   "VBAT_max_V": 10.85,
+   "I_pico_A": 44.1
+  }
+ ],
+ "bateria_al_reves": {
+  "VBAT_min_V": -0.000741772008,
+  "I_max_mA": 3.0468072500000004e-08
+ },
+ "bloqueo": {
+  "8.4": {
+   "I_bat_media_A": 8.293334139999999,
+   "I_bat_max_A": 8.29333414,
+   "VM8_media_V": 7.936481799999998,
+   "VM8_min_V": 7.9364818,
+   "P_Q1_media_W": 0.9352601072364847,
+   "I_motor_media_A": 1.9623321199999995
+  },
+  "6.6": {
+   "I_bat_media_A": 6.71117631,
+   "I_bat_max_A": 6.71117631,
+   "VM8_media_V": 6.208114499999998,
+   "VM8_min_V": 6.2081145,
+   "P_Q1_media_W": 0.7325164381543506,
+   "I_motor_media_A": 1.5349852499999999
+  }
+ },
+ "crucero": {
+  "0.5": {
+   "rizado_VM8_mVpp": 235.2838799999999,
+   "I_rms_C1_A": 0.21889747512695662,
+   "I_bat_media_A": 2.277303424861178
+  },
+  "0.65": {
+   "rizado_VM8_mVpp": 296.8236399999995,
+   "I_rms_C1_A": 0.2817063790552087,
+   "I_bat_media_A": 3.477781638295985
+  }
+ }
+}

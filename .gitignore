@@ -5,3 +5,6 @@ __pycache__/
 *.kicad_pcb.bak
 Robot_Mini-Sumo/hardware/pcb/fabricacion/gerber/
 fp-info-cache
+
+# simulaciones: mapas intermedios grandes (se regeneran con simulacion/ejecutar_todo.sh)
+Robot_Mini-Sumo/simulacion/resultados/*.npz
