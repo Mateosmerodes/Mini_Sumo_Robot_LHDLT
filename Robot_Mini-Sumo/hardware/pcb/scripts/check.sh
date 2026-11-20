@@ -4,8 +4,8 @@ set -eo pipefail
 cd "$(dirname "$0")"
 OUT=${1:-/tmp/sumo_check}; mkdir -p "$OUT"
 # Configuración de KiCad aislada con las tablas de librerías por defecto (no toca la del usuario)
-export KICAD_CONFIG_HOME="$OUT/kcfg"; rm -rf "$KICAD_CONFIG_HOME"; mkdir -p "$KICAD_CONFIG_HOME/10.0"
-cp /usr/share/kicad/template/sym-lib-table /usr/share/kicad/template/fp-lib-table "$KICAD_CONFIG_HOME/10.0/"
+export KICAD_CONFIG_HOME="$OUT/kcfg"; rm -rf "$KICAD_CONFIG_HOME"; KV=$(kicad-cli version | cut -d. -f1).0; mkdir -p "$KICAD_CONFIG_HOME/$KV"
+cp /usr/share/kicad/template/sym-lib-table /usr/share/kicad/template/fp-lib-table "$KICAD_CONFIG_HOME/$KV/"
 python3 gen_lib.py >/dev/null && python3 gen_pro.py >/dev/null && python3 gen_sch.py && python3 gen_pcb.py 2>&1 | grep -v assert
 cd ..
 kicad-cli sch erc --severity-all -o "$OUT/erc.rpt" robot_sumo.kicad_sch 2>&1 | grep -E "infracc|violation" || true

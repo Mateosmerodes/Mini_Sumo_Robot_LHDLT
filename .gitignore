@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.FCBak
+*-bak
+*.kicad_pcb.bak
+Robot_Mini-Sumo/hardware/pcb/fabricacion/gerber/
+fp-info-cache

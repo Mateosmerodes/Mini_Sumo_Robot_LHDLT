@@ -1,0 +1,380 @@
+{
+ "bat": {
+  "v_nom": 7.4,
+  "v_max": 8.4,
+  "v_min": 6.6,
+  "energia_Wh": {
+   "450": 3.33,
+   "650": 4.81
+  },
+  "i_max_A": {
+   "450": 13.5,
+   "650": 19.5
+  }
+ },
+ "motor": {
+  "r_bobinado": 3.75,
+  "i_stall": {
+   "6.0": 1.6,
+   "7.4": 1.9733,
+   "8.4": 2.24
+  },
+  "p_bloqueo_W": {
+   "6.0": 9.6,
+   "7.4": 14.6027,
+   "8.4": 18.816
+  },
+  "i_stall_crucero_A": 1.68,
+  "p_bloqueo_crucero_W": 10.584,
+  "sobretension": 1.4,
+  "rpm": {
+   "6.0": 500.0,
+   "7.4": 616.6667,
+   "8.4": 700.0
+  }
+ },
+ "driver": {
+  "vref": 1.65,
+  "itrip": 2.4444,
+  "margen_itrip_sobre_stall": 0.0913,
+  "p_conduccion_tipica_W": 1.0035,
+  "p_conduccion_W": 1.7562,
+  "dT_C": [
+   70.2464,
+   87.808
+  ],
+  "tj_C": [
+   95.2464,
+   112.808
+  ],
+  "p_conduccion_itrip_W": 2.0914,
+  "tj_itrip_C": [
+   108.6543,
+   129.5679
+  ],
+  "v_ipropi_por_A": 0.675,
+  "v_ipropi_stall": 1.512,
+  "ipropi_fc_Hz": 10610.3295,
+  "ipropi_atenuacion_pwm_dB": -6.583,
+  "resolucion_corriente_mA": 1.1212
+ },
+ "3v3": {
+  "cargas_A": {
+   "ESP32-S3 (DevKitC-1)": [
+    0.1,
+    0.35
+   ],
+   "6 × VL53L0X": [
+    0.114,
+    0.114
+   ],
+   "4 × QRE1113": [
+    0.084,
+    0.084
+   ],
+   "Módulo ST4RT": [
+    0.002,
+    0.01
+   ],
+   "LED de alimentación": [
+    0.0013,
+    0.0013
+   ],
+   "Pull-ups, divisores, otros": [
+    0.003,
+    0.005
+   ]
+  },
+  "i_qre_A": 0.021,
+  "i_led_A": 0.0013,
+  "total_A": [
+   0.3043,
+   0.5643
+  ],
+  "p_W": [
+   1.0042,
+   1.8622
+  ],
+  "ldo_p_W": [
+   0.4866,
+   0.9024
+  ],
+  "ldo_margen_V_ams1117_tipico": 0.4992,
+  "ldo_margen_V_ams1117": 0.2181
+ },
+ "alim": {
+  "v_buck": 5.2992,
+  "v_buck_rango": [
+   5.1681,
+   5.4303
+  ],
+  "v_5V": [
+   5.2992,
+   5.2992
+  ],
+  "v_pin5V_devkit": [
+   4.7492,
+   4.8992
+  ],
+  "ciclo_trabajo": {
+   "6.6": 0.8029,
+   "7.4": 0.7161,
+   "8.4": 0.6309
+  },
+  "rizado_L_App": {
+   "7.4": 0.786,
+   "8.4": 1.022
+  },
+  "p_bat_electronica_W": [
+   1.7917,
+   3.3226
+  ],
+  "i_bat_electronica_A": [
+   0.2421,
+   0.449
+  ],
+  "div_v_adc": {
+   "6.6": 1.6376,
+   "7.4": 1.8361,
+   "8.4": 2.0842
+  },
+  "div_i_uA": 63.1579,
+  "div_tau_ms": 2.4812,
+  "div_resolucion_mV": 3.0503,
+  "buck_d_max": [
+   0.8724,
+   0.8202
+  ],
+  "buck_vin_bajo_pico_V": 6.11,
+  "buck_d_necesario": {
+   "6.11": 0.8673,
+   "6.6": 0.8029
+  },
+  "buck_v_alcanzable_V": {
+   "6.11": [
+    5.2992,
+    5.0114
+   ],
+   "6.6": [
+    5.2992,
+    5.2992
+   ]
+  },
+  "v_pin5V_devkit_bat_baja_peor_V": 4.4614,
+  "ldo_margen_bat_baja_peor_V": 0.0614,
+  "buck_iq_A": [
+   0.0001,
+   0.0002
+  ]
+ },
+ "potencia": {
+  "p_motores_max_W": 75.264,
+  "p_total_max_W": 78.5866,
+  "p_total_nom_W": 61.7333,
+  "i_bat_pico_A": 9.3555,
+  "C_minimo": {
+   "450": 20.7901,
+   "650": 14.3931
+  },
+  "margen_fusible": 0.6033,
+  "margen_xt30": 0.6033,
+  "p_total_itrip_W": 85.4559,
+  "i_bat_itrip_A": 10.1733,
+  "fusible_util_A": 11.25,
+  "fusible_propuesto_util_A": 11.25,
+  "margen_fusible_itrip": 0.1058,
+  "margen_fusible_propuesto_itrip": 0.1058,
+  "margen_xt30_itrip": 0.4744,
+  "caida_bateria_V": 0.2807,
+  "caida_serie_V": 0.2096,
+  "p_q1_pico_W": 1.3129,
+  "v_motor_real_V": 7.9098
+ },
+ "autonomia": {
+  "escenarios": {
+   "Empujando todo el tiempo": {
+    "i_A": 8.1355,
+    "450 mAh": 2.655,
+    "650 mAh": 3.8351
+   },
+   "Combate típico (40 % empujando)": {
+    "i_A": 4.3595,
+    "450 mAh": 4.9547,
+    "650 mAh": 7.1569
+   },
+   "Solo buscando": {
+    "i_A": 1.8421,
+    "450 mAh": 11.7256,
+    "650 mAh": 16.937
+   }
+  },
+  "sensibilidad_stall": {
+   "0.7": 8.3609,
+   "1.0": 6.8022,
+   "1.6": 4.9547,
+   "2.0": 4.2243
+  },
+  "carga_1C_min": 60
+ },
+ "mecanica": {
+  "f_traccion_N": [
+   3.8848,
+   4.8559
+  ],
+  "f_por_rueda_N": [
+   0.9712,
+   1.214
+  ],
+  "par_por_rueda_Nm": [
+   0.0146,
+   0.0182
+  ],
+  "par_por_rueda_kgcm": [
+   0.1485,
+   0.1856
+  ],
+  "v_m_s": {
+   "6.0": 0.7854,
+   "7.4": 0.9687,
+   "8.4": 1.0996
+  },
+  "t_cruzar_dohyo_s": {
+   "6.0": 0.9804,
+   "7.4": 0.7949,
+   "8.4": 0.7003
+  },
+  "t_borde_ms": {
+   "6.0": 31.831,
+   "7.4": 25.8089,
+   "8.4": 22.7364
+  },
+  "i2c_t_subida_ns": 597.3465,
+  "i2c_i_sumidero_mA": 0.7021,
+  "i2c_r_equivalente_con_modulos_ohm": 1230.3665,
+  "i2c_i_sumidero_con_modulos_mA": 2.6821,
+  "i2c_t_subida_con_modulos_ns": 156.3734,
+  "i2c_r_modulos_solos_ohm": 1666.6667,
+  "i2c_i_sumidero_modulos_solos_mA": 1.98
+ },
+ "st4rt": {
+  "v_alimentacion_V": [
+   3.28,
+   3.2
+  ],
+  "margen_sobre_vmin_V": [
+   0.48,
+   0.4
+  ],
+  "v_gpio_start_alto_V": 3.2673,
+  "vih_min_V": 2.475,
+  "margen_vih_V": 0.7923,
+  "i_pulldown_uA": 33.0,
+  "i_gpio_si_5V_mA": 1.4
+ },
+ "borde": {
+  "distancia_disponible_mm": 50.0,
+  "casos": {
+   "busqueda a 7.4 V": {
+    "v_m_s": 0.4359,
+    "mu_0.8": {
+     "dist_total_mm": 13.413,
+     "margen_mm": 36.587
+    },
+    "mu_0.6": {
+     "dist_total_mm": 17.4481,
+     "margen_mm": 32.5519
+    }
+   },
+   "busqueda a 8.4 V": {
+    "v_m_s": 0.4359,
+    "mu_0.8": {
+     "dist_total_mm": 13.413,
+     "margen_mm": 36.587
+    },
+    "mu_0.6": {
+     "dist_total_mm": 17.4481,
+     "margen_mm": 32.5519
+    }
+   },
+   "crucero a 7.4 V": {
+    "v_m_s": 0.6296,
+    "mu_0.8": {
+     "dist_total_mm": 27.1457,
+     "margen_mm": 22.8543
+    },
+    "mu_0.6": {
+     "dist_total_mm": 35.5646,
+     "margen_mm": 14.4354
+    }
+   },
+   "crucero a 8.4 V": {
+    "v_m_s": 0.6296,
+    "mu_0.8": {
+     "dist_total_mm": 27.1457,
+     "margen_mm": 22.8543
+    },
+    "mu_0.6": {
+     "dist_total_mm": 35.5646,
+     "margen_mm": 14.4354
+    }
+   },
+   "ataque a 7.4 V": {
+    "v_m_s": 0.9687,
+    "mu_0.8": {
+     "dist_total_mm": 62.6854,
+     "margen_mm": -12.6854
+    },
+    "mu_0.6": {
+     "dist_total_mm": 82.6119,
+     "margen_mm": -32.6119
+    }
+   },
+   "ataque a 8.4 V": {
+    "v_m_s": 1.0996,
+    "mu_0.8": {
+     "dist_total_mm": 80.3264,
+     "margen_mm": -30.3264
+    },
+    "mu_0.6": {
+     "dist_total_mm": 106.0023,
+     "margen_mm": -56.0023
+    }
+   }
+  },
+  "v_max_segura_m_s": {
+   "mu_0.8": 0.8859,
+   "mu_0.6": 0.7672
+  }
+ },
+ "geometria": {
+  "rampa_angulo_deg": 34.5923
+ },
+ "masa": {
+  "modelo_3d_g": 405.5,
+  "con_extras_g": [
+   420.5,
+   425.5
+  ],
+  "margen_hasta_500_g": [
+   74.5,
+   79.5
+  ],
+  "envolvente_mm": {
+   "x": [
+    1.0,
+    99.0
+   ],
+   "y_robot": [
+    1.0,
+    99.0
+   ],
+   "z": [
+    0.0,
+    58.6
+   ],
+   "ancho": 98.0,
+   "largo": 98.0,
+   "alto": 58.6
+  }
+ }
+}

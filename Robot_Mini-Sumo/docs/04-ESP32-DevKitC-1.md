@@ -1,5 +1,7 @@
 # 04 · Cerebro: ESP32-S3-DevKitC-1 enchufable (placa base v1.1)
 
+> ⚠️ **Documento de la v1.1 (octubre de 2026).** El diseño actual es la **v1.2**: el receptor VS1838B se sustituye por el módulo **Sobotz ST4RT** (J17, con parada por hardware mediante U3), se elimina D2 y el buck pasa a 5,3 V, el fusible pasa a 15 A, J17 y J12 cambian de sitio y GPIO21 se llama DRV_EN. Ver [CHANGELOG](../CHANGELOG.md), [08 · Cálculos v1.2](08-Calculos-v1.2.md) y [12 · Memoria](12-Memoria-rediseno-v1.2.md).
+
 > Cambio del 19/10/2026. Antes, el robot llevaba solo el módulo **ESP32-S3-WROOM-1 soldado** en nuestra PCB, con su USB-C, botones, LED y LDO alrededor. Ahora lleva la **placa de desarrollo completa** (la ESP32-S3-DevKitC-1, con su propia PCB y sus conectores) **pinchada en tiras hembra** sobre la placa base. La placa base hace las conexiones.
 
 ![Interior: la DevKit sobre la placa base](img/3d_interior.png)
