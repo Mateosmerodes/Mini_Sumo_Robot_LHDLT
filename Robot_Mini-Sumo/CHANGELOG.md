@@ -2,14 +2,14 @@
 
 Historial de versiones del robot. Cómo se numera y cómo se recupera una versión antigua: [docs/VERSIONES.md](docs/VERSIONES.md).
 
-Cada versión tiene su etiqueta de git (`v1.0`, `v1.1`, `v1.2`). Lo que aparece en **Quitado** ya no está en el repositorio, pero se puede recuperar desde la etiqueta indicada.
+Cada versión tiene su etiqueta de git (`v1.0`, `v1.1`, `v1.2`; los comandos para crearlas están en [VERSIONES](docs/VERSIONES.md#etiquetas-iniciales)). Lo que aparece en **Quitado** ya no está en el repositorio, pero se puede recuperar desde la etiqueta indicada.
 
 ---
 
 ## [Sin publicar]
 
 ### Añadido
-- **Sistema de versiones**: este CHANGELOG, [docs/VERSIONES.md](docs/VERSIONES.md), etiquetas de git `v1.0`, `v1.1` y `v1.2`, y `.gitignore` en la raíz.
+- **Sistema de versiones**: este CHANGELOG, [docs/VERSIONES.md](docs/VERSIONES.md), etiquetas de git `v1.0`, `v1.1` y `v1.2` (por crear, ver abajo) y `.gitignore` en la raíz.
 - [Informe de consumos y cálculos](docs/Informe-consumos-y-calculos.md) pieza a pieza, con fuentes oficiales, y su script `hardware/calculos/calculos_electricos.py`.
 - [Revisión de la PCB v1.2](docs/revisiones/2026-11-21_Revision_PCB_v1.2.pdf) (PDF con imágenes).
 - `hardware/pcb/bom.csv` regenerada a partir del esquemático v1.2: 96 piezas en 48 líneas; R68 y R69 van sin montar.
@@ -38,6 +38,7 @@ Cada versión tiene su etiqueta de git (`v1.0`, `v1.1`, `v1.2`). Lo que aparece 
 - Bajar la holgura del netclass a 0,15 mm, que es la del rutado (ahora salen ~240 avisos de DRC).
 - I²C: bus a 100 kHz, o pull-ups de 2,2 kΩ.
 - Pasar ERC y DRC en KiCad 10.
+- Crear las etiquetas `v1.0`, `v1.1` y `v1.2` ([comandos](docs/VERSIONES.md#etiquetas-iniciales)).
 - Regenerar el 3D desde la v1.2 con `hardware/generar_todo.sh`: los STEP/STL y `pcb_componentes.json` son todavía de la colocación v1.1.
 - Unificar la licencia: la ficha entregada dice CERN-OHL-P y el repositorio y la PCB dicen CERN-OHL-S v2.
 

@@ -55,6 +55,20 @@ git show v1.1:Robot_Mini-Sumo/hardware/pcb/robot_sumo.kicad_pcb > /tmp/placa_v1.
 
 También desde GitHub: botón de rama → pestaña **Tags** → elegir la versión.
 
+## Etiquetas iniciales
+
+Las tres versiones que ya existen apuntan a estos commits de `main`. Hay que crearlas **una sola vez**, desde un ordenador con permiso para subir al repositorio:
+
+```bash
+git fetch origin
+git tag -a v1.0 1dc1bc6 -m "v1.0: primera versión (ESP32-S3-WROOM-1 soldado, PCB generada por script)"
+git tag -a v1.1 c3d4341 -m "v1.1: ESP32-S3-DevKitC-1 enchufable"
+git tag -a v1.2 c50a422 -m "v1.2: placa rutada a mano, módulo de arranque y corte de motores por hardware"
+git push origin v1.0 v1.1 v1.2
+```
+
+Hasta que existan, una versión antigua se puede ver con su commit en lugar de la etiqueta (por ejemplo, `git switch --detach c3d4341` para la v1.1).
+
 ## Revisiones de diseño
 
 Cada revisión de una versión se guarda en `docs/revisiones/` con el nombre `AAAA-MM-DD_Revision_PCB_vX.Y.pdf`. Los problemas que encuentra se copian al CHANGELOG, en «Pendiente», hasta que se corrigen.
