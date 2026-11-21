@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+
+# KiCad: copias de seguridad, cachés, bloqueos y preferencias locales
+*-backups/
+*.kicad_prl
+fp-info-cache
+*.lck
+\#auto_saved_files#
+_autosave-*
+
+# FreeCAD: copias de seguridad
+*.FCBak
+
+# Mallas intermedias del renderizador (se regeneran con generar_todo.sh)
+Robot_Mini-Sumo/hardware/mecanica/cad/_render/
+
+# Ficheros temporales de LibreOffice / Word
+~$*
+.~lock.*#

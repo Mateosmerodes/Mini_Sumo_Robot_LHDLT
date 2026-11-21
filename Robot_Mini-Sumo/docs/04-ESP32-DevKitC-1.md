@@ -1,4 +1,6 @@
-# 04 · Cerebro: ESP32-S3-DevKitC-1 enchufable (placa base v1.1)
+# 04 · Cerebro: ESP32-S3-DevKitC-1 enchufable (desde la placa base v1.1)
+
+> Esta arquitectura se introdujo en la **v1.1** y sigue en la versión actual (**v1.2**, rutada a mano). Lo que cambió entre versiones está en el [CHANGELOG](../CHANGELOG.md).
 
 > Cambio del 19/10/2026. Antes, el robot llevaba solo el módulo **ESP32-S3-WROOM-1 soldado** en nuestra PCB, con su USB-C, botones, LED y LDO alrededor. Ahora lleva la **placa de desarrollo completa** (la ESP32-S3-DevKitC-1, con su propia PCB y sus conectores) **pinchada en tiras hembra** sobre la placa base. La placa base hace las conexiones.
 
@@ -115,9 +117,9 @@ constexpr int BTN_USER = 0;    // botón BOOT de la DevKit
 
 | Cara superior | Cara inferior |
 |---|---|
-| ![PCB superior](img/pcb_v1.1_cara_superior.png) | ![PCB inferior](img/pcb_v1.1_cara_inferior.png) |
+| ![PCB superior](img/pcb_v1.2_cara_superior.png) | ![PCB inferior](img/pcb_v1.2_cara_inferior.png) |
 
-En la cara superior, el contorno gris es la DevKit (capa Fab).
+Placa v1.2 rutada. La DevKit va pinchada sobre las dos filas de pines del centro.
 
 - **Quitado** (lo trae la DevKit): módulo WROOM, USB-C + protección USBLC6 + resistencias CC, botones RESET/BOOT y su RC, LED WS2812, LDO AMS1117. De 109 a **96 componentes**.
 - **Añadido:** zócalo de la DevKit (U1), diodo D1 y su condensador C11.
@@ -146,6 +148,5 @@ El XT30 queda 6 mm más hondo que antes respecto al techo; el conector de la bat
 ## Pendiente
 
 - [ ] **Medir la DevKit real** (separación entre filas, largo, posición de los USB) y ajustar `DEVKIT_*` en `geometria.py`.
-- [ ] **Regenerar con KiCad 10** en el ordenador del equipo: `hardware/generar_todo.sh`. El `.kicad_pcb` de este cambio se generó en un entorno con KiCad 7 (el formato es el de KiCad 7; KiCad 10 lo abre sin problema y al regenerar se actualiza). El esquemático sí está en formato KiCad 10. Pasar **ERC y DRC** ahí.
-- [ ] Rutado de la placa siguiendo las zonas de arriba.
-- [ ] Las imágenes `pcb_esquematico.png` y `pcb_render_3d.png` del informe del 06/10 son de la v1.0; rehacerlas desde KiCad 10.
+- [x] Rutado de la placa siguiendo las zonas de arriba (v1.2).
+- [ ] Corregir lo que encontró la [revisión de la v1.2](revisiones/2026-11-21_Revision_PCB_v1.2.pdf) y pasar **ERC y DRC** en KiCad 10 (ver el [CHANGELOG](../CHANGELOG.md), apartado «Sin publicar»).
