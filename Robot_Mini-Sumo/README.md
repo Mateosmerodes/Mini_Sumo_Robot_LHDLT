@@ -4,9 +4,13 @@ Robot mini-sumo autónomo (10 × 10 cm, < 500 g) para **Tecnología Eléctrica**
 
 **Equipo:** Mateo Esmerodes Rodríguez · Paulo Bouza García · Mario Costoya Mera
 
+**Versión actual: v1.2** (placa base rutada, sin fabricar todavía) · historial en el [CHANGELOG](CHANGELOG.md) · cómo se versiona en [VERSIONES](docs/VERSIONES.md)
+
 ## Concepto
 
-Rampa (cuña) clásica, **tracción 4WD** con 4 N20, una **ESP32-S3-DevKitC-1 enchufada** sobre una **PCB propia que es también el chasis**, 6 sensores ToF para encontrar al rival, 4 de línea y arranque por IR (RC5).
+Rampa (cuña) clásica, **tracción 4WD** con 4 N20, una **ESP32-S3-DevKitC-1 enchufada** sobre una **PCB propia que es también el chasis**, 6 sensores ToF para encontrar al rival, 4 de línea y **módulo de arranque IR** con corte de motores por hardware.
+
+![Robot montado](docs/img/3d_montado.png)
 
 ## Documentación
 
@@ -16,31 +20,32 @@ Rampa (cuña) clásica, **tracción 4WD** con 4 N20, una **ESP32-S3-DevKitC-1 en
 | [01 · Selección de componentes](docs/01-Seleccion-de-componentes.md) | Qué pieza y por qué | ✅ borrador |
 | [02 · Arquitectura eléctrica](docs/02-Arquitectura-electrica.md) | Alimentación, interconexión, pinout | ✅ borrador |
 | [03 · Disposición mecánica y 3D](docs/03-Disposicion-mecanica.md) | Piezas, niveles, masas, montaje, impresión | ✅ borrador |
-| [04 · ESP32-S3-DevKitC-1](docs/04-ESP32-DevKitC-1.md) | Cambio a DevKit enchufable: montaje, alimentación, pinout, rutado | ✅ borrador |
-| 05 · Diseño de la PCB | Esquemático ✅, colocación v1.1 ✅, ERC/DRC en KiCad 10 ⏳, rutado ⏳ | 🟡 |
-| 06 · Lista de compra | AliExpress + LCSC/JLC | ⏳ |
-| 07 · Costes | Desglose para el informe | ⏳ |
-| Informe final | 6 páginas | ⏳ |
-| [📝 Ficha técnica](docs/Ficha-tecnica.md) | Respuestas a la ficha de la competición, con los cálculos (consumo, autonomía, corrientes) | ✅ |
-| [📊 Consumos y cálculos](docs/Informe-consumos-y-calculos.md) | Pieza a pieza con fuentes oficiales; cálculos de batería, motores, potencia, autonomía y señales (`hardware/calculos/`) | ✅ |
-| [📋 Informe de progreso 06/10/2026](docs/Informe-progreso-2026-10-06.md) | Resumen para el equipo: proceso, compra, útiles, problemas | ✅ |
+| [04 · ESP32-S3-DevKitC-1](docs/04-ESP32-DevKitC-1.md) | DevKit enchufable: montaje, alimentación, pinout, rutado | ✅ borrador |
+| [Ficha técnica](docs/Ficha-tecnica.md) | Respuestas a la ficha de la competición, con los cálculos | ✅ |
+| [Consumos y cálculos](docs/Informe-consumos-y-calculos.md) | Pieza a pieza con fuentes oficiales; batería, motores, potencia, autonomía | ✅ |
+| [Revisión de la PCB v1.2](docs/revisiones/2026-11-21_Revision_PCB_v1.2.pdf) | Problemas encontrados en la placa rutada y cómo arreglarlos | ✅ |
+| Lista de compra · Costes · Informe final (6 páginas) | | ⏳ |
 
-![Robot montado](docs/img/3d_montado.png)
+Entregas del curso (ficha rellena, croquis y modelo de ficha): [`docs/entregas/`](docs/entregas/).
 
 ## Estructura
 
 ```
-docs/                   Documentación (también es una bóveda de Obsidian)
-hardware/geometria.py   Parámetros mecánicos compartidos (PCB + 3D)
-hardware/generar_todo.sh  Regenera PCB, 3D, STL/STEP e imágenes
-hardware/pcb/           Proyecto KiCad (scripts/design.py = circuito)
-hardware/mecanica/cad/  Modelo 3D paramétrico (FreeCAD) y renderizador
-hardware/mecanica/step/ Exportaciones STEP (Onshape/FreeCAD)
-hardware/mecanica/stl/  Piezas listas para imprimir
-firmware/               Código del ESP32-S3 (Arduino/PlatformIO; pines en docs/04)
-media/fotos/            Fotos del proceso
-informe/                Informe de entrega
+CHANGELOG.md                 Historial de versiones (qué cambió y qué se quitó)
+docs/                        Documentación (también es una bóveda de Obsidian)
+docs/VERSIONES.md            Sistema de versiones del proyecto
+docs/entregas/               Documentos entregados en la asignatura
+docs/revisiones/             Revisiones de diseño (una por versión revisada)
+hardware/pcb/                Proyecto KiCad 10: robot_sumo.kicad_pro / _sch / _pcb, librería propia, BOM
+hardware/geometria.py        Cotas mecánicas compartidas (contorno, taladros, motores, DevKit…)
+hardware/mecanica/cad/       Modelo 3D paramétrico (FreeCAD), renderizador y exportador de cajas de la PCB
+hardware/mecanica/step/      Exportaciones STEP (Onshape/FreeCAD)
+hardware/mecanica/stl/       Piezas listas para imprimir
+hardware/calculos/           Cálculos eléctricos (consumos, autonomía…) y sus resultados
+hardware/generar_todo.sh     Regenera 3D, STL/STEP, imágenes y cálculos a partir de la PCB
 ```
+
+**La PCB se edita a mano en KiCad 10** (`hardware/pcb/robot_sumo.kicad_pro`). El nombre de los ficheros no cambia entre versiones: la versión va en el cajetín de KiCad, en el CHANGELOG y en las etiquetas de git.
 
 ## Herramientas (Linux)
 

@@ -1,10 +1,10 @@
 # Ficha técnica del robot
 
-Respuestas al [`Modelo_ficha_técnica_robot.docx`](../Modelo_ficha_t%C3%A9cnica_robot.docx), con los cálculos que hay detrás de cada número.
+Respuestas al [modelo de ficha de la competición](entregas/Modelo_ficha_tecnica_robot.docx), con los cálculos que hay detrás de cada número. La ficha rellena que se entrega está en [`entregas/Ficha_tecnica_robot.docx`](entregas/Ficha_tecnica_robot.docx).
 
 > 📊 **Informe completo pieza a pieza**, con las fuentes oficiales de cada consumo y todos los cálculos desarrollados: [Informe de consumos y cálculos](Informe-consumos-y-calculos.md). Ahí también están los avisos que han salido de las cuentas (fusible justo, motor bloqueado, margen del LDO).
 
-> Los datos salen del diseño actual (placa base v1.1 con la ESP32-S3-DevKitC-1, modelo 3D de `hardware/mecanica/cad/informe_3d.json`). Lo marcado con **(a medir)** es una estimación hasta que lleguen las piezas: sobre todo la **corriente de bloqueo de los N20**, que en los de AliExpress varía mucho. Cuando la midáis, se rehacen las cuentas de los apartados 3.2 y 3.3 cambiando un solo dato.
+> Los datos salen del diseño actual (placa base v1.2 con la ESP32-S3-DevKitC-1, modelo 3D de `hardware/mecanica/cad/informe_3d.json`). Lo marcado con **(a medir)** es una estimación hasta que lleguen las piezas: sobre todo la **corriente de bloqueo de los N20**, que en los de AliExpress varía mucho. Cuando la midáis, se rehacen las cuentas de los apartados 3.2 y 3.3 cambiando un solo dato.
 
 ## 1. Datos generales
 

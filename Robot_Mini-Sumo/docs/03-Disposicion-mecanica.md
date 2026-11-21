@@ -1,6 +1,6 @@
 # 03 · Disposición mecánica y modelo 3D
 
-> Modelo paramétrico: **todas las cotas salen de [`hardware/geometria.py`](../hardware/geometria.py)**. Si se cambia un parámetro (diámetro de rueda, ángulo de rampa, posición de un eje…), basta con ejecutar `hardware/generar_todo.sh` y se regeneran la PCB, el modelo 3D, los STL/STEP y estas imágenes.
+> Modelo paramétrico: **todas las cotas salen de [`hardware/geometria.py`](../hardware/geometria.py)**. Si se cambia un parámetro (diámetro de rueda, ángulo de rampa, posición de un eje…), basta con ejecutar `hardware/generar_todo.sh` y se regeneran el modelo 3D, los STL/STEP y estas imágenes. **La PCB no se regenera**: desde la v1.2 se edita a mano en KiCad, y si cambia algo que afecta a la mecánica (contorno, taladros, posición de la DevKit) hay que llevarlo a mano también a `geometria.py`.
 
 ![Robot montado](img/3d_montado.png)
 
@@ -138,4 +138,4 @@ Los motores no llevan abrazadera: quedan atrapados entre su alojamiento de la cu
 hardware/generar_todo.sh
 ```
 
-Hace, en orden: esquemático + PCB con ERC/DRC → STEP de la PCB → modelo 3D en FreeCAD (`freecadcmd`) → comprobación de interferencias y masas (`mecanica/cad/informe_3d.json`) → imágenes de `docs/img/`.
+Hace, en orden: cajas de los componentes leídas de la PCB → STEP de la PCB → modelo 3D en FreeCAD (`freecadcmd`) → comprobación de interferencias y masas (`mecanica/cad/informe_3d.json`) → imágenes de `docs/img/`.

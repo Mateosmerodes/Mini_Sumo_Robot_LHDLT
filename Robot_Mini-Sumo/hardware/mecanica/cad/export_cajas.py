@@ -17,17 +17,17 @@ if hasattr(pcbnew, 'SwigPyIterator') and not hasattr(pcbnew.SwigPyIterator, 'nex
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..'))
 import geometria as g               # noqa: E402
-from gen_lib import tramos          # noqa: E402
 
-PCB = os.path.join(HERE, '..', 'robot_sumo.kicad_pcb')
-OUT = os.path.join(HERE, '..', '..', 'mecanica', 'cad', 'pcb_componentes.json')
+PCB = os.path.join(HERE, '..', '..', 'pcb', 'robot_sumo.kicad_pcb')
+OUT = os.path.join(HERE, 'pcb_componentes.json')
 OX, OY = 100.0, 50.0
 
 # (fragmento del nombre de huella, altura en mm)
 ALTURAS = [
     ('XT30UPB', 11.0), ('JST_SH', 4.25),
     ('HTSSOP', 1.1), ('SOT-223', 1.8), ('SOT-23', 1.1), ('TO-252', 2.4), ('D_SMA', 2.3),
-    ('SRN4018', 1.8), ('KMR2', 1.9), ('2512', 0.7), ('1206', 1.2), ('0805', 1.0),
+    ('SRN4018', 1.8), ('NANO2', 2.7), ('2512', 0.7), ('1206', 1.2), ('0805', 1.0), ('0402', 0.35),
+    ('SolderJumper', 0.0), ('TestPoint', 0.0),
     ('0603', 0.6), ('SolderWire', 0.0), ('MountingHole', 0.0),
 ]
 
@@ -44,6 +44,17 @@ def bbox_fab(fp):
         xs, ys = [bb.GetX(), bb.GetRight()], [bb.GetY(), bb.GetBottom()]
     mm = pcbnew.ToMM
     return [mm(min(xs)) - OX, mm(min(ys)) - OY, mm(max(xs)) - OX, mm(max(ys)) - OY]
+
+
+def tramos(pines):
+    """Agrupa números de pin consecutivos: [1, 2, 4, 5, 6] -> [(1, 2), (4, 6)]."""
+    out = []
+    for p in sorted(pines):
+        if out and p == out[-1][1] + 1:
+            out[-1][1] = p
+        else:
+            out.append([p, p])
+    return out
 
 
 def cajas_devkit(fp):
