@@ -1,0 +1,297 @@
+{
+  "aviso": "Cálculo teórico; nada medido.",
+  "datos": {
+    "celda_nom_V": 3.7,
+    "celda_max_V": 4.2,
+    "celda_min_V": 3.3,
+    "bat_C_mAh": 450,
+    "bat_C_alt_mAh": 650,
+    "bat_tasa_C": 30,
+    "bat_R_int_ohm": 0.03,
+    "bat_util": 0.8,
+    "mot_V_nom": 6.0,
+    "mot_I_stall_6V": 1.6,
+    "mot_I_maniobra": 0.4,
+    "mot_rpm_6V": 500,
+    "rueda_D_mm": 30,
+    "tb_VM_min": 2.5,
+    "tb_VM_max_op": 13.5,
+    "tb_VM_abs": 15.0,
+    "tb_I_cont_canal": 1.2,
+    "tb_I_pico_20ms": 2.0,
+    "tb_I_pico_10ms": 3.2,
+    "tb_Vsat_UL_1A_typ": 0.5,
+    "tb_Vsat_UL_1A_max": 0.7,
+    "tb_Pd_W": 0.78,
+    "tb_Tj_max": 150,
+    "tb_TSD": 175,
+    "tb_Icc_mA": 1.1,
+    "tb_reparto": 0.55,
+    "pwm_ataque": 0.85,
+    "pwm_giro": 0.45,
+    "pwm_busqueda": 0.4,
+    "esp_typ_mA": 100,
+    "esp_pico_mA": 200,
+    "vl53_typ_mA": 19,
+    "vl53_pico_mA": 40,
+    "n_vl53": 2,
+    "qre_Vf": 1.2,
+    "qre_R": 100,
+    "n_qre": 2,
+    "st4rt_mA": 5,
+    "otros_mA": 3,
+    "reg_Vout": 5.0,
+    "reg_Vout_tol": 0.15,
+    "reg_dropout_typ": 0.2,
+    "reg_dropout_1A": 0.5,
+    "reg_Iq_mA": 10,
+    "reg_Rth": [
+      50,
+      60
+    ],
+    "reg_Tj_max": 125,
+    "reg_I_max": 1.0,
+    "d1_Vf": [
+      0.3,
+      0.45
+    ],
+    "ldo_devkit_drop": 1.1,
+    "fusible_A": 7.5,
+    "fusible_uso": 0.75,
+    "xt30_A": 15,
+    "pista_VBAT_mm": 1.5,
+    "cobre_um": 35,
+    "masa_sin_lastre_g": 187.7,
+    "masa_con_lastre_acero_g": 232.5,
+    "lastre_plomo_lleno_g": 123.0,
+    "masa_max_g": 500,
+    "planta_mm": [
+      98.0,
+      97.2
+    ],
+    "alto_mm": 42.5,
+    "mu": [
+      0.8,
+      1.0
+    ],
+    "g": 9.81,
+    "ambiente_C": 25
+  },
+  "resultados": {
+    "bateria": {
+      "V_nom": 7.4,
+      "V_max": 8.4,
+      "V_min": 6.6,
+      "energia_Wh": 3.33,
+      "I_max_A": 13.5
+    },
+    "motor": {
+      "R_ohm": 3.75,
+      "bloqueo": {
+        "6.0": {
+          "I_A": 1.6,
+          "P_W": 9.6
+        },
+        "7.4": {
+          "I_A": 1.97,
+          "P_W": 14.6
+        },
+        "8.4": {
+          "I_A": 2.24,
+          "P_W": 18.8
+        }
+      },
+      "bloqueo_8V4_ataque_A": 1.9,
+      "V_ataque_bat_llena": 7.14,
+      "sobretension_bat_llena": 1.4,
+      "pico_inversion_A": 3.81
+    },
+    "velocidad": {
+      "6.0": {
+        "rpm": 500,
+        "v_m_s": 0.79,
+        "t_dohyo_s": 0.98,
+        "t_borde_ms": 32
+      },
+      "7.4": {
+        "rpm": 617,
+        "v_m_s": 0.97,
+        "t_dohyo_s": 0.79,
+        "t_borde_ms": 26
+      },
+      "8.4": {
+        "rpm": 700,
+        "v_m_s": 1.1,
+        "t_dohyo_s": 0.7,
+        "t_borde_ms": 23
+      }
+    },
+    "driver": {
+      "I_cont_motor": 2.4,
+      "I_pico_motor_20ms": 4.0,
+      "I_pico_motor_10ms": 6.4,
+      "Rth_C_W": 160,
+      "casos": {
+        "bloqueo_100": {
+          "I_motor": 2.24,
+          "I_canal": 1.12,
+          "I_canal_desigual": 1.23,
+          "P_typ_W": 1.25,
+          "P_max_W": 1.76,
+          "Tj_typ_C": 226,
+          "Tj_max_C": 306
+        },
+        "bloqueo_ataque": {
+          "I_motor": 1.9,
+          "I_canal": 0.95,
+          "I_canal_desigual": 1.05,
+          "P_typ_W": 0.91,
+          "P_max_W": 1.27,
+          "Tj_typ_C": 170,
+          "Tj_max_C": 228
+        },
+        "maniobra": {
+          "I_motor": 0.4,
+          "I_canal": 0.2,
+          "I_canal_desigual": 0.22,
+          "P_typ_W": 0.04,
+          "P_max_W": 0.06,
+          "Tj_typ_C": 31,
+          "Tj_max_C": 34
+        }
+      },
+      "I_motor_Tj125_A": 1.58,
+      "pwm_Tj125": 0.71,
+      "margen_inversion_canal_A": 1.91
+    },
+    "electronica": {
+      "cargas_mA": {
+        "ESP32-S3 DevKitC-1": [
+          100,
+          200
+        ],
+        "2 x VL53L0X": [
+          38,
+          80
+        ],
+        "2 x QRE1113": [
+          42.0,
+          42.0
+        ],
+        "Lógica de los 2 TB6612FNG": [
+          2.2,
+          2.2
+        ],
+        "ST4RT": [
+          5,
+          5
+        ],
+        "Otros": [
+          3,
+          3
+        ]
+      },
+      "qre_mA": 21.0,
+      "I_3V3_typ_mA": 190.2,
+      "I_3V3_pico_mA": 332.2,
+      "I_bat_typ_A": 0.2,
+      "I_bat_pico_A": 0.342,
+      "P_bat_typ_W": 1.48,
+      "P_bat_pico_W": 2.87,
+      "regulador": {
+        "typ_7V4": {
+          "P_W": 0.53,
+          "Tj_C": [
+            52,
+            57
+          ]
+        },
+        "typ_8V4": {
+          "P_W": 0.73,
+          "Tj_C": [
+            62,
+            69
+          ]
+        },
+        "pico_8V4": {
+          "P_W": 1.21,
+          "Tj_C": [
+            86,
+            98
+          ]
+        },
+        "V_bat_min_regula": 5.2,
+        "V_devkit": [
+          4.4,
+          4.85
+        ],
+        "margen_ldo_devkit_peor_V": -0.0
+      }
+    },
+    "potencia": {
+      "I_bat_pico_A": 4.82,
+      "I_bat_pico_ataque_A": 4.15,
+      "P_max_W": 40.5,
+      "P_nom_W": 31.7,
+      "P_motores_W": 37.6,
+      "C_necesario": 10.7,
+      "caida_V": 0.18,
+      "V_bat_baja_en_pico": 6.42
+    },
+    "fusible": {
+      "util_A": 5.62,
+      "uso_pico_pct": 64,
+      "margen_util_pct": 17,
+      "I_stall_motor_limite_A": 2.64,
+      "pico_inversion_total_A": 7.96,
+      "bateria_A": 13.5,
+      "xt30_A": 15
+    },
+    "pista": {
+      "A_mil2": 81.4,
+      "I_dT10_A": 3.21,
+      "dT_tronco_pico_C": 25.2,
+      "dT_motor_C": 4.4
+    },
+    "autonomia": {
+      "C_util_Ah": 0.36,
+      "I_empuje_A": 3.35,
+      "I_maniobra_A": 0.8,
+      "escenarios": {
+        "100": {
+          "I_A": 3.55,
+          "min_450": 6.1,
+          "min_650": 8.8
+        },
+        "40": {
+          "I_A": 2.02,
+          "min_450": 10.7,
+          "min_650": 15.4
+        },
+        "0": {
+          "I_A": 1.0,
+          "min_450": 21.6,
+          "min_650": 31.2
+        }
+      },
+      "sensibilidad_stall_6V": {
+        "0.7": 17.0,
+        "1.0": 14.2,
+        "1.6": 10.7,
+        "2.0": 9.2
+      }
+    },
+    "mecanica": {
+      "masa_g": 232.5,
+      "masa_sin_lastre_g": 187.7,
+      "masa_plomo_g": 310.7,
+      "margen_g": 267.5,
+      "F_N": [
+        1.82,
+        2.28
+      ],
+      "par_rueda_Nm": 0.0171,
+      "par_rueda_kgcm": 0.17
+    }
+  }
+}

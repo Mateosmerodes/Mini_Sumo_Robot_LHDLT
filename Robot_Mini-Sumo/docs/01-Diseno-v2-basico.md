@@ -125,5 +125,6 @@ Subir `hardware/pcb/fabricacion/gerber_LHDT_v2.zip` al fabricante con: 2 capas, 
 - Medir la corriente de bloqueo real de los N20 (con fuente de laboratorio y la rueda sujeta) y comprobar que no pasa de 2,4 A a 8,4 V. Si pasa, bajar `POT_ATAQUE` en el firmware.
 - Confirmar el patillaje y los niveles del ST4RT cuando llegue (diciembre), y si K baja a 0 en la parada.
 - Comprobar el formato del módulo TB6612FNG comprado antes de pedir la placa.
+- Ficha técnica y anexo de cálculos: [`entrega/ficha-tecnica/`](../entrega/ficha-tecnica/README.md).
 - Base mecánica propia del equipo (requisito académico): **diseñada** en [`hardware/chasis/`](../hardware/chasis/README.md) (script de Fusion 360, STEP y STL). Falta medir las piezas marcadas con 🔶, imprimirla y probarla.
 - Compilar el firmware en el IDE de Arduino (aquí solo se ha comprobado la sintaxis con g++, sin las librerías reales).
