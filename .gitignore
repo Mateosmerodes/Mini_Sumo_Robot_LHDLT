@@ -8,3 +8,4 @@ fp-info-cache
 
 # simulaciones: mapas intermedios grandes (se regeneran con simulacion/ejecutar_todo.sh)
 archivo/v1-4motores/simulacion/resultados/*.npz
+Robot_Mini-Sumo/hardware/pcb/fabricacion/gerber/
