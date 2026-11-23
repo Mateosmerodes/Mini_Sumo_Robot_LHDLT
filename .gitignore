@@ -3,8 +3,8 @@ __pycache__/
 *.FCBak
 *-bak
 *.kicad_pcb.bak
-Robot_Mini-Sumo/hardware/pcb/fabricacion/gerber/
+archivo/v1-4motores/hardware/pcb/fabricacion/gerber/
 fp-info-cache
 
 # simulaciones: mapas intermedios grandes (se regeneran con simulacion/ejecutar_todo.sh)
-Robot_Mini-Sumo/simulacion/resultados/*.npz
+archivo/v1-4motores/simulacion/resultados/*.npz
