@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>html,body{margin:0;background:#fff}canvas{display:block}</style>
+<script type="importmap">
+{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}
+</script>
+</head>
+<body>
+<script type="module">
+// Pinta las mallas de ../_render (las genera construir_cadquery.py). Coordenadas: mm, frente +Y, Z arriba.
+import * as THREE from 'three';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+
+const W = 1400, H = 1050;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(W, H);
+renderer.setClearColor(0xffffff);
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 1.6));
+const sol = new THREE.DirectionalLight(0xffffff, 1.6);
+sol.position.set(120, 160, 300);
+scene.add(sol);
+const sol2 = new THREE.DirectionalLight(0xffffff, 0.6);
+sol2.position.set(-200, -120, -80);
+scene.add(sol2);
+
+const objetos = {};
+const base = '../_render/';
+const man = await (await fetch(base + 'manifest.json')).json();
+const loader = new STLLoader();
+for (const m of man) {
+  const geo = loader.parse(await (await fetch(base + m.nombre + '.stl')).arrayBuffer());
+  geo.computeVertexNormals();
+  const col = new THREE.Color(...m.color);
+  const mat = new THREE.MeshStandardMaterial({ color: col, roughness: 0.65, metalness: m.nombre.includes('cuchilla') ? 0.5 : 0.05,
+                                               polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+  const mesh = new THREE.Mesh(geo, mat);
+  const ed = new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), new THREE.LineBasicMaterial({ color: 0x222222 }));
+  const grp = new THREE.Group();
+  grp.add(mesh); grp.add(ed);
+  scene.add(grp);
+  objetos[m.nombre] = grp;
+}
+
+window.vista = ({ cam, objetivo = [0, 0, 18], ocultar = [], solo = null, desplaz = {}, orto = false, zoom = 1, up = [0, 0, 1] }) => {
+  for (const [n, o] of Object.entries(objetos)) {
+    o.visible = !(ocultar.includes(n) || (solo && !solo.includes(n)));
+    const d = desplaz[n] || [0, 0, 0];
+    o.position.set(...d);
+  }
+  let camera;
+  if (orto) {
+    const s = 62 / zoom;
+    camera = new THREE.OrthographicCamera(-s * W / H, s * W / H, s, -s, 1, 2000);
+  } else {
+    camera = new THREE.PerspectiveCamera(17 / zoom, W / H, 1, 3000);
+  }
+  camera.up.set(...up);
+  camera.position.set(...cam);
+  camera.lookAt(...objetivo);
+  renderer.render(scene, camera);
+  return true;
+};
+window.listo = true;
+</script>
+</body>
+</html>

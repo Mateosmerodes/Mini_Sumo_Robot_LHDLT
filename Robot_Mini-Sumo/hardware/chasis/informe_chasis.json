@@ -1,0 +1,153 @@
+{
+  "aviso": "Comprobación teórica del modelo 3D. Nada de esto está montado ni probado.",
+  "envolvente_mm": {
+    "x": [
+      1.0,
+      99.0
+    ],
+    "y": [
+      0.78,
+      98.0
+    ],
+    "z": [
+      0.0,
+      42.5
+    ]
+  },
+  "planta_mm": [
+    98.0,
+    97.22
+  ],
+  "cabe_en_10x10": true,
+  "pcb_patillas": 137,
+  "choques_mm3": {
+    "chasis/motor_izq": 0.0,
+    "chasis/motor_der": 0.0,
+    "chasis/rueda_izq": 0.0,
+    "chasis/rueda_der": 0.0,
+    "chasis/bateria": 0.0,
+    "chasis/devkit_esp32": 0.0,
+    "chasis/vl53l0x_1": 0.0,
+    "chasis/vl53l0x_2": 0.0,
+    "chasis/qre1113_1": 0.0,
+    "chasis/qre1113_2": 0.0,
+    "abrazadera_izq/motor_izq": 0.0,
+    "abrazadera_izq/patillas_pcb": 0.0,
+    "abrazadera_izq/chasis": 0.0,
+    "abrazadera_der/motor_der": 0.0,
+    "abrazadera_der/patillas_pcb": 0.0,
+    "abrazadera_der/chasis": 0.0,
+    "chasis/patillas_pcb": 0.0,
+    "vl53l0x_1/patillas_pcb": 0.0,
+    "vl53l0x_2/patillas_pcb": 0.0,
+    "bateria/patillas_pcb": 0.0,
+    "recorrido_bateria/rueda_izq": 0.0,
+    "recorrido_bateria/rueda_der": 0.0,
+    "cuchilla/chasis": 0.0,
+    "rueda_izq/pcb": 0.0,
+    "rueda_der/pcb": 0.0
+  },
+  "choques_ok": true,
+  "holguras_mm": {
+    "rueda_interior_a_chasis_x": 1.5,
+    "rueda_interior_a_pcb_x": 2.5,
+    "bajo_chasis_al_suelo": 1.5,
+    "bateria_a_patillas_pcb_z": 5.0,
+    "bateria_holgura_y": 2.5,
+    "bateria_max_alto": 18.5
+  },
+  "vl53l0x_margen_sobre_rampa_mm": 1.29,
+  "rampa": {
+    "angulo_grados": 34.0,
+    "alto_mm": 15.51,
+    "filo_y_mm": 1.0
+  },
+  "masas_piezas": {
+    "chasis": {
+      "volumen_cm3": 53.0,
+      "maciza_g": 67.3,
+      "impresa_estimada_g": 40.4
+    },
+    "abrazadera_motor_izq": {
+      "volumen_cm3": 0.47,
+      "maciza_g": 0.6,
+      "impresa_estimada_g": 0.4
+    },
+    "abrazadera_motor_der": {
+      "volumen_cm3": 0.47,
+      "maciza_g": 0.6,
+      "impresa_estimada_g": 0.4
+    },
+    "cuchilla_acero": {
+      "volumen_cm3": 0.567,
+      "acero_g": 4.5
+    }
+  },
+  "lastre": {
+    "volumen_huecos_cm3": 10.88,
+    "acero_g": 85.0,
+    "plomo_g": 123.0,
+    "nota": "Si se llena con perdigones/pletina, cuenta ~60-90 % de esto."
+  },
+  "centro_masas": {
+    "componentes": [
+      {
+        "que": "chasis (impreso, estimada)",
+        "g": 40.4,
+        "y": 55.4
+      },
+      {
+        "que": "abrazaderas",
+        "g": 0.8,
+        "y": 81.0
+      },
+      {
+        "que": "cuchilla",
+        "g": 4.5,
+        "y": 7.0
+      },
+      {
+        "que": "motores N20 (2 × 10 g 🔶)",
+        "g": 20,
+        "y": 81.0
+      },
+      {
+        "que": "ruedas (2 × 8 g 🔶)",
+        "g": 16,
+        "y": 81.0
+      },
+      {
+        "que": "bateria 2S 450 mAh (30 g 🔶)",
+        "g": 30,
+        "y": 49.0
+      },
+      {
+        "que": "PCB montada con DevKit y drivers (55 g 🔶)",
+        "g": 55,
+        "y": 58.0
+      },
+      {
+        "que": "sensores y cables (15 g 🔶)",
+        "g": 15,
+        "y": 35.0
+      },
+      {
+        "que": "tornillos (6 g 🔶)",
+        "g": 6,
+        "y": 70.0
+      }
+    ],
+    "sin_lastre": {
+      "masa_g": 187.7,
+      "y_mm": 57.8,
+      "peso_en_ruedas": 0.711
+    },
+    "con_lastre_central_acero": {
+      "lastre_g": 44.8,
+      "masa_g": 232.5,
+      "y_mm": 62.5,
+      "peso_en_ruedas": 0.769
+    },
+    "nota": "Apoyos: filo de la cuña (y=1) y eje de las ruedas (y=81). Si el centro de masas pasa por detrás del eje, el robot se echa hacia atrás y la cuña se levanta."
+  }
+}

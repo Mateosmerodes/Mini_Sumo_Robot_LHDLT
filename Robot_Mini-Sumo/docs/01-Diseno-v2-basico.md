@@ -59,7 +59,7 @@ La misma tabla está en [`firmware/sumo_lhdt_v2/pines.h`](../firmware/sumo_lhdt_
 - **Nombre del equipo**: "LHDT · LOS HOMBRES DE LAS TABERNAS" delante (borde trasero y bajo la ESP32) y en grande en la cara inferior.
 - Bajo la antena de la ESP32 no hay plano de cobre (para no tapar el WiFi/Bluetooth, aunque no se use en combate).
 - Debajo de la ESP32 van solo componentes bajos (resistencias, C3 y D1): hay que **soldarlos antes de pinchar la DevKit**.
-- 4 taladros M3 para fijarla a la base mecánica del equipo.
+- 4 taladros M3 para fijarla a la base mecánica del equipo ([`hardware/chasis/`](../hardware/chasis/README.md)).
 
 ![Cara inferior](img/pcb_v2_cara_inferior.png)
 
@@ -125,5 +125,5 @@ Subir `hardware/pcb/fabricacion/gerber_LHDT_v2.zip` al fabricante con: 2 capas, 
 - Medir la corriente de bloqueo real de los N20 (con fuente de laboratorio y la rueda sujeta) y comprobar que no pasa de 2,4 A a 8,4 V. Si pasa, bajar `POT_ATAQUE` en el firmware.
 - Confirmar el patillaje y los niveles del ST4RT cuando llegue (diciembre), y si K baja a 0 en la parada.
 - Comprobar el formato del módulo TB6612FNG comprado antes de pedir la placa.
-- Base mecánica propia del equipo (requisito académico): falta diseñarla. La placa tiene 4 taladros M3 (en (4,5; 11), (71,5; 11), (21; 76) y (71,5; 76) mm desde la esquina delantera izquierda).
+- Base mecánica propia del equipo (requisito académico): **diseñada** en [`hardware/chasis/`](../hardware/chasis/README.md) (script de Fusion 360, STEP y STL). Falta medir las piezas marcadas con 🔶, imprimirla y probarla.
 - Compilar el firmware en el IDE de Arduino (aquí solo se ha comprobado la sintaxis con g++, sin las librerías reales).

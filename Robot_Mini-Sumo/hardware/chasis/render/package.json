@@ -1,0 +1,9 @@
+{
+  "name": "chasis-lhdt-render",
+  "private": true,
+  "description": "Imágenes del chasis (three.js en Chromium con Playwright)",
+  "type": "module",
+  "dependencies": {
+    "three": "0.160.0"
+  }
+}
