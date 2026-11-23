@@ -15,6 +15,7 @@ Nada está montado ni probado todavía.
 | Diseño completo: piezas, pines, placa, cálculos, montaje y compra | [docs/01-Diseno-v2-basico.md](docs/01-Diseno-v2-basico.md) |
 | Proyecto KiCad (esquemático y PCB) | [hardware/pcb/](hardware/pcb/) |
 | Ficheros para pedir la placa (Gerber, BOM, esquema en PDF) | [hardware/pcb/fabricacion/](hardware/pcb/fabricacion/) |
+| Chasis (script de Fusion 360, STEP, STL e imágenes) | [hardware/chasis/](hardware/chasis/README.md) |
 | Firmware (Arduino) | [firmware/sumo_lhdt_v2/](firmware/sumo_lhdt_v2/) |
 | Cambios | [CHANGELOG.md](CHANGELOG.md) |
 

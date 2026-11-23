@@ -1,0 +1,10 @@
+{
+	"autodeskProduct":	"Fusion360",
+	"type":	"script",
+	"author":	"LHDT - Los Hombres de las Tabernas",
+	"description":	{
+		"":	"Construye el chasis del robot mini-sumo LHDT v2 (base, abrazaderas, cuchilla y piezas de referencia)"
+	},
+	"supportedOS":	"windows|mac",
+	"editEnabled":	true
+}

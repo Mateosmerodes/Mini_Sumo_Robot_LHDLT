@@ -2,6 +2,11 @@
 
 Nada de lo indicado está probado en un robot físico.
 
+## v2.1 chasis — 23/11/2026
+
+- Base mecánica del equipo en `hardware/chasis/`: chasis impreso de una pieza (cuña de 34° con cuchilla de acero opcional, túnel lateral para la batería, alojamientos de los 2 N20 con abrazadera, soportes de los 2 VL53L0X, huecos de los 2 QRE1113 en la rampa, 4 columnas M3 para la PCB, huecos de lastre y "LHDT" grabado debajo).
+- Script paramétrico para **Fusion 360** + STEP/STL + comprobaciones (envolvente 98 × 97,2 mm, 0 choques con las piezas y las patillas de la PCB) e imágenes. Sin imprimir ni probar; el script de Fusion solo se ha probado con una API simulada.
+
 ## v2.0 básico — 23/11/2026
 
 Cambio de rumbo: se simplifica el robot al mínimo que cumple.
