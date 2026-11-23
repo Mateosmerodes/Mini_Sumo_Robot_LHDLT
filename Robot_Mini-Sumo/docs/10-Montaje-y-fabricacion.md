@@ -27,7 +27,7 @@ Orden recomendado: de lo más bajo a lo más alto, y la potencia primero para po
 
 1. ☐ Bloque de potencia: Q1 (AOD4185), F1 (fusible 15 A), condensadores de entrada, J1 (XT30).
 2. ☐ Buck: U2 (TPS563201), L1, R5–R8, C4–C9. **Probar** (paso 3.1) antes de seguir.
-3. ☐ Drivers U4–U7 (DRV8874, HTSSOP con pad térmico: estaño en el pad y aire caliente) y sus pasivos. Los condensadores de la bomba de carga (C21/C22, C31/C32, C41/C42, C51/C52) son **0402**: pinzas finas y lupa.
+3. ☐ Drivers U5–U8 (DRV8874PWPR, chip suelto HTSSOP-16 con pad térmico debajo: pasta de soldar en el pad y en los pines y aire caliente o placa calefactora; con el soldador solo no se suelda el pad) y sus pasivos. Los condensadores de la bomba de carga (C21/C22, C31/C32, C41/C42, C51/C52) son **0402**: pinzas finas y lupa.
 4. ☐ U3 (74LVC1G08) y C15; bloque ST4RT (R62–R67, C62). **R68 y R69 no se montan** salvo que S/K sean de drenador abierto.
 5. ☐ Conectores JST-SH J7–J19 y tiras hembra de la DevKit (8,5 mm). Comprobar con la DevKit pinchada que entra recta (filas a 22,86 mm).
 6. ☐ Inspección con lupa: puentes en los HTSSOP y en U3; continuidad VBAT–GND **no** debe haber.
