@@ -2,6 +2,12 @@
 
 Nada de lo indicado está probado en un robot físico.
 
+## 2026-11-23 · Ficha técnica v2
+
+- Ficha técnica del robot v2 (plantilla del curso rellenada) y anexo de cálculos en `entrega/ficha-tecnica/`.
+- Script `hardware/calculos/calculos_v2.py`: corrientes de motores y drivers, bloqueo, potencia máxima (40,5 W), fusible de 7,5 A, regulador LM2940, autonomía (≈ 11 min) y masa (≈ 233 g).
+- Aviso: empujando bloqueado al 85 % de PWM más de unos segundos, el TB6612FNG puede llegar a su corte térmico; se recomienda bajar a ~70 % tras 2 s si la corriente de bloqueo medida se acerca a la estimada.
+
 ## v2.1 chasis — 23/11/2026
 
 - Base mecánica del equipo en `hardware/chasis/`: chasis impreso de una pieza (cuña de 34° con cuchilla de acero opcional, túnel lateral para la batería, alojamientos de los 2 N20 con abrazadera, soportes de los 2 VL53L0X, huecos de los 2 QRE1113 en la rampa, 4 columnas M3 para la PCB, huecos de lastre y "LHDT" grabado debajo).
