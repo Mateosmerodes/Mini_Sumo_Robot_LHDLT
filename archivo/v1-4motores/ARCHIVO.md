@@ -14,6 +14,12 @@ Es una sola versión que junta todo lo que había repartido en ramas y PR:
 | PR #8 | Simulaciones de la placa v1.2 | `simulacion/`, `docs/14` |
 | PR #3 (última versión) | Limpieza del repo y sistema de versiones sobre la placa `robot_sumo1` | `variante-PR3/` (solo los ficheros que difieren; misma estructura de carpetas) |
 
-Además, la etiqueta de git **`v1-archivo`** apunta al commit con este estado, por si se quiere volver a él entero.
+Además, el estado completo antes de mover nada está en el commit `7e4c077` (y la última versión del PR #3 en `553044e`). Para marcarlos con etiquetas de git (desde aquí no se pudieron subir), en un ordenador con el repo:
+
+```bash
+git tag -a v1-archivo 7e4c077 -m "Diseño v1 completo antes de simplificar"
+git tag -a v1-archivo-pr3 553044e -m "Última versión del PR #3"
+git push origin v1-archivo v1-archivo-pr3
+```
 
 Nota: las rutas internas de los documentos de esta carpeta (por ejemplo `hardware/pcb/...`) son relativas a esta carpeta. Los scripts se escribieron para ejecutarse desde la antigua carpeta `Robot_Mini-Sumo/`; si se quieren volver a usar, copiar la carpeta a ese nombre.

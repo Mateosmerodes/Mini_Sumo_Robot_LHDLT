@@ -22,7 +22,7 @@ Nada está montado ni probado todavía.
 
 ## Diseño anterior
 
-Todo el trabajo anterior (v1: 4 motores, placa SMD, simulaciones, ficha técnica entregada…) está guardado tal cual en [`../archivo/v1-4motores/`](../archivo/v1-4motores/ARCHIVO.md) y en la etiqueta de git `v1-archivo`.
+Todo el trabajo anterior (v1: 4 motores, placa SMD, simulaciones, ficha técnica entregada…) está guardado tal cual en [`../archivo/v1-4motores/`](../archivo/v1-4motores/ARCHIVO.md) (el commit `7e4c077` tiene el estado completo antes de moverlo).
 
 ## Regenerar la placa (Linux, KiCad 7 o superior)
 
