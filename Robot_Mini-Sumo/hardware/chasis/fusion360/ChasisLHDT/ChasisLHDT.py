@@ -141,7 +141,7 @@ def run(context):
         design = adsk.fusion.Design.cast(app.activeProduct)
         design.designType = adsk.fusion.DesignTypes.ParametricDesignType
         raiz = design.rootComponent
-        raiz.name = 'Robot mini-sumo LHDT v2 - chasis'
+        # (El nombre del componente raíz no se puede cambiar: lo pone Fusion al guardar el documento.)
         k = Constructor(g)
         avisos = []
 

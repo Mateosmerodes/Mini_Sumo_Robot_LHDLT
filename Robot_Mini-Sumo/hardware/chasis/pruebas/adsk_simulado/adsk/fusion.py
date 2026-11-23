@@ -137,10 +137,18 @@ class _Occurrences:
         return o
 
 
+class _RootComponent(Component):
+    """Como en Fusion: el nombre del componente raíz no se puede cambiar."""
+    def __setattr__(self, a, v):
+        if a == 'name' and 'name' in self.__dict__:
+            raise RuntimeError('3 : root component name cannot be changed')
+        object.__setattr__(self, a, v)
+
+
 class Design:
     def __init__(self):
         self.designType = DesignTypes.DirectDesignType
-        self.rootComponent = Component()
+        self.rootComponent = _RootComponent()
 
     @staticmethod
     def cast(x):
