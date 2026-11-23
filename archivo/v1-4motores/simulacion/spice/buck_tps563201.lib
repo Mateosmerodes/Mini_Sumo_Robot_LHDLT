@@ -1,0 +1,50 @@
+* buck_tps563201.lib — modelo SIMPLIFICADO de comportamiento del TPS563201 (no es el modelo de TI).
+* Control D-CAP2 de tiempo de encendido constante, ajustado a los datos de la hoja SLVSD90B que
+* recoge docs/08: V_FB = 0,768 V; f ≈ 580 kHz; t_OFF(min) = 310 ns (peor caso; 220 ns típico);
+* R_DS(on) 140 mΩ (alto) / 84 mΩ (bajo); arranque suave de 1 ms; modo Eco (diodo emulado a poca carga).
+* Supuestos (🔶): umbral de EN 1,2 V; UVLO de VIN 4,0 V; límite de corriente de valle 3,8 A;
+* inyección de rizado interna de ~15 mV en FB.
+* Pines: vin sw fb en gnd
+.subckt TPS563201 vin sw fb en gnd params: TOFFMIN=310n FSW=580k
+* --- habilitación y arranque suave (rampa de VREF de 0 a 0,768 V en 1 ms)
+Benok enok 0 V = (V(en,gnd)>1.2 && V(vin,gnd)>4.0) ? 1 : 0
+Bss 0 ss I = V(enok)>0.5 ? (V(ss)<0.768 ? 0.768e-6/1e-3 : 0) : -V(ss)*1e-3
+Css ss 0 1u
+Rss ss 0 1e9
+* --- inyección de rizado (imita la red interna del D-CAP2)
+Binj inj0 0 V = V(sw,gnd) - V(fb,gnd)*6.9
+Rinj inj0 inj 227k
+Cinj inj 0 1n
+Rinl inj injl 50k
+Cinl injl 0 1n
+Bcmp cmp 0 V = (V(fb,gnd) + 0.15*(V(inj)-V(injl)) < V(ss) && V(enok)>0.5 && I(Vil) < 3.8) ? 1 : 0
+* --- temporizador de encendido: t_ON = VOUT/(VIN·f), con VOUT estimado del propio FB
+Bron 0 ron I = V(hs)>0.5 ? V(vin,gnd)*1e-6 : -V(ron)*1e-3
+Cron ron 0 1p
+Btond tond 0 V = V(ron) > max(V(fb,gnd)*6.9,0.5)/({FSW}*1e-6) ? 1 : 0
+* --- temporizador de apagado mínimo
+Broff 0 roff I = V(hs)<0.5 ? 1e-6 : -V(roff)*1e-3
+Croff roff 0 1p
+Bofok offok 0 V = V(roff) > {TOFFMIN}*1e6 ? 1 : 0
+Bset set 0 V = (V(cmp)>0.5 && V(offok)>0.5) ? 1 : 0
+Brst rst 0 V = (V(tond)>0.5 || V(enok)<0.5) ? 1 : 0
+abr [set rst] [sd rd] adcb
+a1 sd rd en1 z z q qn latb
+aen en1 pup
+az z pdn
+adb [q] [hs] dacb
+.model adcb adc_bridge(in_low=0.4 in_high=0.6)
+.model dacb dac_bridge(out_low=0 out_high=1 t_rise=2n t_fall=2n)
+.model latb d_srlatch(sr_delay=5n enable_delay=1n set_delay=1n reset_delay=1n rise_delay=1n fall_delay=1n ic=0)
+.model pup d_pullup
+.model pdn d_pulldown
+* --- etapa de potencia
+Shs vin swx hs 0 SWHS
+Vil swx sw 0
+Bls lsc 0 V = I(Vil)*(1-V(hs)) - V(hs)
+Sls swx gnd lsc 0 SWLS
+Dls gnd swx DLS
+.model SWHS sw(vt=0.5 vh=0.1 ron=0.14 roff=1e7)
+.model SWLS sw(vt=0 vh=0.03 ron=0.084 roff=1e7)
+.model DLS D(Is=1e-8 N=1.3 Rs=30m Cjo=200p)
+.ends TPS563201

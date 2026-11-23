@@ -1,0 +1,4 @@
+(version 1)
+# Los pads de GND de señal (sensores, ESP32) pueden quedar unidos al plano por un solo radio
+(rule "radios_minimos"
+	(constraint min_resolved_spokes 1))

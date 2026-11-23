@@ -47,10 +47,13 @@ def dump(e, ind=0):
     simple = all(not isinstance(x, list) for x in e)
     if simple:
         return '(' + ' '.join(dump(x) for x in e) + ')'
-    out = '(' + ' '.join(dump(x) for x in e if not isinstance(x, list))
-    for x in e:
+    # Se respeta el orden original (KiCad 7 no acepta, p. ej., "(pin_names hide (offset 1))")
+    out = '(' + dump(e[0])
+    for x in e[1:]:
         if isinstance(x, list):
             out += '\n' + tab + '\t' + dump(x, ind + 1)
+        else:
+            out += ' ' + dump(x)
     return out + '\n' + tab + ')'
 
 

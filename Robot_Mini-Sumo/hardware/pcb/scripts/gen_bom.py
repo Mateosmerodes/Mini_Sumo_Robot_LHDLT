@@ -24,8 +24,8 @@ def clave_ref(r):
 def main():
     grupos = OrderedDict()
     for p in sorted(design.parts, key=lambda p: clave_ref(p['ref'])):
-        if p['lib'].startswith('Mechanical'):
-            continue
+        if p['lib'].startswith('Mechanical') or p.get('dnp'):
+            continue   # taladros y componentes no montados (DNP) no van en la BOM
         k = (p['value'], p['fp'].split(':')[1], p['mpn'])
         grupos.setdefault(k, []).append(p['ref'])
     with open(OUT, 'w', newline='') as f:

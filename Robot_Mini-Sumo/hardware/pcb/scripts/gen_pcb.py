@@ -1,106 +1,104 @@
-"""Genera la PCB (robot_sumo.kicad_pcb) a partir de design.py y ../../geometria.py.
+"""Genera la PCB v2 (robot_sumo.kicad_pcb) a partir de design.py.
 
-- Contorno, taladros y posición de la ESP32-S3-DevKitC-1 salen de la geometría mecánica.
-- Las huellas se enlazan con los símbolos del esquemático (mismos UUID) para que
-  "Actualizar PCB desde esquemático" funcione después en KiCad.
-- Coloca los componentes por bloques; el rutado se hace en KiCad.
-Las coordenadas de COLOCACION están en el sistema del robot (mm, Y hacia atrás).
+Placa de 76 × 80 mm, 2 capas, todo de agujero pasante. Delante (arriba en la imagen) los conectores
+de los sensores; en el centro la ESP32; a los lados los dos drivers con sus clemas de motor;
+detrás la batería (izquierda) y el regulador y el módulo de arranque (derecha).
+Coloca los componentes y la serigrafía; el rutado lo hace autoroute.py (Freerouting).
+Coordenadas en mm de la hoja de KiCad: la placa va de (100, 100) a (176, 180). Y crece hacia atrás.
 """
-import math
 import os
 import sys
 
 import pcbnew
 
-# Compatibilidad SWIG de KiCad 10 con Python 3.14 (el iterador no expone .next())
-if hasattr(pcbnew, 'SwigPyIterator') and not hasattr(pcbnew.SwigPyIterator, 'next'):
-    pcbnew.SwigPyIterator.next = pcbnew.SwigPyIterator.__next__
-
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, '..', '..'))
+sys.path.insert(0, HERE)
 import design                       # noqa: E402
-import geometria as g               # noqa: E402
 from gen_sch import uid             # noqa: E402
 
 FP_ROOT = '/usr/share/kicad/footprints'
-FP_LOCAL = {'Sumo': os.path.join(HERE, '..', 'lib', 'Sumo.pretty')}     # generada por gen_lib.py
+FP_LOCAL = {'Sumo': os.path.join(HERE, '..', 'lib', 'Sumo.pretty')}
 OUT = os.path.join(HERE, '..', design.PROJECT + '.kicad_pcb')
-OX, OY = 100.0, 50.0                # posición del origen del robot en la hoja de KiCad
+
+X0, Y0, X1, Y1, RADIO = 100.0, 100.0, 176.0, 180.0, 3.0
+DEVKIT = (126.57, 113.0)            # pin J1-1 de la DevKit (fila J3 en x + 22,86)
+FILA_J3 = DEVKIT[0] + 22.86
+CX = (DEVKIT[0] + FILA_J3) / 2      # eje de la placa = 138
 
 
 def P(x, y):
-    return pcbnew.VECTOR2I_MM(OX + x, OY + y)
+    return pcbnew.VECTOR2I_MM(x, y)
 
 
-# ------------------------------------------------------------------ colocación
-# ref: (x, y, rotación)   — sistema del robot
+# ref: (x, y, rotación en grados)
 COLOCACION = {
-    # Fila delantera: sensores frontales (J9 queda bajo el borde de la DevKit: se enchufa antes que ella)
-    'J13': (23.5, 33.4, 0), 'J8': (32.0, 33.4, 0), 'J9': (50.0, 33.4, 0),
-    'J10': (68.0, 33.4, 0), 'J14': (76.5, 33.4, 0),
-    # Delante a la izquierda: entrada de batería (fuera de la DevKit: el XT30 mide 11 mm y asoma por el techo)
-    'J1': (22.5, 40.0, 0),
-    # Centro (bajo la DevKit, a 11 mm por encima): protección y buck.
-    # VBAT_RAW entra desde el XT30 por el hueco del pin J1-3 (sin zócalo) y VBAT sale hacia los drivers
-    # de la derecha por el hueco de J3-11..14.
-    'C14': (42.0, 35.2, 90), 'C13': (44.2, 36.0, 90),
-    'Q1': (46.0, 43.6, 90), 'F1': (55.0, 43.6, 90), 'R1': (51.0, 47.6, 0),
-    'U2': (47.0, 60.6, 0), 'L1': (53.6, 60.4, 0), 'C6': (43.6, 60.6, 90), 'C7': (47.0, 58.1, 0),
-    'C4': (43.8, 65.4, 90), 'C5': (46.4, 65.4, 90),
-    'R5': (49.2, 64.9, 90), 'R6': (51.0, 64.9, 90), 'R7': (49.2, 68.6, 90), 'R8': (51.0, 68.6, 90),
-    'C8': (53.6, 65.6, 90), 'C9': (56.2, 65.6, 90),
-    # Centro trasero: comunes de los drivers y diodos de 5 V
-    'R14': (43.0, 73.6, 90), 'R15': (45.0, 73.6, 90), 'C17': (47.0, 73.6, 90),
-    'R16': (49.0, 73.6, 90), 'R17': (51.0, 73.6, 90),
-    'D2': (46.0, 78.6, 0), 'D1': (54.0, 78.6, 0), 'C10': (55.6, 73.6, 90), 'C11': (42.6, 81.6, 0),
-    # Pads de los motores: a cada lado, junto a su driver (la corriente no cruza las filas de la DevKit).
-    # El cable sube desde el motor por un canal de la cuna, fuera de la zona de apoyo del motor.
-    'J3': (g.PAD_MOTOR_X_IZQ[0], g.PAD_MOTOR_Y_DEL, 0), 'J4': (g.PAD_MOTOR_X_IZQ[0], g.PAD_MOTOR_Y_TRAS, 0),
-    'J5': (g.PAD_MOTOR_X_DER[0], g.PAD_MOTOR_Y_DEL, 0), 'J6': (g.PAD_MOTOR_X_DER[0], g.PAD_MOTOR_Y_TRAS, 0),
-    # Bornes laterales
-    'J7': (17.0, 64.0, 90), 'J11': (83.0, 64.0, 90),
-    # Reserva VBAT
-    'C1': (33.5, 57.4, 90), 'C2': (66.5, 57.4, 90),
-    # Delante a la derecha: pull-ups I2C y filtro del receptor IR
-    'R60': (67.5, 40.0, 90), 'R61': (70.0, 40.0, 90), 'R62': (72.5, 40.0, 90), 'C62': (75.2, 40.0, 90),
-    # Trasera izquierda: medida de batería, LED de alimentación, sensores traseros
-    'R3': (21.6, 77.0, 90), 'R4': (23.6, 77.0, 90), 'C3': (25.6, 77.0, 90),
-    'D3': (31.0, 77.0, 0), 'R9': (31.0, 79.0, 0),
-    'J15': (24.0, 89.0, 0), 'J12': (32.0, 89.0, 0),
-    # Trasera derecha: expansión I2C, auxiliar, IR y sensor trasero
-    'J19': (68.0, 78.0, 0), 'J18': (76.5, 78.0, 0),
-    'J17': (67.5, 89.0, 0), 'J16': (76.0, 89.0, 0),
-    # ESP32-S3-DevKitC-1: posición fijada por la geometría (USB a ras de la pared trasera)
-    'U1': (g.DEVKIT_X, g.DEVKIT_Y, 0),
+    # --- delante: sensores (tiras de pines horizontales) y condensadores de los drivers
+    'J4': (105.5, 103.5, 90), 'J6': (119.5, 103.5, 90),          # distancia y suelo izquierdos
+    'J7': (151.5, 103.5, 90), 'J5': (160.5, 103.5, 90),          # suelo y distancia derechos
+    'C6': (112.0, 113.0, 0), 'C7': (162.5, 113.0, 0),
+    # --- centro: ESP32 y, debajo de ella (componentes bajos), las resistencias de señal
+    'U2': (DEVKIT[0], DEVKIT[1], 0),
+    'R4': (CX + 5.08, 118.0, 180), 'R5': (CX + 5.08, 122.0, 180),   # pull-ups I2C (SDA/SCL a la izquierda)
+    'R3': (CX - 5.08, 126.0, 0),                                  # STBY a GND
+    'R6': (CX - 5.08, 130.0, 0), 'R7': (CX - 5.08, 134.0, 0),     # pull-downs del ST4RT
+    'R1': (CX - 5.08, 140.0, 0), 'R2': (CX - 5.08, 144.0, 0),     # divisor de batería
+    'C3': (CX - 2.5, 149.0, 0),
+    # --- lados: drivers (la fila de control mira a la ESP32) y clemas de los motores
+    'U3': (110.5, 129.0, 0), 'U4': (165.5, 129.0, 0),
+    'J2': (106.0, 145.0, 270), 'J3': (170.0, 150.08, 90),
+    # --- detrás a la izquierda: batería, fusible y condensadores de VBAT
+    'F1': (104.0, 157.0, 0), 'C1': (111.0, 167.5, 0),
+    'J1': (105.5, 175.0, 0),
+    # --- detrás a la derecha: regulador de 5 V, LED y módulo de arranque
+    'U1': (158.0, 158.0, 0), 'C4': (167.5, 158.0, 0), 'C5': (166.0, 164.5, 0),
+    'J8': (157.0, 172.5, 90),
+    'D1': (CX - 5.08, 163.0, 0),                                  # bajo la ESP32, cerca de su pin 5V
+    # --- taladros M3
+    'H1': (104.5, 111.0, 0), 'H2': (171.5, 111.0, 0), 'H3': (121.0, 176.0, 0), 'H4': (171.5, 176.0, 0),
 }
 
-# Grupo de cada driver respecto al centro del DRV8874 (rotación 0)
-DRIVER = {
-    'U': (0.0, 0.0, 0), 'R_IPROPI': (-6.5, 0.6, 0), 'C_IPROPI': (-6.5, 2.4, 0), 'R_IMODE': (-6.5, 4.2, 0),
-    'C_VCP': (6.5, -2.7, 0), 'C_CP': (6.5, -0.9, 0), 'C_VM': (6.5, 0.9, 0), 'C_BULK': (6.5, 3.4, 0),
-}
-CENTROS_DRIVER = {1: (28.0, 46.0), 2: (28.0, 64.0), 3: (71.0, 46.0), 4: (71.0, 64.0)}
-for k, (cx, cy) in CENTROS_DRIVER.items():
-    b = 20 + (k - 1) * 10
-    refs = {'U': f'U{4 + k}', 'R_IPROPI': f'R{b}', 'C_IPROPI': f'C{b}', 'R_IMODE': f'R{b + 1}',
-            'C_VCP': f'C{b + 1}', 'C_CP': f'C{b + 2}', 'C_VM': f'C{b + 3}', 'C_BULK': f'C{b + 4}'}
-    for key, (dx, dy, r) in DRIVER.items():
-        COLOCACION[refs[key]] = (cx + dx, cy + dy, r)
-
-# Etiquetas de serigrafía: ref -> (texto, lado del courtyard donde se escribe: N/S/E/O)
-ETIQUETAS = {
-    'J13': ('LÍN FI', 'S'), 'J8': ('ToF FI', 'S'), 'J18': ('I2C', 'N'), 'J9': ('ToF F', 'S'),
-    'J19': ('AUX', 'N'), 'J10': ('ToF FD', 'S'), 'J14': ('LÍN FD', 'S'),
-    'J7': ('ToF I', 'S'), 'J11': ('ToF D', 'S'),
-    'J15': ('LÍN TI', 'N'), 'J12': ('ToF T', 'N'), 'J17': ('IR', 'N'), 'J16': ('LÍN TD', 'N'),
-    'J3': ('M1', 'O'), 'J4': ('M2', 'O'), 'J5': ('M3', 'E'), 'J6': ('M4', 'E'),
+# Serigrafía: texto grande de lo que es cada conector y el nombre de cada pin
+ROTULOS = [  # (texto, x, y, tamaño, ángulo)
+    ('DISTANCIA IZQ', 110.58, 100.9, 0.9, 0), ('SUELO IZQ', 122.04, 100.9, 0.9, 0),
+    ('SUELO DER', 154.04, 100.9, 0.9, 0), ('DISTANCIA DER', 165.58, 100.9, 0.9, 0),
+    ('MOTOR IZQ', 113.6, 147.5, 0.9, 90), ('MOTOR DER', 162.4, 147.5, 0.9, 90),
+    ('BATERIA 2S', 107.0, 178.6, 0.9, 0), ('F1 · FUSIBLE 7,5 A', 109.5, 154.0, 0.9, 0),
+    ('U1 · REGULADOR 5 V', 163.0, 154.0, 0.8, 0), ('J8 · ARRANQUE ST4RT', 160.8, 175.4, 0.8, 0),
+    ('U3 · DRIVER IZQ', 110.5, 141.0, 1.0, 0), ('U4 · DRIVER DER', 165.5, 141.0, 1.0, 0),
+    ('U2 · ESP32-S3-DevKitC-1', CX, 110.0, 1.0, 0), ('USB', CX, 175.6, 0.9, 0),
+    ('LHDT · LOS HOMBRES DE LAS TABERNAS', CX, 178.2, 0.8, 0),
+]
+# nombre de cada pin de las tiras: ref -> lista (pin 1 primero)
+PINES = {
+    'J4': ['3V3', 'GND', 'SCL', 'SDA', 'XSH'], 'J5': ['3V3', 'GND', 'SCL', 'SDA', 'XSH'],
+    'J6': ['3V3', 'GND', 'OUT'], 'J7': ['3V3', 'GND', 'OUT'],
+    'J8': ['3V3', 'GND', 'S', 'K'],
 }
 
-for i, (x, y, _) in enumerate(g.TALADROS):
-    COLOCACION[f'H{i + 1}'] = (x, y, 0)
+
+# Posición a mano de referencia y valor donde la de la huella se pisa con otra cosa
+TEXTOS_REF = {
+    'C1': ((119.3, 166.0), (120.4, 170.8)),
+    'C3': ((CX - 4.8, 146.9), (CX + 6.0, 149.0)),
+    'C4': ((170.0, 155.6), (170.0, 160.4)),
+    'C5': ((171.8, 162.8), (167.25, 168.8)),
+    'C6': ((107.6, 112.0), (112.75, 117.4)),
+    'C7': ((168.0, 112.0), (163.25, 117.4)),
+}
+
+# (red, ancho, capa, puntos)
+PRERUTADO = [
+    # 3,3 V de la ESP32 (pin J1-1) al lado derecho, por la cara inferior
+    ('+3V3', 0.5, pcbnew.B_Cu, [(DEVKIT[0], DEVKIT[1]), (DEVKIT[0] + 2.4, 110.6), (148.0, 110.6),
+                                (151.5, 107.1), (151.5, 103.5)]),
+    # I2C de las pull-ups (entre las filas) al sensor de distancia izquierdo, por la cara superior
+    ('I2C_SDA', 0.4, pcbnew.F_Cu, [(CX - 5.08, 118.0), (CX - 5.08, 111.0), (131.1, 109.2), (114.5, 109.2),
+                                   (113.12, 107.8), (113.12, 103.5)]),
+    ('I2C_SCL', 0.4, pcbnew.F_Cu, [(CX - 5.08, 122.0), (131.0, 120.1), (131.0, 112.0), (129.6, 110.6),
+                                   (112.0, 110.6), (110.58, 109.2), (110.58, 103.5)]),
+]
 
 
-# ------------------------------------------------------------------ utilidades
 def load_fp(fpid):
     lib, name = fpid.split(':')
     fp = pcbnew.FootprintLoad(FP_LOCAL.get(lib) or os.path.join(FP_ROOT, lib + '.pretty'), name)
@@ -120,19 +118,19 @@ def segment(board, a, b, layer=pcbnew.Edge_Cuts, w=0.1):
     board.Add(s)
 
 
-def arc(board, center, start, deg, layer=pcbnew.Edge_Cuts, w=0.1):
+def arc(board, center, start, deg):
     s = pcbnew.PCB_SHAPE(board)
     s.SetShape(pcbnew.SHAPE_T_ARC)
     s.SetCenter(center)
     s.SetStart(start)
     s.SetArcAngleAndEnd(pcbnew.EDA_ANGLE(deg, pcbnew.DEGREES_T), True)
-    s.SetLayer(layer)
-    s.SetWidth(pcbnew.FromMM(w))
+    s.SetLayer(pcbnew.Edge_Cuts)
+    s.SetWidth(pcbnew.FromMM(0.1))
     board.Add(s)
 
 
-def outline(board):
-    x0, y0, x1, y1, r = g.PCB_X0, g.PCB_Y0, g.PCB_X1, g.PCB_Y1, g.PCB_RADIO_ESQUINA
+def contorno(board):
+    x0, y0, x1, y1, r = X0, Y0, X1, Y1, RADIO
     segment(board, P(x0 + r, y0), P(x1 - r, y0))
     segment(board, P(x1, y0 + r), P(x1, y1 - r))
     segment(board, P(x1 - r, y1), P(x0 + r, y1))
@@ -143,27 +141,25 @@ def outline(board):
     arc(board, P(x0 + r, y0 + r), P(x0, y0 + r), 90)
 
 
-def zone(board, net, layer, pts, name='', priority=0):
+def zona(board, net, layer, pts, nombre):
     z = pcbnew.ZONE(board)
     z.SetLayer(layer)
     z.SetNetCode(net.GetNetCode())
-    z.SetZoneName(name)
-    z.SetAssignedPriority(priority)
-    z.SetLocalClearance(pcbnew.FromMM(0.3))
-    z.SetMinThickness(pcbnew.FromMM(0.25))
-    z.SetPadConnection(pcbnew.ZONE_CONNECTION_THERMAL)
-    z.SetThermalReliefGap(pcbnew.FromMM(0.3))
-    z.SetThermalReliefSpokeWidth(pcbnew.FromMM(0.5))
+    z.SetZoneName(nombre)
+    z.SetLocalClearance(pcbnew.FromMM(0.4))
+    z.SetMinThickness(pcbnew.FromMM(0.3))
+    z.SetPadConnection(pcbnew.ZONE_CONNECTION_THT_THERMAL)
+    z.SetThermalReliefGap(pcbnew.FromMM(0.4))
+    z.SetThermalReliefSpokeWidth(pcbnew.FromMM(0.6))
     ol = z.Outline()
     ol.NewOutline()
     for x, y in pts:
         ol.Append(P(x, y))
     board.Add(z)
-    return z
 
 
-def sin_cobre(board, pts):
-    """Área de reglas en las dos caras: prohíbe rellenos de cobre (pistas y pads siguen permitidos)."""
+def sin_cobre(board, pts, nombre):
+    """Área de reglas en las dos caras: sin relleno de cobre (pistas sí)."""
     for layer in (pcbnew.F_Cu, pcbnew.B_Cu):
         z = pcbnew.ZONE(board)
         z.SetIsRuleArea(True)
@@ -173,7 +169,7 @@ def sin_cobre(board, pts):
         z.SetDoNotAllowVias(False)
         z.SetDoNotAllowPads(False)
         z.SetDoNotAllowFootprints(False)
-        z.SetZoneName('antena_DevKit')
+        z.SetZoneName(nombre)
         ol = z.Outline()
         ol.NewOutline()
         for x, y in pts:
@@ -181,135 +177,120 @@ def sin_cobre(board, pts):
         board.Add(z)
 
 
-def text(board, s, x, y, size=1.2, layer=pcbnew.F_SilkS, bold=True, angle=0):
+def texto(board, s, x, y, size=1.0, layer=pcbnew.F_SilkS, angle=0, bold=True):
     t = pcbnew.PCB_TEXT(board)
     t.SetText(s)
     t.SetPosition(P(x, y))
     t.SetLayer(layer)
     t.SetTextSize(pcbnew.VECTOR2I_MM(size, size))
-    t.SetTextThickness(pcbnew.FromMM(size * (0.2 if bold else 0.15)))
-    t.SetBold(bold)
+    t.SetTextThickness(pcbnew.FromMM(max(0.15, size * (0.18 if bold else 0.15))))
     if angle:
         t.SetTextAngleDegrees(angle)
-    if layer in (pcbnew.B_SilkS, pcbnew.B_Fab, pcbnew.B_Cu):
+    if layer == pcbnew.B_SilkS:
         t.SetMirrored(True)
     board.Add(t)
 
 
-def vias_termicas(board, x, y, gnd):
-    """12 vías de 0,3 mm en el pad térmico del DRV8874 (JLC no hace 0,2 mm en 2 capas)."""
-    for dx in (-1.0, 0.0, 1.0):
-        for dy in (-1.65, -0.55, 0.55, 1.65):
-            v = pcbnew.PCB_VIA(board)
-            v.SetPosition(P(x + dx, y + dy))
-            v.SetWidth(pcbnew.FromMM(0.6))
-            v.SetDrill(pcbnew.FromMM(0.3))
-            v.SetNet(gnd)
-            board.Add(v)
-
-
-def etiqueta(board, fp, s, lado, size=0.8):
-    bb = fp.GetCourtyard(pcbnew.F_CrtYd).BBox()
-    x0, y0 = pcbnew.ToMM(bb.GetX()) - OX, pcbnew.ToMM(bb.GetY()) - OY
-    x1, y1 = pcbnew.ToMM(bb.GetRight()) - OX, pcbnew.ToMM(bb.GetBottom()) - OY
-    cx, cy, m = (x0 + x1) / 2, (y0 + y1) / 2, 0.75
-    pos = {'N': (cx, y0 - m, 0), 'S': (cx, y1 + m, 0), 'E': (x1 + m, cy, 90), 'O': (x0 - m, cy, 90)}[lado]
-    text(board, s, pos[0], pos[1], size, pcbnew.F_SilkS, True, pos[2])
-
-
-def zona_motor_fab(board):
-    """Dibuja en B.Fab dónde van los motores y el lastre (referencia para el montaje)."""
-    for (x0, y0, x1, y1) in g.ZONAS_MOTOR:
-        for a, b in [((x0, y0), (x1, y0)), ((x1, y0), (x1, y1)), ((x1, y1), (x0, y1)), ((x0, y1), (x0, y0))]:
-            segment(board, P(*a), P(*b), pcbnew.B_Fab, 0.1)
-        text(board, 'N20', (x0 + x1) / 2, (y0 + y1) / 2, 1.5, pcbnew.B_Fab, False)
-
-
-# ------------------------------------------------------------------ principal
 def main():
     board = pcbnew.NewBoard(OUT)
-    ds = board.GetDesignSettings()
-    ds.SetAuxOrigin(P(0, 0))
-    ds.SetGridOrigin(P(0, 0))
     board.SetCopperLayerCount(2)
-
+    ds = board.GetDesignSettings()
+    ds.m_MinClearance = pcbnew.FromMM(0.2)
+    ds.m_CopperEdgeClearance = pcbnew.FromMM(0.5)
+    ds.m_HoleClearance = pcbnew.FromMM(0.25)
     tb = board.GetTitleBlock()
     tb.SetTitle(design.TITLE)
     tb.SetCompany(design.COMPANY)
     tb.SetRevision(design.REV)
-    tb.SetDate('2026-10-19')
+    tb.SetDate('2026-11-23')
 
     nets = {}
-
-    def net(name):
-        if name not in nets:
-            n = pcbnew.NETINFO_ITEM(board, name)
-            board.Add(n)
-            nets[name] = n
-        return nets[name]
-
     for p in design.parts:
         for n in p['nets'].values():
-            net(n)
+            if n not in nets:
+                nets[n] = pcbnew.NETINFO_ITEM(board, n)
+                board.Add(nets[n])
 
-    faltan = []
     for p in design.parts:
         fp = load_fp(p['fp'])
         fp.SetReference(p['ref'])
         fp.SetValue(p['value'])
         fp.SetPath(pcbnew.KIID_PATH('/' + uid('sym', p['ref'])))
-        fp.SetSheetname('/')
-        fp.SetSheetfile(design.PROJECT + '.kicad_sch')
-        if p['ref'] not in COLOCACION:
-            faltan.append(p['ref'])
-            x, y, r = 5.0, 5.0, 0
-        else:
-            x, y, r = COLOCACION[p['ref']]
+        x, y, r = COLOCACION[p['ref']]
         fp.SetPosition(P(x, y))
         fp.SetOrientationDegrees(r)
-        ref_txt = fp.Reference()          # referencia a la capa de montaje (no cabe en serigrafía)
-        ref_txt.SetLayer(pcbnew.F_Fab)
-        ref_txt.SetTextSize(pcbnew.VECTOR2I_MM(0.8, 0.8))
-        ref_txt.SetTextThickness(pcbnew.FromMM(0.15))
-        for item in fp.GraphicalItems():  # el texto ${REFERENCE} de la capa Fab ya lo cubre la referencia
-            if isinstance(item, pcbnew.PCB_TEXT) and item.GetText() == '${REFERENCE}':
-                item.SetVisible(False)
+        ref = fp.Reference()
+        ref.SetTextSize(pcbnew.VECTOR2I_MM(1.0, 1.0))
+        ref.SetTextThickness(pcbnew.FromMM(0.18))
+        if p['ref'].startswith(('H', 'J', 'U', 'F')):   # los conectores llevan su rótulo; los taladros, nada
+            ref.SetVisible(False)
+        val = fp.Value()
+        val.SetLayer(pcbnew.F_SilkS)
+        val.SetTextSize(pcbnew.VECTOR2I_MM(0.8, 0.8))
+        val.SetTextThickness(pcbnew.FromMM(0.15))
+        if p['lib'] == 'Device:R':      # valor dentro del cuerpo y referencia a la derecha
+            xs = [pcbnew.ToMM(q.GetPosition().x) for q in fp.Pads()]
+            val.SetPosition(P(sum(xs) / 2, y))
+            val.SetTextAngleDegrees(0)
+            ref.SetPosition(P(max(xs) + 2.3, y))
+            ref.SetTextAngleDegrees(0)
+            ref.SetTextSize(pcbnew.VECTOR2I_MM(0.9, 0.9))
+        elif p['lib'] in ('Device:C', 'Device:C_Polarized', 'Diode:1N5819',
+                          'Regulator_Linear:L7805'):
+            pass                         # valor donde lo pone la huella, ya en serigrafía
+        else:
+            val.SetVisible(False)
         for pad in fp.Pads():
             n = p['nets'].get(pad.GetNumber())
             if n:
                 pad.SetNet(nets[n])
+        if p['ref'] in TEXTOS_REF:
+            (rx, ry), (vx, vy) = TEXTOS_REF[p['ref']]
+            ref.SetPosition(P(rx, ry))
+            val.SetPosition(P(vx, vy))
+        if p['ref'] in ('J1', 'U3', 'U4'):   # corriente de motores: GND unido en macizo al plano
+            fp.SetZoneConnection(pcbnew.ZONE_CONNECTION_FULL)
         board.Add(fp)
-        if p['ref'].startswith('U') and p['lib'] == 'Sumo:DRV8874':
-            vias_termicas(board, x, y, nets['GND'])
-        if p['ref'] in ETIQUETAS:
-            etiqueta(board, fp, *ETIQUETAS[p['ref']])
-    if faltan:
-        print('SIN COLOCAR:', ' '.join(faltan))
+        if p['ref'] in PINES:   # nombre de cada pin, encima de la tira (las tiras van en horizontal)
+            for i, nm in enumerate(PINES[p['ref']]):
+                pad = [q for q in fp.Pads() if q.GetNumber() == str(i + 1)][0]
+                c = pad.GetPosition()
+                dy = -2.4 if p['ref'] == 'J8' else 2.4
+                texto(board, nm, pcbnew.ToMM(c.x), pcbnew.ToMM(c.y) + dy, 0.8)
 
-    outline(board)
+    # Pistas fijas (cruces que Freerouting no resolvía): pasan por delante de la fila J1 de la ESP32
+    for red, ancho, capa, pts in PRERUTADO:
+        for a, b in zip(pts, pts[1:]):
+            t = pcbnew.PCB_TRACK(board)
+            t.SetStart(P(*a)); t.SetEnd(P(*b)); t.SetWidth(pcbnew.FromMM(ancho)); t.SetLayer(capa)
+            t.SetNet(nets[red]); t.SetLocked(True)
+            board.Add(t)
 
-    # Planos de GND en las dos caras (la inferior queda casi entera: no hay componentes)
-    x0, y0, x1, y1 = g.PCB_X0, g.PCB_Y0, g.PCB_X1, g.PCB_Y1
-    i, c = 0.3, 2.0      # retranqueo y chaflán para no tocar el borde redondeado
-    rect = [(x0 + i + c, y0 + i), (x1 - i - c, y0 + i), (x1 - i, y0 + i + c), (x1 - i, y1 - i - c),
-            (x1 - i - c, y1 - i), (x0 + i + c, y1 - i), (x0 + i, y1 - i - c), (x0 + i, y0 + i + c)]
-    zone(board, nets['GND'], pcbnew.B_Cu, rect, 'GND_inf')
-    zone(board, nets['GND'], pcbnew.F_Cu, rect, 'GND_sup')
+    contorno(board)
+    # Planos de GND en las dos caras
+    i, c = 0.5, 2.5
+    rect = [(X0 + i + c, Y0 + i), (X1 - i - c, Y0 + i), (X1 - i, Y0 + i + c), (X1 - i, Y1 - i - c),
+            (X1 - i - c, Y1 - i), (X0 + i + c, Y1 - i), (X0 + i, Y1 - i - c), (X0 + i, Y0 + i + c)]
+    zona(board, nets['GND'], pcbnew.B_Cu, rect, 'GND_inferior')
+    zona(board, nets['GND'], pcbnew.F_Cu, rect, 'GND_superior')
+    # Sin cobre bajo la antena de la ESP32 (sobresale por delante de su placa)
+    ax, ay = DEVKIT
+    sin_cobre(board, [(ax + 2.0, Y0 + 0.5), (ax + 20.9, Y0 + 0.5), (ax + 20.9, ay - 1.0), (ax + 2.0, ay - 1.0)],
+              'antena_ESP32')
 
-    # Serigrafía: obligatoria con el nombre del equipo. En la cara inferior, en las franjas delantera y
-    # trasera, las únicas que no cruzan las filas de pines de la DevKit.
-    text(board, 'HOMBRES DE LAS TABERNAS', 50, 31.8, 1.8, pcbnew.B_SilkS)
-    text(board, f'Robot Mini-Sumo {design.REV} · Tecnología Eléctrica · USC · 2026 · CERN-OHL-S v2',
-         50, 90.6, 1.0, pcbnew.B_SilkS, False)
-    text(board, 'HOMBRES DE LAS TABERNAS', 50, 90.8, 1.0, pcbnew.F_SilkS)
-    # Bajo la antena de la DevKit (que vuela por delante de su placa) no se rellena cobre
-    ax0, ay0, ax1, ay1 = g.DEVKIT_ANTENA
-    sin_cobre(board, [(g.DEVKIT_X + ax0, y0 + i), (g.DEVKIT_X + ax1, y0 + i),
-                      (g.DEVKIT_X + ax1, g.DEVKIT_Y + ay1), (g.DEVKIT_X + ax0, g.DEVKIT_Y + ay1)])
-    zona_motor_fab(board)
+    for s, x, y, size, ang in ROTULOS:
+        texto(board, s, x, y, size, angle=ang)
+    # Polaridad de batería y motores
+    # Nombre del equipo (requisito académico): por delante bajo la ESP32 y por detrás grande
+    texto(board, 'LHDT', CX, 153.4, 2.0)
+    texto(board, 'LOS HOMBRES', CX, 156.4, 1.0)
+    texto(board, 'DE LAS TABERNAS', CX, 158.2, 1.0)
+    # Por detrás: en la franja delantera (bajo la antena no hay pads) y entre las filas de la ESP32
+    texto(board, 'LHDT', CX, 104.0, 3.0, pcbnew.B_SilkS)
+    texto(board, 'LOS HOMBRES DE LAS TABERNAS', CX, 108.3, 1.0, pcbnew.B_SilkS)
+    texto(board, f'Mini-Sumo {design.REV} · 2026', CX, 158.0, 0.9, pcbnew.B_SilkS, bold=False)
 
-    filler = pcbnew.ZONE_FILLER(board)
-    filler.Fill(board.Zones())
+    pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     pcbnew.SaveBoard(OUT, board)
     print('escrito', os.path.relpath(OUT), f'({len(design.parts)} huellas, {len(nets)} redes)')
 

@@ -1,0 +1,24 @@
+U5.11: caída 36.6 mV
+U6.11: caída 46.2 mV
+U7.11: caída 50.5 mV
+U8.11: caída 50.2 mV
+pérdidas totales 0.442 W
+F.Cu: J máx 302 A/mm² en (138.6, 98.5)
+B.Cu: J máx 62 A/mm² en (146.9, 99.4)
+U5.17: caída 8.2 mV
+U6.17: caída 35.7 mV
+U7.17: caída 41.4 mV
+U8.17: caída 40.3 mV
+pérdidas totales 0.301 W
+F.Cu: J máx 254 A/mm² en (120.2, 122.6)
+B.Cu: J máx 272 A/mm² en (172.6, 106.2)
+potencia total 10.53 W (Joule cobre 0.74 W, componentes 9.79 W), 259 vías/pads
+ΔT a 3 s / 10 s (K):
+  U5: 34.5 / 48.6
+  U7: 33.7 / 48.4
+  Q1: 38.0 / 59.9
+  F1: 17.4 / 32.4
+  cuello VBAT (138,6; 98,5): 3.8 / 13.6
+  cuello GND F (120,2; 122,6): 2.1 / 7.6
+  cuello GND B (172,6; 106,2): 3.9 / 16.8
+solo Joule del cobre, régimen permanente: cuello VBAT 12.9 K; máx placa 16.4 K

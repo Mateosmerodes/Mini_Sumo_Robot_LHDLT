@@ -1,4 +1,4 @@
-"""Genera robot_sumo.kicad_pro: clases de red y reglas de diseño (JLCPCB 2 capas)."""
+"""Genera robot_sumo.kicad_pro: clases de red y reglas de diseño (2 capas, reglas holgadas: pistas ≥ 0,4 mm y holguras ≥ 0,3 mm)."""
 import json
 import os
 
@@ -23,32 +23,31 @@ pro = {
     'board': {
         'design_settings': {
             'rules': {
-                'min_clearance': 0.15, 'min_track_width': 0.15, 'min_via_diameter': 0.5,
+                'min_clearance': 0.2, 'min_track_width': 0.25, 'min_via_diameter': 0.6,
                 'min_through_hole_diameter': 0.3, 'min_via_annular_width': 0.1,
                 'min_hole_to_hole': 0.5, 'min_copper_edge_clearance': 0.3,
                 'min_silk_clearance': 0.0, 'min_text_height': 0.8, 'min_text_thickness': 0.15,
                 'min_hole_clearance': 0.25,
             },
-            'track_widths': [0.0, 0.25, 0.4, 0.6, 1.0, 1.5],
-            'via_dimensions': [{'diameter': 0.0, 'drill': 0.0}, {'diameter': 0.6, 'drill': 0.3},
-                               {'diameter': 0.8, 'drill': 0.4}],
+            'track_widths': [0.0, 0.4, 0.8, 1.5, 2.0],
+            'via_dimensions': [{'diameter': 0.0, 'drill': 0.0}, {'diameter': 0.9, 'drill': 0.45},
+                               {'diameter': 1.2, 'drill': 0.6}],
         },
     },
     'net_settings': {
         'meta': {'version': 4},
         'classes': [
-            netclass('Default', 0.25),
-            # VBAT, salidas de motor y GND de potencia: hasta ~2,5 A por motor (10 A en total por VBAT)
-            netclass('Potencia', 1.0, clearance=0.25, via_d=0.8, via_h=0.4, prio=1,
+            netclass('Default', 0.4, clearance=0.3, via_d=0.9, via_h=0.45),
+            # Batería y motores: hasta ~2,3 A por motor y ~5 A en total por VBAT/GND
+            netclass('Potencia', 1.5, clearance=0.4, via_d=1.2, via_h=0.6, prio=1,
                      color='rgba(194, 0, 0, 1.000)'),
-            netclass('Alimentacion', 0.5, prio=2, color='rgba(194, 118, 0, 1.000)'),
+            netclass('Alimentacion', 0.8, clearance=0.3, via_d=1.0, via_h=0.5, prio=2,
+                     color='rgba(194, 118, 0, 1.000)'),
         ],
         'netclass_patterns': [
-            {'netclass': 'Potencia', 'pattern': p} for p in
-            ['VBAT', 'VBAT_RAW', 'VBAT_REV', 'M*_OUTA', 'M*_OUTB']
+            {'netclass': 'Potencia', 'pattern': p} for p in ['VBAT', 'VBAT_RAW', 'MI_A', 'MI_B', 'MD_A', 'MD_B']
         ] + [
-            {'netclass': 'Alimentacion', 'pattern': p} for p in
-            ['+5V', '+3V3', 'V5_BUCK', 'V5_ESP', 'BUCK_SW']
+            {'netclass': 'Alimentacion', 'pattern': p} for p in ['+5V', 'V5_ESP']
         ],
     },
     'libraries': {'pinned_footprint_libs': [], 'pinned_symbol_libs': []},

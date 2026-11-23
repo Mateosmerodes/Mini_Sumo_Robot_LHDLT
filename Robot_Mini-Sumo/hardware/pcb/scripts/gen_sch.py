@@ -34,12 +34,12 @@ def snap(v):
 def font(size=1.27, hide=False, justify=None, bold=False):
     f = [S('font'), [S('size'), size, size]]
     if bold:
-        f.append([S('bold'), S('yes')])
+        f.append(S('bold'))
     e = [S('effects'), f]
     if justify:
         e.append([S('justify')] + [S(j) for j in justify.split()])
     if hide:
-        e.append([S('hide'), S('yes')])
+        e.append(S('hide'))
     return e
 
 
@@ -93,14 +93,14 @@ def symbol_instance(pl, ref, value, extra_props):
     vals = [('Reference', ref, sx, top, False), ('Value', value, sx, bot, False),
             ('Footprint', p['fp'], sx, sy, True),
             ('Datasheet', lib_props.get('Datasheet', '~'), sx, sy, True),
-            ('Description', lib_props.get('Description', ''), sx, sy, True)]
+            ]
     for k, v in extra_props.items():
         vals.append((k, v, sx, sy, True))
     for name, val, x, y, hide in vals:
         props.append([S('property'), name, val, [S('at'), snap(x), snap(y), pl.r], font(hide=hide)])
     sym_uuid = uid('sym', ref)
     inst = [S('symbol'), [S('lib_id'), p['lib']], [S('at'), sx, sy, pl.r], [S('unit'), 1],
-            [S('exclude_from_sim'), S('no')], [S('in_bom'), S('no') if p['lib'].startswith('Mechanical') else S('yes')],
+            [S('in_bom'), S('no') if p['lib'].startswith('Mechanical') else S('yes')],
             [S('on_board'), S('yes')], [S('dnp'), S('yes') if p['dnp'] else S('no')],
             [S('uuid'), sym_uuid]] + props
     for num in sorted(pl.pins):
@@ -130,8 +130,8 @@ def main():
     groups.append(('Banderas de alimentación', flag_parts))
 
     # Empaquetado: cada grupo es un bloque de ancho máx. BW; los bloques en estanterías.
-    SHEET_W, SHEET_H, M = 841.0, 594.0, 15.0     # A1 apaisado
-    BW = 200.0
+    SHEET_W, SHEET_H, M = 420.0, 297.0, 12.0     # A3 apaisado
+    BW = 130.0
     blocks = []
     for name, ps in groups:
         placed = [Placed(p) for p in ps]
@@ -156,7 +156,7 @@ def main():
         items.append([S('rectangle'), [S('start'), snap(ox), snap(oy)], [S('end'), snap(ox + bw + 4), snap(oy + bh + 4)],
                       [S('stroke'), [S('width'), 0.2], [S('type'), S('dash')]], [S('fill'), [S('type'), S('none')]],
                       [S('uuid'), uid('box', name)]])
-        items.append([S('text'), name.upper(), [S('exclude_from_sim'), S('no')], [S('at'), snap(ox + 2), snap(oy + 5), 0],
+        items.append([S('text'), name.upper(), [S('at'), snap(ox + 2), snap(oy + 5), 0],
                       font(2.0, justify='left bottom', bold=True), [S('uuid'), uid('txt', name)]])
         for pl, px, py in pos:
             pl.place(ox + 2 + px, oy + 6 + py)
@@ -181,15 +181,14 @@ def main():
     if cy + shelf_h > SHEET_H - 40:
         raise SystemExit(f'No cabe en la hoja: alto {cy + shelf_h:.0f} mm')
 
-    sch = [S('kicad_sch'), [S('version'), 20250114], [S('generator'), 'eeschema'], [S('generator_version'), '9.0'],
-           [S('uuid'), ROOT_UUID], [S('paper'), 'A1'],
-           [S('title_block'), [S('title'), design.TITLE], [S('date'), '2026-10-19'], [S('rev'), design.REV],
+    sch = [S('kicad_sch'), [S('version'), 20230121], [S('generator'), S('eeschema')],
+           [S('uuid'), ROOT_UUID], [S('paper'), 'A3'],
+           [S('title_block'), [S('title'), design.TITLE], [S('date'), '2026-11-23'], [S('rev'), design.REV],
             [S('company'), design.COMPANY],
             [S('comment'), 1, 'Generado con hardware/pcb/scripts/gen_sch.py a partir de design.py'],
             [S('comment'), 2, 'Licencia CERN-OHL-S v2']],
            [S('lib_symbols')] + list(lib_symbols.values())] + items + [
-        [S('sheet_instances'), [S('path'), '/', [S('page'), '1']]],
-        [S('embedded_fonts'), S('no')]]
+        [S('sheet_instances'), [S('path'), '/', [S('page'), '1']]]]
     out = os.path.join(PCB_DIR, design.PROJECT + '.kicad_sch')
     with open(out, 'w') as f:
         f.write(dump(sch) + '\n')

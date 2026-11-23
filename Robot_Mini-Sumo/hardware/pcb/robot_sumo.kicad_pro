@@ -105,9 +105,9 @@
       },
       "rules": {
         "max_error": 0.005,
-        "min_clearance": 0.15,
+        "min_clearance": 0.19999999999999998,
         "min_connection": 0.0,
-        "min_copper_edge_clearance": 0.3,
+        "min_copper_edge_clearance": 0.5,
         "min_hole_clearance": 0.25,
         "min_hole_to_hole": 0.5,
         "min_microvia_diameter": 0.19999999999999998,
@@ -117,9 +117,9 @@
         "min_text_height": 0.7999999999999999,
         "min_text_thickness": 0.15,
         "min_through_hole_diameter": 0.3,
-        "min_track_width": 0.15,
+        "min_track_width": 0.25,
         "min_via_annular_width": 0.09999999999999999,
-        "min_via_diameter": 0.5,
+        "min_via_diameter": 0.6,
         "solder_mask_to_copper_clearance": 0.0,
         "use_height_for_length_calcs": true
       },
@@ -165,11 +165,10 @@
       ],
       "track_widths": [
         0.0,
-        0.25,
         0.4,
-        0.6,
-        1.0,
-        1.5
+        0.8,
+        1.5,
+        2.0
       ],
       "via_dimensions": [
         {
@@ -177,12 +176,12 @@
           "drill": 0.0
         },
         {
-          "diameter": 0.6,
-          "drill": 0.3
+          "diameter": 0.9,
+          "drill": 0.45
         },
         {
-          "diameter": 0.8,
-          "drill": 0.4
+          "diameter": 1.2,
+          "drill": 0.6
         }
       ],
       "zones_allow_external_fillets": false
@@ -206,7 +205,7 @@
     "classes": [
       {
         "bus_width": 12,
-        "clearance": 0.2,
+        "clearance": 0.3,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -216,14 +215,14 @@
         "name": "Default",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.25,
-        "via_diameter": 0.6,
-        "via_drill": 0.3,
+        "track_width": 0.4,
+        "via_diameter": 0.9,
+        "via_drill": 0.45,
         "wire_width": 6
       },
       {
         "bus_width": 12,
-        "clearance": 0.2,
+        "clearance": 0.3,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -233,14 +232,14 @@
         "name": "Alimentacion",
         "pcb_color": "rgb(194, 118, 0)",
         "schematic_color": "rgb(194, 118, 0)",
-        "track_width": 0.5,
-        "via_diameter": 0.6,
-        "via_drill": 0.3,
+        "track_width": 0.8,
+        "via_diameter": 1.0,
+        "via_drill": 0.5,
         "wire_width": 6
       },
       {
         "bus_width": 12,
-        "clearance": 0.25,
+        "clearance": 0.4,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -250,9 +249,9 @@
         "name": "Potencia",
         "pcb_color": "rgb(194, 0, 0)",
         "schematic_color": "rgb(194, 0, 0)",
-        "track_width": 1.0,
-        "via_diameter": 0.8,
-        "via_drill": 0.4,
+        "track_width": 1.5,
+        "via_diameter": 1.2,
+        "via_drill": 0.6,
         "wire_width": 6
       }
     ],
@@ -272,15 +271,19 @@
       },
       {
         "netclass": "Potencia",
-        "pattern": "VBAT_REV"
+        "pattern": "MI_A"
       },
       {
         "netclass": "Potencia",
-        "pattern": "M*_OUTA"
+        "pattern": "MI_B"
       },
       {
         "netclass": "Potencia",
-        "pattern": "M*_OUTB"
+        "pattern": "MD_A"
+      },
+      {
+        "netclass": "Potencia",
+        "pattern": "MD_B"
       },
       {
         "netclass": "Alimentacion",
@@ -288,19 +291,7 @@
       },
       {
         "netclass": "Alimentacion",
-        "pattern": "+3V3"
-      },
-      {
-        "netclass": "Alimentacion",
-        "pattern": "V5_BUCK"
-      },
-      {
-        "netclass": "Alimentacion",
         "pattern": "V5_ESP"
-      },
-      {
-        "netclass": "Alimentacion",
-        "pattern": "BUCK_SW"
       }
     ]
   },
@@ -321,7 +312,7 @@
   },
   "sheets": [],
   "text_variables": {
-    "EQUIPO": "HOMBRES DE LAS TABERNAS",
-    "REV": "v1.1"
+    "EQUIPO": "LHDT · Los Hombres de las Tabernas",
+    "REV": "v2.0"
   }
 }

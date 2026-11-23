@@ -1,56 +1,38 @@
-# 🍺 Robot Mini-Sumo · Hombres de las Tabernas
+# 🍺 Robot Mini-Sumo · LHDT (Los Hombres de las Tabernas)
 
-Robot mini-sumo autónomo (10 × 10 cm, < 500 g) para **Tecnología Eléctrica**, Grado en Robótica (USC), 2.ª edición. Compite según el reglamento **OSHWDem Mini Sumo rev. 7**.
+Robot mini-sumo autónomo (10 × 10 cm, < 500 g) para **Tecnología Eléctrica**, Grado en Robótica (USC). Reglamento de referencia: OSHWDem Mini Sumo.
 
 **Equipo:** Mateo Esmerodes Rodríguez · Paulo Bouza García · Mario Costoya Mera
 
-## Concepto
+## Diseño actual: v2 básico (23/11/2026)
 
-Rampa (cuña) clásica, **tracción 4WD** con 4 N20, una **ESP32-S3-DevKitC-1 enchufada** sobre una **PCB propia que es también el chasis**, 6 sensores ToF para encontrar al rival, 4 de línea y arranque por IR (RC5).
+Robot sencillo para cumplir: **2 motores N20**, **ESP32-S3-DevKitC-1**, **2 sensores de distancia VL53L0X**, **2 sensores de suelo QRE1113**, batería LiPo 2S y el **módulo de arranque ST4RT** del profesor. Placa propia de **agujero pasante**, con los módulos enchufados y todo rotulado en la serigrafía.
 
-## Documentación
+Nada está montado ni probado todavía.
 
-| Doc | Contenido | Estado |
-|---|---|---|
-| [00 · Requisitos y reglamento](docs/00-Requisitos-y-reglamento.md) | Lo que obliga al diseño | ✅ |
-| [01 · Selección de componentes](docs/01-Seleccion-de-componentes.md) | Qué pieza y por qué | ✅ borrador |
-| [02 · Arquitectura eléctrica](docs/02-Arquitectura-electrica.md) | Alimentación, interconexión, pinout | ✅ borrador |
-| [03 · Disposición mecánica y 3D](docs/03-Disposicion-mecanica.md) | Piezas, niveles, masas, montaje, impresión | ✅ borrador |
-| [04 · ESP32-S3-DevKitC-1](docs/04-ESP32-DevKitC-1.md) | Cambio a DevKit enchufable: montaje, alimentación, pinout, rutado | ✅ borrador |
-| 05 · Diseño de la PCB | Esquemático ✅, colocación v1.1 ✅, ERC/DRC en KiCad 10 ⏳, rutado ⏳ | 🟡 |
-| 06 · Lista de compra | AliExpress + LCSC/JLC | ⏳ |
-| 07 · Costes | Desglose para el informe | ⏳ |
-| Informe final | 6 páginas | ⏳ |
-| [📝 Ficha técnica](docs/Ficha-tecnica.md) | Respuestas a la ficha de la competición, con los cálculos (consumo, autonomía, corrientes) | ✅ |
-| [📋 Informe de progreso 06/10/2026](docs/Informe-progreso-2026-10-06.md) | Resumen para el equipo: proceso, compra, útiles, problemas | ✅ |
+| Qué | Dónde |
+|---|---|
+| Diseño completo: piezas, pines, placa, cálculos, montaje y compra | [docs/01-Diseno-v2-basico.md](docs/01-Diseno-v2-basico.md) |
+| Proyecto KiCad (esquemático y PCB) | [hardware/pcb/](hardware/pcb/) |
+| Ficheros para pedir la placa (Gerber, BOM, esquema en PDF) | [hardware/pcb/fabricacion/](hardware/pcb/fabricacion/) |
+| Firmware (Arduino) | [firmware/sumo_lhdt_v2/](firmware/sumo_lhdt_v2/) |
+| Cambios | [CHANGELOG.md](CHANGELOG.md) |
 
-![Robot montado](docs/img/3d_montado.png)
+![Placa v2](docs/img/pcb_v2_cara_superior.png)
 
-## Estructura
+## Diseño anterior
 
-```
-docs/                   Documentación (también es una bóveda de Obsidian)
-hardware/geometria.py   Parámetros mecánicos compartidos (PCB + 3D)
-hardware/generar_todo.sh  Regenera PCB, 3D, STL/STEP e imágenes
-hardware/pcb/           Proyecto KiCad (scripts/design.py = circuito)
-hardware/mecanica/cad/  Modelo 3D paramétrico (FreeCAD) y renderizador
-hardware/mecanica/step/ Exportaciones STEP (Onshape/FreeCAD)
-hardware/mecanica/stl/  Piezas listas para imprimir
-firmware/               Código del ESP32-S3 (Arduino/PlatformIO; pines en docs/04)
-media/fotos/            Fotos del proceso
-informe/                Informe de entrega
-```
+Todo el trabajo anterior (v1: 4 motores, placa SMD, simulaciones, ficha técnica entregada…) está guardado tal cual en [`../archivo/v1-4motores/`](../archivo/v1-4motores/ARCHIVO.md) (el commit `7e4c077` tiene el estado completo antes de moverlo).
 
-## Herramientas (Linux)
+## Regenerar la placa (Linux, KiCad 7 o superior)
 
 ```bash
-sudo pacman -S --needed kicad kicad-library freecad
+cd hardware/pcb/scripts
+python3 gen_lib.py && python3 gen_pro.py && python3 gen_sch.py   # librería, proyecto y esquemático
+python3 gen_pcb.py                                               # coloca componentes (BORRA el rutado)
+python3 autoroute.py freerouting-1.9.0.jar 150                   # rutado con Freerouting 1.9 (Java)
+python3 drc.py && python3 paridad.py                             # DRC y esquemático = placa
+./fabricacion.sh                                                 # Gerber, BOM y PDF
 ```
 
-Opcional, para exportar la PCB a 3D con todos los componentes (~5 GB):
-
-```bash
-sudo pacman -S --needed kicad-library-3d
-```
-
-Licencias: hardware **CERN-OHL-S v2**, software **MIT**.
+`robot_sumo.kicad_pcb` ya está rutado: **no hace falta** ejecutar `gen_pcb.py` ni `autoroute.py` para pedir la placa (si se ejecutan, el rutado sale distinto y hay que revisarlo otra vez).
